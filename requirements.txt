@@ -1,0 +1,10 @@
+streamlit
+openai
+anthropic
+mistralai
+spacy
+textdescriptives
+python-docx
+python-dotenv
+pyarrow
+fastparquet
