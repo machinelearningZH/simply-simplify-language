@@ -53,6 +53,7 @@
 - Some benefits: No need for any local installation, you can do anything right from your Web Browser. You get  some free hours with your GitHub account, so this should not be expensive at all. 
 - Create a GitHub codespace on this repository by clicking `Code > Codespaces > Create codespace on main`
 - Wait until the codespace is started. You'll get a new url like `https://scaling-pancake-jwjjw54r4r7hpqpg.github.dev/`
+- If you run into network connection issues try another browser. In our testing Firefox sometimes throws errors, Chrome worked fine.
 - Install the project requirements from the terminal: `pip install -r requirements.txt`
 - Close terminal and reopen a new one. 
 - Install spacy language model: `python -m spacy download de_core_news_sm`
