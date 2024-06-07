@@ -31,6 +31,8 @@ from spacy.language import Language
 import textdescriptives as td
 
 from openai import OpenAI
+# Azure OpenAI, see: https://github.com/openai/openai-python?tab=readme-ov-file#microsoft-azure-openai
+from openai import AzureOpenAI
 from anthropic import Anthropic
 from mistralai.client import MistralClient
 from mistralai.models.chat_completion import ChatMessage
@@ -79,6 +81,9 @@ load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
 MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")
+AZURE_OPENAI_API_KEY = os.getenv("AZURE_OPENAI_API_KEY")
+AZURE_OPENAI_DEPLOYMENT = os.getenv("AZURE_OPENAI_DEPLOYMENT")
+AZURE_OPENAI_ENDPOINT = os.getenv("AZURE_OPENAI_ENDPOINT")
 
 HAIKU = "claude-3-haiku-20240307"
 SONNET = "claude-3-sonnet-20240229"
@@ -88,6 +93,8 @@ M_LARGE = "mistral-large-2402"
 
 GPT4 = "gpt-4-turbo"
 GPT4o = "gpt-4o"
+
+AOAI = f"Azure OpenAI ({AZURE_OPENAI_DEPLOYMENT})"
 
 # From our testing we derive a sensible temperature of 0.5 as a good trade-off between creativity and coherence. Adjust this to your needs.
 TEMPERATURE = 0.5
@@ -395,6 +402,45 @@ def invoke_openai_model(
 
 
 @st.cache_resource
+# https://learn.microsoft.com/azure/cognitive-services/openai/how-to/create-resource?pivots=web-portal#create-a-resource
+def get_azure_openai_client():
+    return AzureOpenAI(
+        api_key=AZURE_OPENAI_API_KEY, # default, but make it explicit
+        azure_endpoint=AZURE_OPENAI_ENDPOINT, 
+        api_version="2024-02-01" #"2023-12-01-preview", # or OPENAI_API_VERSION, see https://learn.microsoft.com/azure/ai-services/openai/reference#rest-api-versioning
+
+)
+
+# different shape than standard openai API
+# see: https://github.com/openai/openai-python?tab=readme-ov-file#microsoft-azure-openai
+# changes compared to openai library: https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/switching-endpoints
+def invoke_azure_openai_model(
+    text,
+    deployment="simply-ch-gpt35turbo16k",
+    temperature=TEMPERATURE,
+    max_tokens=4096,
+    analysis=False,
+):
+    """Invoke OpenAI model."""
+    final_prompt, system = create_prompt(text, *OPENAI_TEMPLATES, analysis)
+    try:
+        message = azure_openai_client.chat.completions.create(
+            model=deployment,  # note that AOAI needs a deployment name (not the model name)
+            temperature=temperature,
+            max_tokens=max_tokens,
+            messages=[
+                {"role": "system", "content": system},
+                {"role": "user", "content": final_prompt},
+            ],
+        )
+        message = message.choices[0].message.content.strip()
+
+        return True, get_result_from_response(message)
+    except Exception as e:
+        print(f"Error: {e}")
+        return False, e
+
+@st.cache_resource
 def get_mistral_client():
     return MistralClient(api_key=MISTRAL_API_KEY)
 
@@ -651,6 +697,7 @@ def log_event(
 anthropic_client = get_anthropic_client()
 openai_client = get_openai_client()
 mistral_client = get_mistral_client()
+azure_openai_client = get_azure_openai_client()
 
 nlp = get_nlp_pipeline()
 project_info = get_project_info()
@@ -709,6 +756,7 @@ with button_cols[3]:
             "Claude 3 Opus",
             "GPT-4",
             "GPT-4o",
+            AOAI
         ),
         index=5,
         horizontal=True,
@@ -760,6 +808,8 @@ elif model_choice == "GPT-4":
     modelId = GPT4
 elif model_choice == "GPT-4o":
     modelId = GPT4o
+elif model_choice == AOAI:
+    modelId = AZURE_OPENAI_DEPLOYMENT
 
 
 # Start processing if one of the processing buttons is clicked.
@@ -811,6 +861,10 @@ if do_simplification or do_analysis or do_one_click:
                     elif model_choice in ["Mistral Large"]:
                         success, response = invoke_mistral_model(
                             text_input, modelId=modelId, analysis=do_analysis
+                        )
+                    elif model_choice in [AOAI]:
+                        success, response = invoke_azure_openai_model(
+                            text_input, deployment=modelId, analysis=do_analysis
                         )
                     else:
                         success, response = invoke_anthropic_model(
