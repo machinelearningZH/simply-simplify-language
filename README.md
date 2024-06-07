@@ -70,6 +70,10 @@
 - In case you don't like coding in your browser, you can also use a local VSCode IDE and connect to the remote Codespace .
 
 
+**Use Azure OpenAI Services**
+> This app supports Azure OpenAI Services, which enables us to get your own OpenAIGPT-x LLM model instances e.g. inside the **Swiss Azure Cloud region**, instead of using the OpenAI US-Endpoints. See the setup instructions [here](./_aoai/README.md)
+
+
 ## Project information
 **Institutional communication is often overly complicated and hard to understand.**
 

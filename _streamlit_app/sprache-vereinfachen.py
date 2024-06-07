@@ -94,6 +94,7 @@ M_LARGE = "mistral-large-2402"
 GPT4 = "gpt-4-turbo"
 GPT4o = "gpt-4o"
 
+# AOAI = "Azure Open AI". The actually used model is defined by the 'deploymentName', see docs
 AOAI = f"Azure OpenAI ({AZURE_OPENAI_DEPLOYMENT})"
 
 # From our testing we derive a sensible temperature of 0.5 as a good trade-off between creativity and coherence. Adjust this to your needs.
