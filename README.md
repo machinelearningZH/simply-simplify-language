@@ -48,9 +48,6 @@
 - Install Conda and set up the repo and app as described above. 
 - Recommendation: To use a proper domain and HTTPS it makes sense to install a reverse proxy. We very much like [Caddy server](https://caddyserver.com/) for this due to its simplicity and ease of installation and usage. It's also simple to request certificates – Caddy does [this automatically for you](https://caddyserver.com/docs/automatic-https).
 
-> [!Note]
-> The app logs user interactions to your local computer or virtual machine to a file named `app.log`. If you do not want to have analytics, simply comment out the function call in the code. 
-
 **Run the app in a Github Codespace**
 - This will enable you to develop and run the app in a cloud-hosted development workspace, using [GitHub Codespaces](https://docs.github.com/en/codespaces/overview). 
 - Some benefits: No need for any local installation, you can do anything right from your Web Browser. You get  some free hours with your GitHub account, so this should not be expensive at all. 
@@ -70,6 +67,9 @@
 - Codespaces auto-proxies and forwards Port 8501 to something like `https://scaling-pancake-jwjjw54r4r7hpqpg.github.dev/`
 - In case you don't like coding in your browser, you can also use a local VSCode IDE and connect to the remote Codespace.
 
+> [!Note]
+> The app logs user interactions to your local computer or virtual machine to a file named `app.log`. If you do not want to have analytics, simply comment out the function call in the code. 
+
 
 ## Project information
 **Institutional communication is often overly complicated and hard to understand.**
@@ -79,6 +79,7 @@ This particularly affects citizens who do not speak German as their first langua
 For many years, the cantonal administration of Zurich has gone to great lengths to make communication more inclusive and accessible. With the increasing volume of content, we wanted to explore the potential of AI to assist in this effort. In autumn 2023, we launched a pilot project. This app is one of the results. The code in this repository represents a snapshot of our ongoing efforts.
 
 We developed this app following our communication guidelines. However, we believe it can be easily adapted for use by other public institutions.
+
 
 ### What does the app do?
 - This app **simplifies complex texts, rewriting them according to rules for [«Einfache Sprache»](https://de.wikipedia.org/wiki/Einfache_Sprache) or [«Leichte Sprache»](https://de.wikipedia.org/wiki/Leichte_Sprache)**. It processes your text, applies effective prompting, and uses your chosen LLM.
