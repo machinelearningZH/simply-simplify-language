@@ -55,13 +55,12 @@
 - Wait until the codespace is started. You'll get a new url like `https://scaling-pancake-jwjjw54r4r7hpqpg.github.dev/`
 - If you run into network connection issues try another browser. In our testing Firefox sometimes threw errors, Chrome worked fine.
 - Install the project requirements from the terminal: `pip install -r requirements.txt`
-- Close terminal and reopen a new one. 
 - Install spacy language model: `python -m spacy download de_core_news_sm`
 - Create an `.env` file and input your API keys like described above.
 - Alternatively, create Repository Secrets on GitHub, which will get available for your codespaces automatically when starting up (only if you are a repo owner / using your own fork).
-- Start app: `streamlit run _streamlit-app/sprache-vereinfachen.py`
+- Start app: `python -m streamlit run _streamlit-app/sprache-vereinfachen.py`
 - Codespaces auto-proxies and forwards Port 8501 to something like `https://scaling-pancake-jwjjw54r4r7hpqpg.github.dev/`
-- In case you don't like coding in your browser, you can also use a local VSCode IDE and connect to the remote Codespace.
+- In case you don't like coding in your browser, you can also use a local [Visual Studio Code IDE](https://code.visualstudio.com/) and connect to the remote Codespace.
 
 > [!Note]
 > The app logs user interactions to your local computer or virtual machine to a file named `app.log`. If you do not want to have analytics, simply comment out the function call in the code. 
