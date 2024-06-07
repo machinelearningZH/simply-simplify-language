@@ -53,10 +53,11 @@
 
 **Run the app in a Github Codespace**
 - This will enable you to develop and run the app in a cloud-hosted development workspace, using [GitHub Codespaces](https://docs.github.com/en/codespaces/overview). 
-- Some benefits: No need for any local installation, you can do anything right from your Web Browser. Ah, you get quite some free hours with your GitHub account, so this should not be expensive at all. 
+- Some benefits: No need for any local installation, you can do anything right from your Web Browser. You get  some free hours with your GitHub account, so this should not be expensive at all. 
 - Create a GitHub codespace on this repository by clicking `Code > Codespaces > Create codespace on main`
-- Wait until the codespace is started. You'll get a new url like 'https://buenzli-kehrwoche-w8wrwwqgarq0815.github.dev/'
+- Wait until the codespace is started. You'll get a new url like `https://scaling-pancake-jwjjw54r4r7hpqpg.github.dev/`
 - Install the project requirements from the terminal: `pip install -r requirements.txt`
+- Close terminal and reopen a new one. 
 - Install spacy language model: `python -m spacy download de_core_news_sm`
 - Create an `.env` file and input your API keys:
 ```
@@ -64,10 +65,10 @@
     ANTHROPIC_API_KEY=sk-...
     MISTRAL_API_KEY=KGT...
 ```
-- Alternativly, create Repository Secrets on GitHub, which will get available for your codespaces automatically when starting up (only if you are a repo owner / using your own fork)
+- Alternatively, create Repository Secrets on GitHub, which will get available for your codespaces automatically when starting up (only if you are a repo owner / using your own fork)
 - Start app (change cwd first): `cd _streamlit_app && python -m streamlit run ./sprache-vereinfachen.py`
-- Codespaces auto-proxies and forwards Port 8501 to something like `https://buenzli-kehrwoche-w8wrwwqgarq0815-8501.app.github.dev/`
-- In case you don't like coding in your browser, you can also use a local VSCode IDE and connect to the remote Codespace .
+- Codespaces auto-proxies and forwards Port 8501 to something like `https://scaling-pancake-jwjjw54r4r7hpqpg.github.dev/`
+- In case you don't like coding in your browser, you can also use a local VSCode IDE and connect to the remote Codespace.
 
 
 ## Project information
