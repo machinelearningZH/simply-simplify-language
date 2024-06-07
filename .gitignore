@@ -4,3 +4,4 @@ _streamlit_app/.env
 *.pyc
 *.log
 .DS_Store
+.env
