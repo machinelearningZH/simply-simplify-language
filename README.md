@@ -50,7 +50,7 @@
 
 **Run the app in a Github Codespace**
 - This will enable you to develop and run the app in a cloud-hosted development workspace, using [GitHub Codespaces](https://docs.github.com/en/codespaces/overview). 
-- Some benefits: No need for any local installation, you can do anything right from your Web Browser. You get  some free hours with your GitHub account, so this should not be expensive at all. 
+- Some benefits: No need for any local installation, you can do anything right from your Web Browser. You get  some free hours with your GitHub account, so this should not be expensive at all. However, **do not forget to delete unused Codespaces to avoid being billed unnecessarily.** It's also a sensible idea, to make sure that `Auto-delete codespace` is activated in the settings.
 - Create a GitHub codespace on this repository by clicking `Code > Codespaces > Create codespace on main`
 - Wait until the codespace is started. You'll get a new url like `https://scaling-pancake-jwjjw54r4r7hpqpg.github.dev/`
 - If you run into network connection issues try another browser. In our testing Firefox sometimes threw errors, Chrome worked fine.
