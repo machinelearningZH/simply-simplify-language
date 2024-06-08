@@ -486,11 +486,11 @@ def get_one_click_results():
 
     if leichte_sprache:
         response.append(
-            "Die Modelle haben den Text in **Leichte Sprache** vereinfacht."
+            "Die Sprachmodelle haben versucht, den Ausgangstext in **Leichte Sprache** umzuschreiben."
         )
     else:
         response.append(
-            "Die Modelle haben den Text in **Einfache Sprache** vereinfacht."
+            "Die Sprachmodelle haben versucht, den Text in **Einfache Sprache** umzuschreiben."
         )
 
     if success_mistral:
