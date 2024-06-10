@@ -1,0 +1,20 @@
+{
+  "nodes": {
+    "simplify_es": {
+      "variant_0": {
+        "inputs": {
+          "prompt": [],
+          "rules": [],
+          "completeness": [],
+          "response_format": [],
+          "text": []
+        }
+      },
+      "variant_1": {
+        "inputs": {
+          "model": []
+        }
+      }
+    }
+  }
+}

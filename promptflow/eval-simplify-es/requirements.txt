@@ -1,0 +1,5 @@
+promptflow
+spacy
+textdescriptives
+pyarrow
+fastparquet

@@ -1,0 +1,91 @@
+inputs:
+  text:
+    type: string
+    default: Als Vernehmlassungsverfahren wird diejenige Phase innerhalb des
+      Vorverfahrens der Gesetzgebung bezeichnet, in der Vorhaben des Bundes von
+      erheblicher politischer, finanzieller, wirtschaftlicher, ökologischer,
+      sozialer oder kultureller Tragweite auf ihre sachliche Richtigkeit,
+      Vollzugstauglichkeit und Akzeptanz hin geprüft werden.   Die Vorlage wird
+      zu diesem Zweck den Kantonen, den in der Bundesversammlung vertretenen
+      Parteien, den Dachverbänden der Gemeinden, Städte und der Berggebiete, den
+      Dachverbänden der Wirtschaft sowie weiteren, im Einzelfall interessierten
+      Kreisen unterbreitet.
+outputs:
+  simplified_text:
+    type: string
+    reference: ${simplify_es.output}
+nodes:
+- name: simplify_es
+  use_variants: true
+- name: rules_es
+  use_variants: true
+- name: completeness
+  use_variants: true
+node_variants:
+  simplify_es:
+    default_variant_id: gpt4o
+    variants:
+      gpt4o:
+        node:
+          type: llm
+          source:
+            type: code
+            path: simplify_es.jinja2
+          inputs:
+            model: gpt-4o
+            rules: ${rules_es.output}
+            completeness: ${completeness.output}
+            response_format:
+              type: text
+            text: ${inputs.text}
+          connection: openai_connection
+          api: chat
+      gpt35turbo:
+        node:
+          type: llm
+          source:
+            type: code
+            path: simplify_es.jinja2
+          inputs:
+            model: gpt-3.5-turbo
+            rules: ${rules_es.output}
+            completeness: ${completeness.output}
+            response_format:
+              type: text
+            text: ${inputs.text}
+          connection: openai_connection
+          api: chat
+  rules_es:
+    default_variant_id: full_instructions
+    variants:
+      full_instructions:
+        node:
+          type: prompt
+          source:
+            type: code
+            path: rules_es.jinja2
+          inputs: {}
+      short_instructions:
+        node:
+          type: prompt
+          source:
+            type: code
+            path: rules_es_short.jinja2
+          inputs: {}
+  completeness:
+    default_variant_id: full
+    variants:
+      full:
+        node:
+          type: prompt
+          source:
+            type: code
+            path: completeness_full.jinja2
+          inputs: {}
+      condensed:
+        node:
+          type: prompt
+          source:
+            type: code
+            path: completeness_condensed.jinja2
+          inputs: {}

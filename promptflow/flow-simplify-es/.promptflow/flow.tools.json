@@ -1,0 +1,67 @@
+{
+  "package": {},
+  "code": {
+    "simplify_es.jinja2": {
+      "type": "llm",
+      "inputs": {
+        "completeness": {
+          "type": [
+            "string"
+          ]
+        },
+        "rules": {
+          "type": [
+            "string"
+          ]
+        },
+        "text": {
+          "type": [
+            "string"
+          ]
+        }
+      },
+      "source": "simplify_es.jinja2"
+    },
+    "rules_es.jinja2": {
+      "type": "prompt",
+      "source": "rules_es.jinja2"
+    },
+    "completeness_condensed.jinja2": {
+      "type": "prompt",
+      "source": "completeness_condensed.jinja2"
+    },
+    "completeness_full.jinja2": {
+      "type": "prompt",
+      "source": "completeness_full.jinja2"
+    },
+    "simplify_es_variant_1.jinja2": {
+      "type": "llm",
+      "inputs": {
+        "completeness": {
+          "type": [
+            "string"
+          ]
+        },
+        "rules": {
+          "type": [
+            "string"
+          ]
+        },
+        "text": {
+          "type": [
+            "string"
+          ]
+        }
+      },
+      "source": "simplify_es_variant_1.jinja2"
+    },
+    "rules_es_variant_1.jinja2": {
+      "type": "prompt",
+      "source": "rules_es_variant_1.jinja2"
+    },
+    "rules_es_short.jinja2": {
+      "type": "prompt",
+      "source": "rules_es_short.jinja2"
+    }
+  }
+}

@@ -1,0 +1,54 @@
+$schema: https://azuremlschemas.azureedge.net/promptflow/latest/Flow.schema.json
+environment:
+  python_requirements_txt: requirements.txt
+inputs:
+  original:
+    type: string
+    default: Als Vernehmlassungsverfahren wird diejenige Phase innerhalb des
+      Vorverfahrens der Gesetzgebung bezeichnet, in der Vorhaben des Bundes von
+      erheblicher politischer, finanzieller, wirtschaftlicher, ökologischer,
+      sozialer oder kultureller Tragweite auf ihre sachliche Richtigkeit,
+      Vollzugstauglichkeit und Akzeptanz hin geprüft werden.   Die Vorlage wird
+      zu diesem Zweck den Kantonen, den in der Bundesversammlung vertretenen
+      Parteien, den Dachverbänden der Gemeinden, Städte und der Berggebiete, den
+      Dachverbänden der Wirtschaft sowie weiteren, im Einzelfall interessierten
+      Kreisen unterbreitet.
+  simplified:
+    type: string
+    default: Das Vernehmlassungsverfahren ist ein Teil der Gesetzgebung. Man prüft
+      dabei, ob ein Gesetz richtig und gut ist. Das macht man, bevor das Gesetz
+      in Kraft tritt.\n\nDie Vorlage geht an verschiedene Gruppen. Dazu gehören
+      die Kantone, die Parteien im Parlament, die Verbände der Gemeinden und
+      Städte sowie der Berggebiete, die Wirtschafts-Verbände und weitere
+      Interessierte.
+outputs:
+  zix_score:
+    type: string
+    reference: ${score_simplified.output}
+  cefr_level:
+    type: string
+    reference: ${calculate_level.output}
+nodes:
+- name: aggregate
+  type: python
+  source:
+    type: code
+    path: aggregate.py
+  inputs:
+    scores: ${score_simplified.output}
+  aggregation: true
+- name: score_simplified
+  type: python
+  source:
+    type: code
+    path: calculate_score.py
+  inputs:
+    text: ${inputs.simplified}
+- name: calculate_level
+  type: python
+  source:
+    type: code
+    path: cefr_level.py
+  inputs:
+    score: ${score_simplified.output}
+  aggregation: false
