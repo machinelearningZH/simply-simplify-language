@@ -7,7 +7,8 @@ from promptflow.core import tool
 def get_cefr_level(score: float) -> str:
     """Get CEFR level from understandability score.
 
-    We calculated these ranges by scoring various text samples where we had an approximate idea of their CEFR level. Again these ranges are not perfect, but give a good indication of the CEFR level.
+    We calculated these ranges by scoring various text samples where we had an approximate idea of their CEFR level. 
+    Again these ranges are not perfect, but give a good indication of the CEFR level.
     """
     if score >= 18.3:
         return "A1"

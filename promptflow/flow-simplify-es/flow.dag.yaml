@@ -1,5 +1,5 @@
 inputs:
-  text:
+  original_text:
     type: string
     default: Als Vernehmlassungsverfahren wird diejenige Phase innerhalb des
       Vorverfahrens der Gesetzgebung bezeichnet, in der Vorhaben des Bundes von
@@ -10,10 +10,14 @@ inputs:
       Parteien, den Dachverbänden der Gemeinden, Städte und der Berggebiete, den
       Dachverbänden der Wirtschaft sowie weiteren, im Einzelfall interessierten
       Kreisen unterbreitet.
+    description: This is the input text that should be simplified
 outputs:
   simplified_text:
     type: string
     reference: ${simplify_es.output}
+  prompt:
+    type: string
+    reference: ${create_prompt.output}
 nodes:
 - name: simplify_es
   use_variants: true
@@ -21,6 +25,15 @@ nodes:
   use_variants: true
 - name: completeness
   use_variants: true
+- name: create_prompt
+  type: prompt
+  source:
+    type: code
+    path: create_prompt.jinja2
+  inputs:
+    completeness: ${completeness.output}
+    rules: ${rules_es.output}
+    text: ${inputs.original_text}
 node_variants:
   simplify_es:
     default_variant_id: gpt4o
@@ -33,11 +46,9 @@ node_variants:
             path: simplify_es.jinja2
           inputs:
             model: gpt-4o
-            rules: ${rules_es.output}
-            completeness: ${completeness.output}
             response_format:
               type: text
-            text: ${inputs.text}
+            prepared_prompt: ${create_prompt.output}
           connection: openai_connection
           api: chat
       gpt35turbo:
@@ -48,11 +59,9 @@ node_variants:
             path: simplify_es.jinja2
           inputs:
             model: gpt-3.5-turbo
-            rules: ${rules_es.output}
-            completeness: ${completeness.output}
             response_format:
               type: text
-            text: ${inputs.text}
+            prepared_prompt: ${create_prompt.output}
           connection: openai_connection
           api: chat
   rules_es:

@@ -145,4 +145,4 @@ nlp = get_nlp_pipeline()
 @tool
 def calculate_score(text: str) -> float:
     score = get_understandability(text)
-    return score
+    return float(score)

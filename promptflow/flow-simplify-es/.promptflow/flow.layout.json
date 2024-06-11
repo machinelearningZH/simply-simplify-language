@@ -7,23 +7,28 @@
     },
     "outputs": {
       "x": 550,
-      "y": 310,
+      "y": 444,
       "index": -1
     },
     "simplify_es": {
-      "x": 470,
-      "y": 176,
+      "x": 382.5,
+      "y": 310,
       "index": 0
     },
     "rules_es": {
-      "x": 140,
+      "x": 470,
       "y": 42,
       "index": 1
     },
     "completeness": {
-      "x": 470,
+      "x": 140,
       "y": 42,
       "index": 2
+    },
+    "create_prompt": {
+      "x": 470,
+      "y": 176,
+      "index": 3
     }
   },
   "orientation": "Vertical"

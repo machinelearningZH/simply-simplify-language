@@ -4,17 +4,7 @@
     "simplify_es.jinja2": {
       "type": "llm",
       "inputs": {
-        "completeness": {
-          "type": [
-            "string"
-          ]
-        },
-        "rules": {
-          "type": [
-            "string"
-          ]
-        },
-        "text": {
+        "prepared_prompt": {
           "type": [
             "string"
           ]
@@ -62,6 +52,27 @@
     "rules_es_short.jinja2": {
       "type": "prompt",
       "source": "rules_es_short.jinja2"
+    },
+    "create_prompt.jinja2": {
+      "type": "prompt",
+      "inputs": {
+        "completeness": {
+          "type": [
+            "string"
+          ]
+        },
+        "rules": {
+          "type": [
+            "string"
+          ]
+        },
+        "text": {
+          "type": [
+            "string"
+          ]
+        }
+      },
+      "source": "create_prompt.jinja2"
     }
   }
 }

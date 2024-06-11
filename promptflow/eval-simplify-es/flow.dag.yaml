@@ -21,21 +21,42 @@ inputs:
       die Kantone, die Parteien im Parlament, die Verbände der Gemeinden und
       Städte sowie der Berggebiete, die Wirtschafts-Verbände und weitere
       Interessierte.
+  model:
+    type: string
+    default: gpt-4o
+  prompt_used:
+    type: string
+    default: "Simplify the following text:"
 outputs:
-  zix_score:
+  zix_score_simplified:
     type: string
     reference: ${score_simplified.output}
-  cefr_level:
+  zix_score_original:
     type: string
-    reference: ${calculate_level.output}
+    reference: ${score_original.output}
+  level_original:
+    type: string
+    reference: ${level_original.output}
+  level_simplified:
+    type: string
+    reference: ${level_simplified.output}
+  estimated_cost:
+    type: string
+    reference: ${estimate_cost.output.cost}
+  value_for_money:
+    type: string
+    reference: ${estimate_cost.output.value}
 nodes:
-- name: aggregate
+- name: aggregate_scores
   type: python
   source:
     type: code
     path: aggregate.py
   inputs:
-    scores: ${score_simplified.output}
+    scores_original: ${score_original.output}
+    scores_simplified: ${score_simplified.output}
+    estimated_cost: ${estimate_cost.output.cost}
+    value_for_money: ${estimate_cost.output.value}
   aggregation: true
 - name: score_simplified
   type: python
@@ -44,11 +65,37 @@ nodes:
     path: calculate_score.py
   inputs:
     text: ${inputs.simplified}
-- name: calculate_level
+- name: level_original
+  type: python
+  source:
+    type: code
+    path: cefr_level.py
+  inputs:
+    score: ${score_original.output}
+  aggregation: false
+- name: score_original
+  type: python
+  source:
+    type: code
+    path: calculate_score.py
+  inputs:
+    text: ${inputs.original}
+- name: level_simplified
   type: python
   source:
     type: code
     path: cefr_level.py
   inputs:
     score: ${score_simplified.output}
-  aggregation: false
+- name: estimate_cost
+  type: python
+  source:
+    type: code
+    path: estimate_cost.py
+  inputs:
+    original: ${inputs.original}
+    simplified: ${inputs.simplified}
+    model: ${inputs.model}
+    prompt_used: ${inputs.prompt_used}
+    score_original: ${score_original.output}
+    score_simplified: ${score_simplified.output}

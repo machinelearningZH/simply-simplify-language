@@ -22,7 +22,22 @@
     "aggregate.py": {
       "type": "python",
       "inputs": {
-        "scores": {
+        "scores_original": {
+          "type": [
+            "object"
+          ]
+        },
+        "scores_simplified": {
+          "type": [
+            "object"
+          ]
+        },
+        "estimated_cost": {
+          "type": [
+            "object"
+          ]
+        },
+        "value_for_money": {
           "type": [
             "object"
           ]
@@ -53,9 +68,46 @@
           ]
         }
       },
-      "description": "Get CEFR level from understandability score.\n\nWe calculated these ranges by scoring various text samples where we had an approximate idea of their CEFR level. Again these ranges are not perfect, but give a good indication of the CEFR level.",
+      "description": "Get CEFR level from understandability score.\n\nWe calculated these ranges by scoring various text samples where we had an approximate idea of their CEFR level. \nAgain these ranges are not perfect, but give a good indication of the CEFR level.",
       "source": "cefr_level.py",
       "function": "get_cefr_level"
+    },
+    "estimate_cost.py": {
+      "type": "python",
+      "inputs": {
+        "original": {
+          "type": [
+            "string"
+          ]
+        },
+        "simplified": {
+          "type": [
+            "string"
+          ]
+        },
+        "model": {
+          "type": [
+            "string"
+          ]
+        },
+        "prompt_used": {
+          "type": [
+            "string"
+          ]
+        },
+        "score_original": {
+          "type": [
+            "double"
+          ]
+        },
+        "score_simplified": {
+          "type": [
+            "double"
+          ]
+        }
+      },
+      "source": "estimate_cost.py",
+      "function": "estimate_cost"
     }
   }
 }

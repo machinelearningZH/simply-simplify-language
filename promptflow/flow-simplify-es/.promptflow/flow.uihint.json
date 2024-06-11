@@ -14,6 +14,27 @@
         "inputs": {
           "model": []
         }
+      },
+      "gpt4o": {
+        "inputs": {
+          "prompt": [],
+          "prepared_prompt": []
+        }
+      },
+      "gpt35turbo": {
+        "inputs": {
+          "prompt": [],
+          "prepared_prompt": []
+        }
+      }
+    },
+    "create_prompt": {
+      "variant_0": {
+        "inputs": {
+          "completeness": [],
+          "rules": [],
+          "text": []
+        }
       }
     }
   }
