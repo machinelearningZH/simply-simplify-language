@@ -76,6 +76,10 @@ OPENAI_TEMPLATES = [
 
 load_dotenv()
 
+USE_OPENAI = os.getenv("USE_OPENAI")
+USE_ANTHROPIC = os.getenv("USE_ANTHROPIC")
+USE_MISTRAL = os.getenv("USE_MISTRAL")
+
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
 MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")
@@ -700,17 +704,29 @@ with button_cols[2]:
             help="**Schalter aktiviert**: Modell konzentriert sich auf essentielle Informationen und versucht, Unwichtiges wegzulassen. **Schalter nicht aktiviert**: Modell versucht, alle Informationen zu übernehmen.",
         )
 with button_cols[3]:
+    
+    #Neue Liste mit Radio-Options
+    optionsAuswahl = list()
+    
+    #Prüfung von env Var auf Verwendung
+    if USE_OPENAI == "1":
+       optionsAuswahl.append("GPT-4")
+       optionsAuswahl.append("GPT-4o")
+       
+    if USE_ANTHROPIC == "1":
+       optionsAuswahl.append("Claude 3 Haiku")
+       optionsAuswahl.append("Claude 3 Sonnet")
+       optionsAuswahl.append("Claude 3 Opus")
+       
+    if USE_MISTRAL == "1":
+       optionsAuswahl.append("Mistral Large")
+    
     model_choice = st.radio(
         label="Sprachmodell",
         options=(
-            "Mistral Large",
-            "Claude 3 Haiku",
-            "Claude 3 Sonnet",
-            "Claude 3 Opus",
-            "GPT-4",
-            "GPT-4o",
+            optionsAuswahl
         ),
-        index=5,
+        index=0,
         horizontal=True,
         help="Alle Modelle liefern je nach Ausgangstext meist gute bis sehr gute Ergebnisse und sind alle einen Versuch wert. Claude Haiku und GPT-4o sind am schnellsten. Mehr Details siehe Infobox oben auf der Seite.",
     )
