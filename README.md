@@ -101,7 +101,7 @@ We developed this app following our communication guidelines. However, we believ
 
 
 ### What does it cost?
-**Usage is inexpensive**. You only pay OpenAI & Co. for the tokens that you use. E.g. for the translation of 100 separate [«Normseiten»](https://de.wikipedia.org/wiki/Normseite) (standard pages of 250 German words each) to Einfache Sprache or Leichte Sprache you pay depending on the model token cost - so roughly between 0.2 CHF for Claude Haiku and a little over 7 CHF for Claude Opus. The hardware requirements to run the app are modest too. As mentioned above a small VM for a couple of Francs per month will suffice. 
+**Usage is inexpensive**. You only pay OpenAI & Co. for the tokens that you use. E.g. for the translation of 100 separate [«Normseiten»](https://de.wikipedia.org/wiki/Normseite) (standard pages of 250 German words each) to Einfache Sprache or Leichte Sprache you pay depending on the model token cost - so roughly between 0.5 CHF for Claude Haiku and a little over 25 CHF for Claude Opus (as of June 2024). The hardware requirements to run the app are modest too. As mentioned above a small VM for a couple of Francs per month will suffice. 
 
 
 ### Our language guidelines
