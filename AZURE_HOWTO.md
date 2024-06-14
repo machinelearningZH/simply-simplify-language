@@ -1,4 +1,4 @@
-# How to use Azure OpenAI Service
+# How to setup the app with Azure OpenAI Service
 
 In addition to (mostly US-hosted) API model endpoints, we created an app version that runs with `Azure OpenAI Services (AOAI)`. Find the docs here: https://learn.microsoft.com/en-us/azure/ai-services/openai/
 
