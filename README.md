@@ -160,4 +160,4 @@ We are interested to hear from you. Please share your feedback and let us know h
 Please note that we use [Ruff](https://docs.astral.sh/ruff/) for linting and code formatting with default settings.
 
 ## Miscellaneous
-The wonderful people at [LIIP](https://www.liip.ch/en) refactored the understandability index into a separate API in GitHub ([see this repo here](https://github.com/chregu/simply-understandability-score)). They also made it available [as a webservice](https://u15y.gpt.liip.ch/). How cool is that?! Big shoutout to [Christian Stocker](https://www.linkedin.com/in/chregu/) for doing this!
+The wonderful people at [LIIP](https://www.liip.ch/en) refactored the understandability index into a separate API ([see this repo here](https://github.com/chregu/simply-understandability-score)). They also made it available [as a webservice](https://u15y.gpt.liip.ch/). How cool is that?! 🚀 Big shoutout to [Christian Stocker](https://www.linkedin.com/in/chregu/) for doing this!
