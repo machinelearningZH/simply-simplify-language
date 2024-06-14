@@ -32,7 +32,7 @@
 - Create a [Conda](https://conda.io/projects/conda/en/latest/index.html) environment: `conda create -n simplify python=3.9`
 - Activate environment: `conda activate simplify`
 - Clone this repo.
-- Change into the project directory: `cd sprache-vereinfachen/`
+- Change into the project directory: `cd simply-simplify-language/`
 - Install packages: `pip install -r requirements.txt`
 - Install Spacy language model: `python -m spacy download de_core_news_sm`
 - Create an `.env` file and input your API keys:
@@ -41,7 +41,7 @@
     ANTHROPIC_API_KEY=sk-...
     MISTRAL_API_KEY=KGT...
 ```
-- Start app: `streamlit run _streamlit-app/sprache-vereinfachen.py`
+- Start app: `streamlit run _streamlit_app/sprache-vereinfachen.py`
 
 **Run the app in the cloud**
 - Instantiate a small virtual machine with the cloud provider of your choosing. Suggested size: 2 vCPUs, 2GB RAM, and an SSD with a couple of GBs are sufficient. This will set you back no more than a couple of Francs per month. 
