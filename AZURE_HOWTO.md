@@ -23,30 +23,30 @@ Check with your Microsoft contact or Cloud Service Provider (Partner) representa
 - Go to https://portal.azure.com
 - From the Catalog, choose `Azure OpenAI service` 
 
-<img src="../_imgs/aoai_select_service.png" style="width: 400px; border: none" />
-<img src="../_imgs/aoai_select_service2.png" style="width: 400px; border: none" />
+<img src="_imgs/aoai_select_service.png" style="width: 400px; border: none" />
+<img src="_imgs/aoai_select_service2.png" style="width: 400px; border: none" />
 
 - You need to select (or create) a new **Resource Group**, choose the Cloud **Region** and a unique service **Name** (becomes part of the endpoint url) 
 - **Note:** Not all model versions are available in all regions, see [here](https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/models). The region can't be changed afterwards (you'll need to delete & create a new service instance in that case).
 
-<img src="../_imgs/aoai_create_service.png" style="width: 600px; border: none" />
+<img src="_imgs/aoai_create_service.png" style="width: 600px; border: none" />
 
 - Follow the wizard to the end, and create the service.
 - Once the service instance is ready, find the overview and `Go to Azure OpenAI Studio`.
 
-<img src="../_imgs/aoai_goto_studio.png" style="width: 600px; border: none" />
+<img src="_imgs/aoai_goto_studio.png" style="width: 600px; border: none" />
 
 - In the `Azure Open AI Studio`, go to `Deployments` and create a new model deployment. 
 - **Note**: If you can't create a particular model type, that model may be unavailable in your region, or your quota may be exceeded.
 
-<img src="../_imgs/aoai_create_deployment.png" style="width: 600px; border: none" />
-<img src="../_imgs/aoai_create_deployment2.png" style="width: 600px; border: none" />
+<img src="_imgs/aoai_create_deployment.png" style="width: 600px; border: none" />
+<img src="_imgs/aoai_create_deployment2.png" style="width: 600px; border: none" />
 
 - Take note of the **deployment name** - this is needed later for making API calls
 
 - Now go back and find the **Endpoint** and **API Key**. There are multiple ways to find these, but one is clicking on the gear icon on top of OpenAI Studio:
-<img src="../_imgs/aoai_gear_icon.png" style="width: 600px; border: none" />
-<img src="../_imgs/aoai_endpoint_and_key.png" style="width: 800px; border: none" />
+<img src="_imgs/aoai_gear_icon.png" style="width: 600px; border: none" />
+<img src="_imgs/aoai_endpoint_and_key.png" style="width: 800px; border: none" />
 
 - Now add these credentials to your `_streamlit_app/.env` file:
 ```
