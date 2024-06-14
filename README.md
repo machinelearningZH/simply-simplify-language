@@ -19,6 +19,7 @@
     - [Outlook](#outlook)
 - [Project team](#project-team)
 - [Contributing](#feedback-and-contributing)
+- [Contributing](#miscellaneous)
 
 </details>
 
