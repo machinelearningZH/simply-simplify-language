@@ -30,7 +30,7 @@
 ## Usage
 
 - You can run the app **locally**, **in the cloud** or **in a [GitHub Codespace](https://github.com/features/codespaces)**. 
-- If you just have an OpenAI account and do not want to use other LLMs you also can run **a variant of the app that only uses GPT-4o**. However, we recommend to give the Mistral and Anthropic models a spin too. These models too are very powerful.
+- If you just have an [OpenAI](https://openai.com/api/) account and do not want to use other LLMs you also can run **a variant of the app that only uses GPT-4o**. However, we recommend to give the [Mistral](https://mistral.ai/) and [Anthropic](https://www.anthropic.com/api) models a spin too. These models are very powerful too and we continuously achieve very good results.
 - We also added an app version that uses the [**Azure OpenAI Service**](https://azure.microsoft.com/en-us/products/ai-services/openai-service). 
 
 
@@ -162,4 +162,5 @@ We are interested to hear from you. Please share your feedback and let us know h
 Please note that we use [Ruff](https://docs.astral.sh/ruff/) for linting and code formatting with default settings.
 
 ## Miscellaneous
-The wonderful people at [LIIP](https://www.liip.ch/en) refactored the understandability index into a separate API ([see this repo here](https://github.com/chregu/simply-understandability-score)). They also made it available [as a webservice](https://u15y.gpt.liip.ch/). How cool is that?! 🚀 Big shoutout to [Christian Stocker](https://www.linkedin.com/in/chregu/) for doing this!
+- The wonderful people at [LIIP](https://www.liip.ch/en) refactored the understandability index into a separate API ([see this repo here](https://github.com/chregu/simply-understandability-score)). They also made it available [as a webservice](https://u15y.gpt.liip.ch/). How cool is that?! 🚀 Big shoutout to [Christian Stocker](https://www.linkedin.com/in/chregu/) for doing this!
+- Also a big shout out to [Florian Georg](https://www.linkedin.com/in/fgeorg/) of Microsoft Switzerland for his great help to make the app work with [Azure AI](https://azure.microsoft.com/en-us/solutions/ai). Thanks! 
