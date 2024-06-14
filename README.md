@@ -42,7 +42,8 @@
     ANTHROPIC_API_KEY=sk-...
     MISTRAL_API_KEY=KGT...
 ```
-- Start app: `streamlit run _streamlit_app/sprache-vereinfachen.py`
+- Change into app directory: `cd _streamlit_app/`
+- Start app: `streamlit run sprache-vereinfachen.py`
 
 **Run the app in the cloud**
 - Instantiate a small virtual machine with the cloud provider of your choosing. Suggested size: 2 vCPUs, 2GB RAM, and an SSD with a couple of GBs are sufficient. This will set you back no more than a couple of Francs per month. 
