@@ -29,7 +29,7 @@ import spacy
 from spacy.language import Language
 import textdescriptives as td
 
-# For usage of the Azure OpenAI client, see: https://github.com/openai/openai-python?tab=readme-ov-file#microsoft-azure-openai
+# For usage of the Azure OpenAI client, see: https://github.com/openai/openai-python?tab=readme-ov-file#microsoft-azure-openai.
 from openai import AzureOpenAI
 
 from utils_sample_texts import (
