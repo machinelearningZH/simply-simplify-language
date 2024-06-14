@@ -33,7 +33,7 @@
 - If you just have an OpenAI account and do not want to use other LLMs you also can run **a variant of the app that only uses GPT-4o**. However, we recommend to give the Mistral and Anthropic models a spin too. These models too are very powerful.
 
 
-**Run the app locally**
+### Run the app locally
 - Create a [Conda](https://conda.io/projects/conda/en/latest/index.html) environment: `conda create -n simplify python=3.9`
 - Activate environment: `conda activate simplify`
 - Clone this repo.
@@ -52,12 +52,12 @@
 > [!Note]
 > To run the app version with only GPT-4o use `streamlit run sprache-vereinfachen_openai.py`. In this case your `.env` file only has to contain the OpenAI API key. 
 
-**Run the app in the cloud**
+### Run the app in the cloud
 - Instantiate a small virtual machine with the cloud provider of your choosing. Suggested size: 2 vCPUs, 2GB RAM, and an SSD with a couple of GBs are sufficient. This will set you back no more than a couple of Francs per month. 
 - Install Conda and set up the repo and app as described above. 
 - Recommendation: To use a proper domain and HTTPS it makes sense to install a reverse proxy. We very much like [Caddy server](https://caddyserver.com/) for this due to its simplicity and ease of installation and usage. It's also simple to request certificates – Caddy does [this automatically for you](https://caddyserver.com/docs/automatic-https).
 
-**Run the app in a Github Codespace**
+### Run the app in a Github Codespace 
 - This will enable you to develop and run the app in a cloud-hosted development workspace, using [GitHub Codespaces](https://docs.github.com/en/codespaces/overview). 
 - Some benefits: No need for any local installation, you can do anything right from your Web Browser. You get  some free hours with your GitHub account, so this should not be expensive at all. However, **do not forget to delete unused Codespaces to avoid being billed unnecessarily.** It's also a sensible idea, to make sure that `Auto-delete codespace` is activated in the settings.
 - Create a GitHub codespace on this repository by clicking `Code > Codespaces > Create codespace on main`
