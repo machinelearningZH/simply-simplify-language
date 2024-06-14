@@ -51,7 +51,7 @@
 - Start app: `streamlit run sprache-vereinfachen.py`
 
 - To **run the GPT-4o only app version** use `streamlit run sprache-vereinfachen_openai.py`. 
-- To **run the Azure OpenAI app version** use `streamlit run sprache-vereinfachen_azure.py`.
+- To **run the Azure OpenAI app version** use `streamlit run sprache-vereinfachen_azure.py`. Have a look [here to learn more about how to setup the app with Azure](AZURE_HOWTO.md).
 
 
 ### Run the app in the cloud
