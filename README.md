@@ -110,13 +110,13 @@ We derived the current rules in the prompts mainly from these of our language gu
 - **Measuring text understandability is really helpful**. Early in our project, we realized the need for a quantitative metric to evaluate our outputs, such as comparing different prompts, models, and preprocessing steps. We developed and index for this purpose that we call the «Zürcher Verständlichkeits-Index» or «ZIX» 😉. We created the ZIX using a dataset of complex legal and administrative texts, as well as many samples of Einfache and Leichte Sprache. We trained a classification model to differentiate between complex and simple texts. By selecting the most significant model coefficients, we devised a formula to estimate a text's understandability. This pragmatic metric has been useful to us in practice. We plan to publish the code for it in the coming weeks.
 - Finally, **validating your results with your target audience is crucial**, especially for Leichte Sprache, which requires expert and user validation to be effective.
 
-## How does the understandability score work?
+### How does the understandability score work?
 We perceive the understandability index as a pragmatic metric. We have found it to be useful in our pilot project. It seems to work well in practice for our context and administrative texts. The score takes into account sentence lengths, the [readability metrix RIX](https://hlasse.github.io/TextDescriptives/readability.html) as well as the occurrence of common words. 
 
 > [!Important]
 > As mention above the index assumes the Swiss `ss` in your texts rather than the German German `ß`. You'll get somewhat worse scores, if your text contains `ß`. The difference shouldn't be substantial. Nonetheless, we want you to be aware. At the moment the score does **not** take into account other language properties that are essential for Einfache or Leichte Sprache like use of passive voice, subjunctives, complex structures in short sentences etc. Be also aware that the mapping to CEFR levels A1 to C2 should also be considered as a rough and pragmatic approach that gives an *indication* which seems to work well in practice. However, it is by no means an ‘official’ or safe measure.
 
-## What does the score mean?
+### What does the score mean?
 - Texts with **scores below 13 will be really hard to understand** (this is classic «Behördendeutsch» or legal text territory...). 
 - News, Wikipedia and many books have scores between 13 to 16.
 - Anything higher than 16: **You're on a good way.** 👍 Keep editing. **And validate with users!**
@@ -150,3 +150,6 @@ A special thanks goes to **[Government Councillor Jacqueline Fehr](https://www.z
 We are interested to hear from you. Please share your feedback and let us know how you use the app in your institution. You can [write an email](mailto:datashop@statistik.zh.ch) or share your ideas by opening an issue or a pull requests.
 
 Please note that we use [Ruff](https://docs.astral.sh/ruff/) for linting and code formatting with default settings.
+
+## Miscellaneous
+The wonderful people at [LIIP](https://www.liip.ch/en) refactored the understandability index into a separate API in GitHub ([see this repo here](https://github.com/chregu/simply-understandability-score)). They also made it available [as a webservice](https://u15y.gpt.liip.ch/). How cool is that?! Big shoutout to [Christian Stocker](https://www.linkedin.com/in/chregu/) for doing this!
