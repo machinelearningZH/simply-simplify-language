@@ -58,7 +58,7 @@
 - Install spacy language model: `python -m spacy download de_core_news_sm`
 - Create an `.env` file and input your API keys like described above.
 - Alternatively, create Repository Secrets on GitHub, which will get available for your codespaces automatically when starting up (only if you are a repo owner / using your own fork).
-- Start app: `python -m streamlit run _streamlit-app/sprache-vereinfachen.py`
+- Start app: `python -m streamlit run _streamlit_app/sprache-vereinfachen.py`
 - Codespaces auto-proxies and forwards Port 8501 to something like `https://scaling-pancake-jwjjw54r4r7hpqpg.github.dev/`
 - In case you don't like coding in your browser, you can also use a local [Visual Studio Code IDE](https://code.visualstudio.com/) and connect to the remote Codespace.
 
