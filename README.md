@@ -30,7 +30,7 @@
 ## Usage
 
 - You can run the app **locally**, **in the cloud** or **in a GitHub Codespace**. 
-- If you just have an OpenAI account and do not want to use other LLMs you also can run **a variant of the app that only uses GPT-4o**. 
+- If you just have an OpenAI account and do not want to use other LLMs you also can run **a variant of the app that only uses GPT-4o**. However, we recommend to give the Mistral and Anthropic models a spin too. These models too are very powerful.
 
 
 **Run the app locally**
@@ -50,7 +50,7 @@
 - Start app: `streamlit run sprache-vereinfachen.py`
 
 > [!Note]
-> To run the app version with only GPT-4o use `streamlit run sprache-vereinfachen_openai.py`. Your `.env` file only has to contains the OpenAI API key. 
+> To run the app version with only GPT-4o use `streamlit run sprache-vereinfachen_openai.py`. In this case your `.env` file only has to contain the OpenAI API key. 
 
 **Run the app in the cloud**
 - Instantiate a small virtual machine with the cloud provider of your choosing. Suggested size: 2 vCPUs, 2GB RAM, and an SSD with a couple of GBs are sufficient. This will set you back no more than a couple of Francs per month. 
