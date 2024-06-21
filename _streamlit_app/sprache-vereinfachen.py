@@ -81,7 +81,7 @@ ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
 MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")
 
 HAIKU = "claude-3-haiku-20240307"
-SONNET = "claude-3-sonnet-20240229"
+SONNET = "claude-3-5-sonnet-20240620"
 OPUS = "claude-3-opus-20240229"
 
 M_LARGE = "mistral-large-2402"
@@ -101,7 +101,7 @@ TEXT_AREA_HEIGHT = 600
 MAX_CHARS_INPUT = 10_000
 
 
-USER_WARNING = """<sub>⚠️ Achtung: Diese App ist ein Prototyp. Nutze die App :red[**nur für öffentliche, nicht sensible Daten**]. Die App liefert lediglich einen Textentwurf. Überprüfe das Ergebnis immer und passe es an, wenn nötig. Die aktuelle App-Version ist v0.1. Die letzte Aktualisierung war am 1.6.2024."""
+USER_WARNING = """<sub>⚠️ Achtung: Diese App ist ein Prototyp. Nutze die App :red[**nur für öffentliche, nicht sensible Daten**]. Die App liefert lediglich einen Textentwurf. Überprüfe das Ergebnis immer und passe es an, wenn nötig. Die aktuelle App-Version ist v0.1.1 Die letzte Aktualisierung war am 21.6.2024."""
 
 
 # Constants for the formatting of the Word document that can be downloaded.
