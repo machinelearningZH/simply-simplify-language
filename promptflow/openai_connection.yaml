@@ -1,0 +1,9 @@
+#
+# Use this to create your openai_connection.
+# see: https://microsoft.github.io/promptflow/reference/pf-command-reference.html#pf-connection-create
+#
+$schema: https://azuremlschemas.azureedge.net/promptflow/latest/OpenAIConnection.schema.json
+name: openai_connection
+type: open_ai
+api_key: "<user-input>"
+organization: "" # optional
