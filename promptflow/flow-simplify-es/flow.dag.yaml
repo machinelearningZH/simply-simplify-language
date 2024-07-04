@@ -20,7 +20,17 @@ outputs:
     reference: ${create_prompt.output}
 nodes:
 - name: simplify_es
-  use_variants: true
+  type: llm
+  source:
+    type: code
+    path: simplify_es.jinja2
+  inputs:
+    model: gpt-4o
+    response_format:
+      type: text
+    prepared_prompt: ${create_prompt.output}
+  connection: openai_connection
+  api: chat
 - name: rules_es
   use_variants: true
 - name: completeness
@@ -35,35 +45,6 @@ nodes:
     rules: ${rules_es.output}
     text: ${inputs.original_text}
 node_variants:
-  simplify_es:
-    default_variant_id: gpt4o
-    variants:
-      gpt4o:
-        node:
-          type: llm
-          source:
-            type: code
-            path: simplify_es.jinja2
-          inputs:
-            model: gpt-4o
-            response_format:
-              type: text
-            prepared_prompt: ${create_prompt.output}
-          connection: openai_connection
-          api: chat
-      gpt35turbo:
-        node:
-          type: llm
-          source:
-            type: code
-            path: simplify_es.jinja2
-          inputs:
-            model: gpt-3.5-turbo
-            response_format:
-              type: text
-            prepared_prompt: ${create_prompt.output}
-          connection: openai_connection
-          api: chat
   rules_es:
     default_variant_id: full_instructions
     variants:

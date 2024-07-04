@@ -39,11 +39,11 @@ Verify if promptflow is installed correctly in your local Python environment by 
 > pf -v
 
 {
-  "promptflow": "1.11.0",
-  "promptflow-azure": "1.11.0",
-  "promptflow-core": "1.11.0",
-  "promptflow-devkit": "1.11.0",
-  "promptflow-tracing": "1.11.0"
+  "promptflow": "1.13.0",
+  "promptflow-azure": "1.13.0",
+  "promptflow-core": "1.13.0",
+  "promptflow-devkit": "1.13.0",
+  "promptflow-tracing": "1.13.0"
 }
 
 Executable '/usr/local/bin/python'
@@ -51,20 +51,42 @@ Python (Linux) 3.9.19 (main, May 14 2024, 09:07:43)
 [GCC 10.2.1 20210110]
 ```
 
-## Create Open AI Connections
+### Create Open AI Connections
 Promptflow securely stores connection credentials referenced by flows. 
 Before running flows for the first time, you need to create a __connection__ called _"openai_connection"_ once. (The connection data is locally stored for subsequent runs).
 
 ```bash
 # Override keys with --set to avoid yaml file changes. 
-# If not givem will run in interactive mode
+# If not given, will run in interactive mode
 cd promptflow
 pf connection create --file ./openai_connection.yaml --set api_key=<your_api_key>
 
 
 ```
 
-## Test the "Simplify" Flow
+### Install depenedencies for evaluation flows
+The eval flow needs special dependencies installed.
+
+```bash
+cd eval-simplify
+# Install dependencies needed by the evaluation tools 
+pip install -r requirements.txt
+# Download spacy german model
+python -m spacy download de_core_news_sm
+```
+
+### Run all tests
+For a simplified experience you can run the `run_all_tests.sh` script. 
+It will create a bunch of test runs and evaluations, ready to compare. 
+
+For a deeper understanding on whats going on here, read on  
+
+
+
+## Deep dive - Use Promptflow for prompt evaluation and tuning
+The following sections go step by step through the process of running flows, variants, evaluations and visualization.
+
+### Test the "Simplify" Flow
 - The flow `flow-simplify-es` is used to execute simplifications based on the "Einfache Sprache" rules.
 - You can select different variants (e.g. different LLM models and parameters, different system prompts, different instructions etc.).
 
@@ -94,17 +116,28 @@ The trace UI should look something like this:
 <img src="./_imgs/pf_trace_output_1.png"></img>
 <img src="./_imgs/pf_trace_output_2.png"></img>
 
-## Create Batch "Simplify" Flow runs, with different models
 
-To overwrite the "model" property of the flow node that calls the LLM, you need to set the `--connections` parameter. The Node name is `simplify_es`.
+## Create Batch "Simplify" Flow runs, with different models
+Now it's time to run our flows against a test set in "batch" mode.
+The default `flow.dag.yaml` currently uses `gpt-4o`, but this can be overwritten with any valid OpenAI model name.
+- To set the "model", you need to overwrite the property of the flow node that calls the LLM using the  `--connections` parameter. The node name is `simplify_es`, so use e.g. `'--connections simplify_es.model=gpt-4o'`
 
 ```bash
 # Assume working directory is /promptflow
 
 # Create a batch run against data.jsonl using gpt-4o
-pf run create --name base_run_4o --flow ./flow-simplify-es --data ./flow-simplify-es/data.jsonl --connections simplify_es.model=gpt-4o
+pf run create \
+  --name base_run_4o \
+  --flow ./flow-simplify-es \ 
+  --data ./test_data.jsonl \
+  --connections simplify_es.model=gpt-4o
+
 # Create a batch run against data.jsonl using gpt-3.5-turbo
-pf run create --name base_run_35turbo --flow ./flow-simplify-es --data ./flow-simplify-es/data.jsonl --connections simplify_es.model=gpt-3.5-turbo
+pf run create \
+  --name base_run_35turbo \
+  --flow ./flow-simplify-es \
+  --data ./test_data.jsonl \
+  --connections simplify_es.model=gpt-3.5-turbo
 
 # List the runs
 pf run list
@@ -119,25 +152,134 @@ pf run show-details --name base_run_35turbo
 
 ```
 
-__Note__: Run names need to be unique, so if you run these again, choose a different name or delete the runs first: `pf run delete -y --name base_run_4o && pf run delete -y --name base_run_35turbo`  
+__Note__: Run names need to be unique, so if you run these again, choose a different name or delete the runs first, like this: `pf run delete -y --name base_run_4o`  
 
-# Visualize 
+## Create batch runs for different variants
+You can also create runs and select different "variants" of a flow. The way you select them is via the `--variant '${<node_name>.<variant-name>}` parameter. See `flow.dag.yaml`for available variants, and add your own if you want.
+
+- Right now, we support multiple different Prompt templates as variants, like this:
+- Rules
+  - `${rules_es.full_instructions}` (default): Uses full length instructions prompt
+  - `${rules_es.short_instructions}`:  Uses a shorter prompt for instructions (e.g. to save tokens)
+- Completeness
+  - `${completeness.full}` (default): Try to include ALL information and examples
+  - `${completeness.condensed}`: Include key information (only), with examples
+
+```bash
+#  Create a GPT-4o run with alternative, shortened instructions and condensed output
+# To delete an existing previous run: pf run delete -y --name base_run_4o_short_instructions_condensed
+pf run create \
+  --name base_run_4o_short_instructions_condensed \
+  --flow ./flow-simplify-es \
+  --data ./test_data.jsonl \
+  --connections simplify_es.model=gpt-4o \
+  --variant '${rules_es.short_instructions}' \
+  --variant '${completeness.condensed}'
+
+
+#  Create a GPT-3.5-Turbo run with alternative, shortened instructions and condensed output
+pf run create \
+  --name base_run_35turbo_short_instructions_condensed \
+  --flow ./flow-simplify-es \
+  --data ./test_data.jsonl \
+  --connections simplify_es.model=gpt-3.5-turbo \
+  --variant '${rules_es.short_instructions}' \
+  --variant '${completeness.condensed}'
+
+
 ```
-
-## Create a "Batch Run" against test data
-- You can also execute the flow against a `batch` of input data from `data.jsonl`
-https://microsoft.github.io/promptflow/reference/pf-command-reference.html#pf-run-create
  
+See [here](https://microsoft.github.io/promptflow/reference/pf-command-reference.html#pf-run-create) for more detais on creating runs via the pf tool.
 
 ## Run the Evaluation flow
 The Evaluation flow is a special kind of flow that takes the previous output of a flow run (or a batch) and calculates (aggregated) metrics.
+In our case, it will calculate the following metrics per runned line
+- The __ZIX score__ of the `simplified_text`
+- The __estimated cost__, by taking the model into account. We count the tokens of the `prompt` as input tokens, and `simplified_text`as output tokens (as these tow categories have different pricing)
+See the `estimate_cost.py` for token costs for different models, and adjust accordingly.
 
-Prepare the 
+These metrics will be calculated "per line", as well as aggregated averages over the full batch of input data.
+
+
+
+### Run eval flow
+We currently have no "ground throuth" to use in eval flows, as there are no "hand crafted" simplified texts for our test dataset. We simply reference the ouput values of previous flow runs to calculate our score metrics like the ZIX score, which should be a good approximation of quality.
+
+In future releases we could e.g. reference manually simplified texts by experts, and calculate BLEU or ROUGE scores against them .
+
 ```bash
-cd promptflow/eval-simplify-es
-pip install -r requirements.txt
-python -m spacy download de_core_news_sm
+# Assume working dir is /promptflow
+
+# Create an eval flow run against "base_run_4o"
+pf run create \
+  --name eval_base_run_4o \
+  --flow ./eval-simplify \
+  --run base_run_4o 
+# Create eval flows run against the gpt-4o variant flow created earlier
+pf run create \
+  --name eval_base_run_4o_short_instructions_condensed \
+  --flow ./eval-simplify \
+  --run base_run_4o_short_instructions_condensed 
+
+
+# Create an eval flow run against "base_run_35turbo"
+pf run create \
+  --name eval_base_run_35turbo \
+  --flow ./eval-simplify \
+  --run base_run_35turbo
+
+# Create eval flows run against the gpt-3.5-turbo variant flow created earlier
+pf run create \
+  --name eval_base_run_4o_short_instructions_condensed \
+  --flow ./eval-simplify \
+  --run base_run_4o_short_instructions_condensed 
+
+
+```
+### Compare results
+Now we have a few variants of batch tests, where we can compare the results against each other,
+e.g. using a browser web view:
+
+```bash
+$base_run_name=base_run_4o
+$eval_run_name=eval_base_run_40
+pf run visualize --name "$base_run_name,$eval_run_name"
+
 ```
 
-## Visualize Results
+You can also use the Visual Studio Code extension:
 
+
+### Next steps
+Refer to the Tutorial for an example and the Promptflow docs. 
+But essentially, you can now iterate with prompt tuning the variants and templates, and compare the metrics and scores against. 
+__Note__: You'll need to give the flow runs unique names, e.g. using timestamps on each run. This way, you can track the performance over time.
+
+For automation and regression testing, using the Promptflow SDK inside of automated test cases would be probably be better than using the pf CLI tool.
+
+See here for more information.
+
+
+### Cleanup
+The above examples use hardcoded names for all runs, as otherwise it's easy to pollute your workspace with lots of runs (e.g. when using the VS Code Extension, which creates new runs every time).
+This means you can only do this once, unless you change the run names, as each run needs to have a unique name.
+
+Use the following script to delete all runs (incl. eval runs) from above, to start over.
+We're working on a more robust approach for the future.
+
+```bash
+# Delete all flows and variants
+pf run delete -y --name base_run_4o
+pf run delete -y --name base_run_35turbo
+pf run delete -y --name base_run_4o_short_instructions_condensed
+pf run delete -y --name base_run_35turbo_short_instructions_condensed
+
+# Delete all corresponding eval flows
+pf run delete -y --name eval_base_run_4o
+pf run delete -y --name eval_base_run_35turbo
+pf run delete -y --name eval_base_run_4o_short_instructions_condensed
+pf run delete -y --name eval_base_run_35turbo_short_instructions_condensed
+
+# Make sure we cleaned up everything
+pf run list | grep -E '"name"[[:space:]]*:'
+```

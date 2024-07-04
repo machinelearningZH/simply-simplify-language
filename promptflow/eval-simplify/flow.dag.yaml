@@ -2,38 +2,25 @@ $schema: https://azuremlschemas.azureedge.net/promptflow/latest/Flow.schema.json
 environment:
   python_requirements_txt: requirements.txt
 inputs:
-  original:
+  original_text:
     type: string
-    default: Als Vernehmlassungsverfahren wird diejenige Phase innerhalb des
-      Vorverfahrens der Gesetzgebung bezeichnet, in der Vorhaben des Bundes von
-      erheblicher politischer, finanzieller, wirtschaftlicher, ökologischer,
-      sozialer oder kultureller Tragweite auf ihre sachliche Richtigkeit,
-      Vollzugstauglichkeit und Akzeptanz hin geprüft werden.   Die Vorlage wird
-      zu diesem Zweck den Kantonen, den in der Bundesversammlung vertretenen
-      Parteien, den Dachverbänden der Gemeinden, Städte und der Berggebiete, den
-      Dachverbänden der Wirtschaft sowie weiteren, im Einzelfall interessierten
-      Kreisen unterbreitet.
-  simplified:
+    default: Original text
+  simplified_text:
     type: string
-    default: Das Vernehmlassungsverfahren ist ein Teil der Gesetzgebung. Man prüft
-      dabei, ob ein Gesetz richtig und gut ist. Das macht man, bevor das Gesetz
-      in Kraft tritt.\n\nDie Vorlage geht an verschiedene Gruppen. Dazu gehören
-      die Kantone, die Parteien im Parlament, die Verbände der Gemeinden und
-      Städte sowie der Berggebiete, die Wirtschafts-Verbände und weitere
-      Interessierte.
+    default: Simplified text
   model:
     type: string
     default: gpt-4o
-  prompt_used:
+  prompt:
     type: string
-    default: "Simplify the following text:"
+    default: The prompt used to generate the simplified text
 outputs:
-  zix_score_simplified:
-    type: string
-    reference: ${score_simplified.output}
   zix_score_original:
     type: string
     reference: ${score_original.output}
+  zix_score_simplified:
+    type: string
+    reference: ${score_simplified.output}
   level_original:
     type: string
     reference: ${level_original.output}
@@ -64,7 +51,7 @@ nodes:
     type: code
     path: calculate_score.py
   inputs:
-    text: ${inputs.simplified}
+    text: ${inputs.simplified_text}
 - name: level_original
   type: python
   source:
@@ -79,7 +66,7 @@ nodes:
     type: code
     path: calculate_score.py
   inputs:
-    text: ${inputs.original}
+    text: ${inputs.original_text}
 - name: level_simplified
   type: python
   source:
@@ -93,9 +80,9 @@ nodes:
     type: code
     path: estimate_cost.py
   inputs:
-    original: ${inputs.original}
-    simplified: ${inputs.simplified}
+    original: ${inputs.original_text}
+    simplified: ${inputs.simplified_text}
     model: ${inputs.model}
-    prompt_used: ${inputs.prompt_used}
+    prompt_used: ${inputs.prompt}
     score_original: ${score_original.output}
     score_simplified: ${score_simplified.output}
