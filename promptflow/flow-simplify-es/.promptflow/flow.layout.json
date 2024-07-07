@@ -1,7 +1,7 @@
 {
   "nodeLayouts": {
     "inputs": {
-      "x": 950,
+      "x": 620,
       "y": 42,
       "index": -1
     },
@@ -11,22 +11,22 @@
       "index": -1
     },
     "simplify_es": {
-      "x": 382.5,
+      "x": 325,
       "y": 310,
       "index": 0
     },
-    "rules_es": {
-      "x": 470,
+    "rules": {
+      "x": 800,
       "y": 42,
       "index": 1
     },
     "completeness": {
-      "x": 140,
-      "y": 42,
+      "x": 1082.652604249683,
+      "y": 41.34717894972049,
       "index": 2
     },
     "create_prompt": {
-      "x": 470,
+      "x": 645,
       "y": 176,
       "index": 3
     }

@@ -11,6 +11,9 @@ inputs:
       Dachverbänden der Wirtschaft sowie weiteren, im Einzelfall interessierten
       Kreisen unterbreitet.
     description: This is the input text that should be simplified
+  model:
+    type: string
+    default: gpt-3.5-turbo
 outputs:
   simplified_text:
     type: string
@@ -25,13 +28,13 @@ nodes:
     type: code
     path: simplify_es.jinja2
   inputs:
-    model: gpt-4o
+    model: ${inputs.model}
     response_format:
       type: text
     prepared_prompt: ${create_prompt.output}
   connection: openai_connection
   api: chat
-- name: rules_es
+- name: rules
   use_variants: true
 - name: completeness
   use_variants: true
@@ -42,10 +45,10 @@ nodes:
     path: create_prompt.jinja2
   inputs:
     completeness: ${completeness.output}
-    rules: ${rules_es.output}
+    rules: ${rules.output}
     text: ${inputs.original_text}
 node_variants:
-  rules_es:
+  rules:
     default_variant_id: full_instructions
     variants:
       full_instructions:

@@ -191,21 +191,35 @@ pf run create \
  
 See [here](https://microsoft.github.io/promptflow/reference/pf-command-reference.html#pf-run-create) for more detais on creating runs via the pf tool.
 
-## Run the Evaluation flow
-The Evaluation flow is a special kind of flow that takes the previous output of a flow run (or a batch) and calculates (aggregated) metrics.
+## Evaluate the quality of your flows
+The Evaluation flow is a special kind of flow that takes the previous output of a flow run (and potentially ground truth data) and calculates aggregated metrics.
 In our case, it will calculate the following metrics per runned line
-- The __ZIX score__ of the `simplified_text`
-- The __estimated cost__, by taking the model into account. We count the tokens of the `prompt` as input tokens, and `simplified_text`as output tokens (as these tow categories have different pricing)
-See the `estimate_cost.py` for token costs for different models, and adjust accordingly.
+- The __ZIX score__ of both the original and the simplified texts
+- The estimated __language_levels__ of both the original and simplified texts 
+- The __estimated cost__, by taking the model and prompts into account. 
+We count the tokens of the `prompt` as input tokens, and `simplified_text`as output tokens (as these two categories have different pricing)
+- See the `estimate_cost.py` for token costs for different models, and adjust accordingly.
+- An __value for money__ score which calculates an opinionated metric on how good the simplification is, relative to the estimated cost of the model. The formula is `(zix_original - zix_simplified) / estimated_cost`.
 
 These metrics will be calculated "per line", as well as aggregated averages over the full batch of input data.
+The result of the eval flow looks like this:
+```json
+{
+
+}
+```
 
 
-
-### Run eval flow
+### Run eval flow (CLI)
 We currently have no "ground throuth" to use in eval flows, as there are no "hand crafted" simplified texts for our test dataset. We simply reference the ouput values of previous flow runs to calculate our score metrics like the ZIX score, which should be a good approximation of quality.
 
-In future releases we could e.g. reference manually simplified texts by experts, and calculate BLEU or ROUGE scores against them .
+In future releases we could e.g. reference manually simplified texts by experts, and calculate BLEU or ROUGE scores against them.
+
+In order to perform an eval flow, we need to do a `--column-mapping` to map the following properties from the previouis flow run to the eval flow inputs:
+- run.inputs.original_text -> original_text (the original input text to simplify)
+- run.outputs.simplified_text -> simplified_text (the simplified text from the flow run)
+- run.outputs.prompt -> prompt (the full prompt that was used for simplification)
+- '<model name>' -> model (e.g. 'gpt-4o' or 'gpt-3.5-turbo' of the flow run)
 
 ```bash
 # Assume working dir is /promptflow
@@ -214,29 +228,32 @@ In future releases we could e.g. reference manually simplified texts by experts,
 pf run create \
   --name eval_base_run_4o \
   --flow ./eval-simplify \
-  --run base_run_4o 
-# Create eval flows run against the gpt-4o variant flow created earlier
-pf run create \
-  --name eval_base_run_4o_short_instructions_condensed \
-  --flow ./eval-simplify \
-  --run base_run_4o_short_instructions_condensed 
+  --run base_run_4o \
+  --column-mapping model='gpt-4o' original_text='${run.inputs.original_text}' simplified_text='${run.outputs.simplified_text}' prompt='${run.outputs.prompt}'
 
-
-# Create an eval flow run against "base_run_35turbo"
-pf run create \
-  --name eval_base_run_35turbo \
-  --flow ./eval-simplify \
-  --run base_run_35turbo
-
-# Create eval flows run against the gpt-3.5-turbo variant flow created earlier
-pf run create \
-  --name eval_base_run_4o_short_instructions_condensed \
-  --flow ./eval-simplify \
-  --run base_run_4o_short_instructions_condensed 
-
+# ... similar for the other runs
 
 ```
-### Compare results
+
+After the eval flow is done, you can get the results via:
+```bash
+# Shows the inputs/outputs of the eval flow
+pf run show-details --name eval_base_run_4o
+
+# Shows the calculated scores and metrics
+pf run show-metrics --name eval_base_run_4o
+
+```
+
+### Run eval flow (VS Code Extension)
+The VS Code extension proveds a nice integrated way to run (eval) flows.
+
+- Open the visal flow editor of the eval flow
+- Select "Run batch" and select the flow run as input
+- define the mappings
+
+
+### Visualize results
 Now we have a few variants of batch tests, where we can compare the results against each other,
 e.g. using a browser web view:
 
@@ -248,6 +265,7 @@ pf run visualize --name "$base_run_name,$eval_run_name"
 ```
 
 You can also use the Visual Studio Code extension:
+image 
 
 
 ### Next steps
@@ -261,7 +279,7 @@ See here for more information.
 
 
 ### Cleanup
-The above examples use hardcoded names for all runs, as otherwise it's easy to pollute your workspace with lots of runs (e.g. when using the VS Code Extension, which creates new runs every time).
+The above examples (and the `run_all_tests.sh` script) use hardcoded names for all runs, as otherwise it's easy to pollute your workspace with lots of runs (e.g. when using the VS Code Extension, which creates new runs every time).
 This means you can only do this once, unless you change the run names, as each run needs to have a unique name.
 
 Use the following script to delete all runs (incl. eval runs) from above, to start over.
@@ -281,5 +299,5 @@ pf run delete -y --name eval_base_run_4o_short_instructions_condensed
 pf run delete -y --name eval_base_run_35turbo_short_instructions_condensed
 
 # Make sure we cleaned up everything
-pf run list | grep -E '"name"[[:space:]]*:'
+pf run list
 ```

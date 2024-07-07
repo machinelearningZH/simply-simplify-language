@@ -1,32 +1,33 @@
 {
   "flow_runs": [
     {
-      "run_id": "ccbf94c2-2235-4a44-a950-781674c3c30c_0",
+      "run_id": "2c69885a-9bb9-4ccd-9c8e-eb070238495e_0",
       "status": "Completed",
       "error": null,
       "inputs": {
-        "original_text": "Als Vernehmlassungsverfahren wird diejenige Phase innerhalb des Vorverfahrens der Gesetzgebung bezeichnet, in der Vorhaben des Bundes von erheblicher politischer, finanzieller, wirtschaftlicher, ökologischer, sozialer oder kultureller Tragweite auf ihre sachliche Richtigkeit, Vollzugstauglichkeit und Akzeptanz hin geprüft werden.   Die Vorlage wird zu diesem Zweck den Kantonen, den in der Bundesversammlung vertretenen Parteien, den Dachverbänden der Gemeinden, Städte und der Berggebiete, den Dachverbänden der Wirtschaft sowie weiteren, im Einzelfall interessierten Kreisen unterbreitet."
+        "original_text": "Als Vernehmlassungsverfahren wird diejenige Phase innerhalb des Vorverfahrens der Gesetzgebung bezeichnet, in der Vorhaben des Bundes von erheblicher politischer, finanzieller, wirtschaftlicher, ökologischer, sozialer oder kultureller Tragweite auf ihre sachliche Richtigkeit, Vollzugstauglichkeit und Akzeptanz hin geprüft werden.   Die Vorlage wird zu diesem Zweck den Kantonen, den in der Bundesversammlung vertretenen Parteien, den Dachverbänden der Gemeinden, Städte und der Berggebiete, den Dachverbänden der Wirtschaft sowie weiteren, im Einzelfall interessierten Kreisen unterbreitet.",
+        "model": "gpt-3.5-turbo"
       },
       "output": {
-        "simplified_text": "Ein Vernehmlassungsverfahren gehört zum Vorverfahren der Gesetzgebung.\n\nIn dieser Phase prüft der Bund Gesetze. \n\nDer Bund prüft, wie wichtig das Gesetz für Politik, Finanzen, Wirtschaft, Umwelt, Menschen und Kultur ist.\n\nDer Bund fragt auch, ob das Gesetz gut und richtig ist.\n\nDer Bund schickt den Gesetzesvorschlag an die Kantone.\n\nAuch einige Parteien im Parlament bekommen den Vorschlag.\n\nDie Verbände der Gemeinden, Städte und Berggebiete bekommen den Vorschlag ebenfalls.\n\nWirtschaftsverbände und andere Interessierte können den Vorschlag auch bekommen.",
+        "simplified_text": "Im Vernehmlassungsverfahren werden wichtige Vorhaben des Bundes von verschiedenen Gruppen überprüft. Dazu gehören die Kantone, Parteien, Gemeinde- und Wirtschaftsverbände. Es wird geprüft, ob die Vorhaben inhaltlich korrekt, umsetzbar und akzeptabel sind.",
         "prompt": "\nsystem:\n--------\nBitte schreibe den folgenden schwer verständlichen Text vollständig in Einfache Sprache, Sprachniveau B1 bis A2, um. \n\nBeachte dabei folgende Regeln für Einfache Sprache (B1 bis A2):\n\n- Achte immer sehr genau darauf, dass ALLE Informationen aus dem schwer verständlichen Text in dem Text in Leichter Sprache enthalten sind. Kürze niemals Informationen. Wo sinnvoll kannst du zusätzliche Beispiele hinzufügen, um den Text verständlicher zu machen und relevante Inhalte zu konkretisieren.\n- Schreibe kurze Sätze mit höchstens 12 Wörtern.\n- Beschränke dich auf eine Aussage, einen Gedanken pro Satz.\n- Verwende aktive Sprache anstelle von Passiv. \n- Formuliere grundsätzlich positiv und bejahend.\n- Strukturiere den Text übersichtlich mit kurzen Absätzen.\n- Verwende einfache, kurze, häufig gebräuchliche Wörter. \n- Wenn zwei Wörter dasselbe bedeuten, verwende das kürzere und einfachere Wort.\n- Vermeide Füllwörter und unnötige Wiederholungen.\n- Erkläre Fachbegriffe und Fremdwörter.\n- Schreibe immer einfach, direkt und klar. Vermeide komplizierte Konstruktionen und veraltete Begriffe. Vermeide «Behördendeutsch». \n- Benenne Gleiches immer gleich. Verwende für denselben Begriff, Gegenstand oder Sachverhalt immer dieselbe Bezeichnung. Wiederholungen von Begriffen sind in Texten in Einfacher Sprache normal.\n- Vermeide Substantivierungen. Verwende stattdessen Verben und Adjektive.\n- Vermeide Adjektive und Adverbien, wenn sie nicht unbedingt notwendig sind.\n- Wenn du vier oder mehr Wörter zusammensetzt, setzt du Bindestriche. Beispiel: «Motorfahrzeug-Ausweispflicht».\n- Achte auf die sprachliche Gleichbehandlung von Mann und Frau. Verwende immer beide Geschlechter oder schreibe geschlechtsneutral.\n- Vermeide Abkürzungen grundsätzlich. Schreibe stattdessen die Wörter aus. Z.B. «10 Millionen» statt «10 Mio.», «200 Kilometer pro Stunde» statt «200 km/h», «zum Beispiel» statt «z.B.», «30 Prozent» statt «30 %», «2 Meter» statt «2 m», «das heisst» statt «d.h.». \n- Vermeide das stumme «e» am Wortende, wenn es nicht unbedingt notwendig ist. Zum Beispiel: «des Fahrzeugs» statt «des Fahrzeuges».\n- Verwende immer französische Anführungszeichen (« ») anstelle von deutschen Anführungszeichen („ “).\n- Gliedere Telefonnummern mit vier Leerzeichen. Z.B. 044 123 45 67. Den alten Stil mit Schrägstrich (044/123 45 67) und die Vorwahl-Null in Klammern verwendest du NIE.\n- Formatiere Datumsangaben immer so: 1. Januar 2022, 15. Februar 2022.\n- Jahreszahlen schreibst du immer vierstellig aus: 2022, 2025-2030.\n- Formatiere Zeitangaben immer «Stunden Punkt Minuten Uhr». Verwende keinen Doppelpunkt, um Stunden von Minuten zu trennen. Ergänze immer .00 bei vollen Stunden. Beispiele: 9.25 Uhr (NICHT 9:30), 10.30 Uhr (NICHT 10:00), 14.00 Uhr (NICHT 14 Uhr), 15.45 Uhr, 18.00 Uhr, 20.15 Uhr, 22.30 Uhr.\n- Zahlen bis 12 schreibst du aus. Ab 13 verwendest du Ziffern.\n- Fristen, Geldbeträge und physikalische Grössen schreibst du immer in Ziffern.\n- Zahlen, die zusammengehören, schreibst du immer in Ziffern. Beispiel: 5-10, 20 oder 30.\n- Grosse Zahlen ab 5 Stellen gliederst du in Dreiergruppen mit Leerzeichen. Beispiel: 1 000 000.\n- Achtung: Identifikationszahlen übernimmst du 1:1. Beispiel: Stammnummer 123.456.789, AHV-Nummer 756.1234.5678.90, Konto 01-100101-9.\n- Verwende das Komma, dass das deutsche Dezimalzeichen ist. Überflüssige Nullen nach dem Komma schreibst du nicht. Beispiel: 5,5 Millionen, 3,75 Prozent, 1,5 Kilometer, 2,25 Stunden.\n- Vor Franken-Rappen-Beträgen schreibst du immer «CHF». Nur nach ganzen Franken-Beträgen darfst du «Franken» schreiben. Bei Franken- Rappen-Beträgen setzt du einen Punkt als Dezimalzeichen. Anstatt des Null-Rappen-Strichs verwendest du «.00» oder lässt die Dezimalstellen weg. Z.B. 20 Franken, CHF 20, CHF 2.00, CHF 12.50, aber CHF 45,2 Millionen, EUR 14,90.\n- Die Anrede mit «Sie» schreibst du immer gross. Beispiel: «Sie haben».\n\n--------\nuser:\nAls Vernehmlassungsverfahren wird diejenige Phase innerhalb des Vorverfahrens der Gesetzgebung bezeichnet, in der Vorhaben des Bundes von erheblicher politischer, finanzieller, wirtschaftlicher, ökologischer, sozialer oder kultureller Tragweite auf ihre sachliche Richtigkeit, Vollzugstauglichkeit und Akzeptanz hin geprüft werden.   Die Vorlage wird zu diesem Zweck den Kantonen, den in der Bundesversammlung vertretenen Parteien, den Dachverbänden der Gemeinden, Städte und der Berggebiete, den Dachverbänden der Wirtschaft sowie weiteren, im Einzelfall interessierten Kreisen unterbreitet."
       },
       "metrics": null,
       "request": null,
-      "parent_run_id": "ccbf94c2-2235-4a44-a950-781674c3c30c",
-      "root_run_id": "ccbf94c2-2235-4a44-a950-781674c3c30c",
+      "parent_run_id": "2c69885a-9bb9-4ccd-9c8e-eb070238495e",
+      "root_run_id": "2c69885a-9bb9-4ccd-9c8e-eb070238495e",
       "source_run_id": null,
       "flow_id": "default_flow_id",
-      "start_time": "2024-07-03T21:19:56.166710Z",
-      "end_time": "2024-07-03T21:19:58.491926Z",
+      "start_time": "2024-07-07T17:17:50.146756Z",
+      "end_time": "2024-07-07T17:17:51.606235Z",
       "index": 0,
       "api_calls": [
         {
           "name": "flow",
           "node_name": "flow",
           "type": "Flow",
-          "start_time": 1720041596.16671,
-          "end_time": 1720041598.491926,
+          "start_time": 1720372670.146756,
+          "end_time": 1720372671.606235,
           "children": [
             {
               "name": "render_template_jinja2",
@@ -35,13 +36,13 @@
                 "template": "- Schreibe kurze Sätze mit höchstens 12 Wörtern.\n- Beschränke dich auf eine Aussage, einen Gedanken pro Satz.\n- Verwende aktive Sprache anstelle von Passiv. \n- Formuliere grundsätzlich positiv und bejahend.\n- Strukturiere den Text übersichtlich mit kurzen Absätzen.\n- Verwende einfache, kurze, häufig gebräuchliche Wörter. \n- Wenn zwei Wörter dasselbe bedeuten, verwende das kürzere und einfachere Wort.\n- Vermeide Füllwörter und unnötige Wiederholungen.\n- Erkläre Fachbegriffe und Fremdwörter.\n- Schreibe immer einfach, direkt und klar. Vermeide komplizierte Konstruktionen und veraltete Begriffe. Vermeide «Behördendeutsch». \n- Benenne Gleiches immer gleich. Verwende für denselben Begriff, Gegenstand oder Sachverhalt immer dieselbe Bezeichnung. Wiederholungen von Begriffen sind in Texten in Einfacher Sprache normal.\n- Vermeide Substantivierungen. Verwende stattdessen Verben und Adjektive.\n- Vermeide Adjektive und Adverbien, wenn sie nicht unbedingt notwendig sind.\n- Wenn du vier oder mehr Wörter zusammensetzt, setzt du Bindestriche. Beispiel: «Motorfahrzeug-Ausweispflicht».\n- Achte auf die sprachliche Gleichbehandlung von Mann und Frau. Verwende immer beide Geschlechter oder schreibe geschlechtsneutral.\n- Vermeide Abkürzungen grundsätzlich. Schreibe stattdessen die Wörter aus. Z.B. «10 Millionen» statt «10 Mio.», «200 Kilometer pro Stunde» statt «200 km/h», «zum Beispiel» statt «z.B.», «30 Prozent» statt «30 %», «2 Meter» statt «2 m», «das heisst» statt «d.h.». \n- Vermeide das stumme «e» am Wortende, wenn es nicht unbedingt notwendig ist. Zum Beispiel: «des Fahrzeugs» statt «des Fahrzeuges».\n- Verwende immer französische Anführungszeichen (« ») anstelle von deutschen Anführungszeichen („ “).\n- Gliedere Telefonnummern mit vier Leerzeichen. Z.B. 044 123 45 67. Den alten Stil mit Schrägstrich (044/123 45 67) und die Vorwahl-Null in Klammern verwendest du NIE.\n- Formatiere Datumsangaben immer so: 1. Januar 2022, 15. Februar 2022.\n- Jahreszahlen schreibst du immer vierstellig aus: 2022, 2025-2030.\n- Formatiere Zeitangaben immer «Stunden Punkt Minuten Uhr». Verwende keinen Doppelpunkt, um Stunden von Minuten zu trennen. Ergänze immer .00 bei vollen Stunden. Beispiele: 9.25 Uhr (NICHT 9:30), 10.30 Uhr (NICHT 10:00), 14.00 Uhr (NICHT 14 Uhr), 15.45 Uhr, 18.00 Uhr, 20.15 Uhr, 22.30 Uhr.\n- Zahlen bis 12 schreibst du aus. Ab 13 verwendest du Ziffern.\n- Fristen, Geldbeträge und physikalische Grössen schreibst du immer in Ziffern.\n- Zahlen, die zusammengehören, schreibst du immer in Ziffern. Beispiel: 5-10, 20 oder 30.\n- Grosse Zahlen ab 5 Stellen gliederst du in Dreiergruppen mit Leerzeichen. Beispiel: 1 000 000.\n- Achtung: Identifikationszahlen übernimmst du 1:1. Beispiel: Stammnummer 123.456.789, AHV-Nummer 756.1234.5678.90, Konto 01-100101-9.\n- Verwende das Komma, dass das deutsche Dezimalzeichen ist. Überflüssige Nullen nach dem Komma schreibst du nicht. Beispiel: 5,5 Millionen, 3,75 Prozent, 1,5 Kilometer, 2,25 Stunden.\n- Vor Franken-Rappen-Beträgen schreibst du immer «CHF». Nur nach ganzen Franken-Beträgen darfst du «Franken» schreiben. Bei Franken- Rappen-Beträgen setzt du einen Punkt als Dezimalzeichen. Anstatt des Null-Rappen-Strichs verwendest du «.00» oder lässt die Dezimalstellen weg. Z.B. 20 Franken, CHF 20, CHF 2.00, CHF 12.50, aber CHF 45,2 Millionen, EUR 14,90.\n- Die Anrede mit «Sie» schreibst du immer gross. Beispiel: «Sie haben»."
               },
               "output": "- Schreibe kurze Sätze mit höchstens 12 Wörtern.\n- Beschränke dich auf eine Aussage, einen Gedanken pro Satz.\n- Verwende aktive Sprache anstelle von Passiv. \n- Formuliere grundsätzlich positiv und bejahend.\n- Strukturiere den Text übersichtlich mit kurzen Absätzen.\n- Verwende einfache, kurze, häufig gebräuchliche Wörter. \n- Wenn zwei Wörter dasselbe bedeuten, verwende das kürzere und einfachere Wort.\n- Vermeide Füllwörter und unnötige Wiederholungen.\n- Erkläre Fachbegriffe und Fremdwörter.\n- Schreibe immer einfach, direkt und klar. Vermeide komplizierte Konstruktionen und veraltete Begriffe. Vermeide «Behördendeutsch». \n- Benenne Gleiches immer gleich. Verwende für denselben Begriff, Gegenstand oder Sachverhalt immer dieselbe Bezeichnung. Wiederholungen von Begriffen sind in Texten in Einfacher Sprache normal.\n- Vermeide Substantivierungen. Verwende stattdessen Verben und Adjektive.\n- Vermeide Adjektive und Adverbien, wenn sie nicht unbedingt notwendig sind.\n- Wenn du vier oder mehr Wörter zusammensetzt, setzt du Bindestriche. Beispiel: «Motorfahrzeug-Ausweispflicht».\n- Achte auf die sprachliche Gleichbehandlung von Mann und Frau. Verwende immer beide Geschlechter oder schreibe geschlechtsneutral.\n- Vermeide Abkürzungen grundsätzlich. Schreibe stattdessen die Wörter aus. Z.B. «10 Millionen» statt «10 Mio.», «200 Kilometer pro Stunde» statt «200 km/h», «zum Beispiel» statt «z.B.», «30 Prozent» statt «30 %», «2 Meter» statt «2 m», «das heisst» statt «d.h.». \n- Vermeide das stumme «e» am Wortende, wenn es nicht unbedingt notwendig ist. Zum Beispiel: «des Fahrzeugs» statt «des Fahrzeuges».\n- Verwende immer französische Anführungszeichen (« ») anstelle von deutschen Anführungszeichen („ “).\n- Gliedere Telefonnummern mit vier Leerzeichen. Z.B. 044 123 45 67. Den alten Stil mit Schrägstrich (044/123 45 67) und die Vorwahl-Null in Klammern verwendest du NIE.\n- Formatiere Datumsangaben immer so: 1. Januar 2022, 15. Februar 2022.\n- Jahreszahlen schreibst du immer vierstellig aus: 2022, 2025-2030.\n- Formatiere Zeitangaben immer «Stunden Punkt Minuten Uhr». Verwende keinen Doppelpunkt, um Stunden von Minuten zu trennen. Ergänze immer .00 bei vollen Stunden. Beispiele: 9.25 Uhr (NICHT 9:30), 10.30 Uhr (NICHT 10:00), 14.00 Uhr (NICHT 14 Uhr), 15.45 Uhr, 18.00 Uhr, 20.15 Uhr, 22.30 Uhr.\n- Zahlen bis 12 schreibst du aus. Ab 13 verwendest du Ziffern.\n- Fristen, Geldbeträge und physikalische Grössen schreibst du immer in Ziffern.\n- Zahlen, die zusammengehören, schreibst du immer in Ziffern. Beispiel: 5-10, 20 oder 30.\n- Grosse Zahlen ab 5 Stellen gliederst du in Dreiergruppen mit Leerzeichen. Beispiel: 1 000 000.\n- Achtung: Identifikationszahlen übernimmst du 1:1. Beispiel: Stammnummer 123.456.789, AHV-Nummer 756.1234.5678.90, Konto 01-100101-9.\n- Verwende das Komma, dass das deutsche Dezimalzeichen ist. Überflüssige Nullen nach dem Komma schreibst du nicht. Beispiel: 5,5 Millionen, 3,75 Prozent, 1,5 Kilometer, 2,25 Stunden.\n- Vor Franken-Rappen-Beträgen schreibst du immer «CHF». Nur nach ganzen Franken-Beträgen darfst du «Franken» schreiben. Bei Franken- Rappen-Beträgen setzt du einen Punkt als Dezimalzeichen. Anstatt des Null-Rappen-Strichs verwendest du «.00» oder lässt die Dezimalstellen weg. Z.B. 20 Franken, CHF 20, CHF 2.00, CHF 12.50, aber CHF 45,2 Millionen, EUR 14,90.\n- Die Anrede mit «Sie» schreibst du immer gross. Beispiel: «Sie haben».",
-              "start_time": 1720041596.169585,
-              "end_time": 1720041596.171844,
+              "start_time": 1720372670.150538,
+              "end_time": 1720372670.154364,
               "error": null,
               "children": [],
-              "node_name": "rules_es",
+              "node_name": "rules",
               "parent_id": "",
-              "id": "a79d126a-47c2-444b-a251-a4791a46bc3a",
+              "id": "dabfd8d2-80ec-464e-a0ba-5c0e4e22581b",
               "function": "render_template_jinja2",
               "system_metrics": {}
             },
@@ -52,13 +53,13 @@
                 "template": "- Achte immer sehr genau darauf, dass ALLE Informationen aus dem schwer verständlichen Text in dem Text in Leichter Sprache enthalten sind. Kürze niemals Informationen. Wo sinnvoll kannst du zusätzliche Beispiele hinzufügen, um den Text verständlicher zu machen und relevante Inhalte zu konkretisieren."
               },
               "output": "- Achte immer sehr genau darauf, dass ALLE Informationen aus dem schwer verständlichen Text in dem Text in Leichter Sprache enthalten sind. Kürze niemals Informationen. Wo sinnvoll kannst du zusätzliche Beispiele hinzufügen, um den Text verständlicher zu machen und relevante Inhalte zu konkretisieren.",
-              "start_time": 1720041596.172839,
-              "end_time": 1720041596.173921,
+              "start_time": 1720372670.158209,
+              "end_time": 1720372670.159632,
               "error": null,
               "children": [],
               "node_name": "completeness",
               "parent_id": "",
-              "id": "4b6e7fe7-3640-439d-91fb-52fed7b2ce85",
+              "id": "747feaa1-b35d-4255-9a1d-7afbc72d6fe4",
               "function": "render_template_jinja2",
               "system_metrics": {}
             },
@@ -75,13 +76,13 @@
                 ]
               },
               "output": "\nsystem:\n--------\nBitte schreibe den folgenden schwer verständlichen Text vollständig in Einfache Sprache, Sprachniveau B1 bis A2, um. \n\nBeachte dabei folgende Regeln für Einfache Sprache (B1 bis A2):\n\n- Achte immer sehr genau darauf, dass ALLE Informationen aus dem schwer verständlichen Text in dem Text in Leichter Sprache enthalten sind. Kürze niemals Informationen. Wo sinnvoll kannst du zusätzliche Beispiele hinzufügen, um den Text verständlicher zu machen und relevante Inhalte zu konkretisieren.\n- Schreibe kurze Sätze mit höchstens 12 Wörtern.\n- Beschränke dich auf eine Aussage, einen Gedanken pro Satz.\n- Verwende aktive Sprache anstelle von Passiv. \n- Formuliere grundsätzlich positiv und bejahend.\n- Strukturiere den Text übersichtlich mit kurzen Absätzen.\n- Verwende einfache, kurze, häufig gebräuchliche Wörter. \n- Wenn zwei Wörter dasselbe bedeuten, verwende das kürzere und einfachere Wort.\n- Vermeide Füllwörter und unnötige Wiederholungen.\n- Erkläre Fachbegriffe und Fremdwörter.\n- Schreibe immer einfach, direkt und klar. Vermeide komplizierte Konstruktionen und veraltete Begriffe. Vermeide «Behördendeutsch». \n- Benenne Gleiches immer gleich. Verwende für denselben Begriff, Gegenstand oder Sachverhalt immer dieselbe Bezeichnung. Wiederholungen von Begriffen sind in Texten in Einfacher Sprache normal.\n- Vermeide Substantivierungen. Verwende stattdessen Verben und Adjektive.\n- Vermeide Adjektive und Adverbien, wenn sie nicht unbedingt notwendig sind.\n- Wenn du vier oder mehr Wörter zusammensetzt, setzt du Bindestriche. Beispiel: «Motorfahrzeug-Ausweispflicht».\n- Achte auf die sprachliche Gleichbehandlung von Mann und Frau. Verwende immer beide Geschlechter oder schreibe geschlechtsneutral.\n- Vermeide Abkürzungen grundsätzlich. Schreibe stattdessen die Wörter aus. Z.B. «10 Millionen» statt «10 Mio.», «200 Kilometer pro Stunde» statt «200 km/h», «zum Beispiel» statt «z.B.», «30 Prozent» statt «30 %», «2 Meter» statt «2 m», «das heisst» statt «d.h.». \n- Vermeide das stumme «e» am Wortende, wenn es nicht unbedingt notwendig ist. Zum Beispiel: «des Fahrzeugs» statt «des Fahrzeuges».\n- Verwende immer französische Anführungszeichen (« ») anstelle von deutschen Anführungszeichen („ “).\n- Gliedere Telefonnummern mit vier Leerzeichen. Z.B. 044 123 45 67. Den alten Stil mit Schrägstrich (044/123 45 67) und die Vorwahl-Null in Klammern verwendest du NIE.\n- Formatiere Datumsangaben immer so: 1. Januar 2022, 15. Februar 2022.\n- Jahreszahlen schreibst du immer vierstellig aus: 2022, 2025-2030.\n- Formatiere Zeitangaben immer «Stunden Punkt Minuten Uhr». Verwende keinen Doppelpunkt, um Stunden von Minuten zu trennen. Ergänze immer .00 bei vollen Stunden. Beispiele: 9.25 Uhr (NICHT 9:30), 10.30 Uhr (NICHT 10:00), 14.00 Uhr (NICHT 14 Uhr), 15.45 Uhr, 18.00 Uhr, 20.15 Uhr, 22.30 Uhr.\n- Zahlen bis 12 schreibst du aus. Ab 13 verwendest du Ziffern.\n- Fristen, Geldbeträge und physikalische Grössen schreibst du immer in Ziffern.\n- Zahlen, die zusammengehören, schreibst du immer in Ziffern. Beispiel: 5-10, 20 oder 30.\n- Grosse Zahlen ab 5 Stellen gliederst du in Dreiergruppen mit Leerzeichen. Beispiel: 1 000 000.\n- Achtung: Identifikationszahlen übernimmst du 1:1. Beispiel: Stammnummer 123.456.789, AHV-Nummer 756.1234.5678.90, Konto 01-100101-9.\n- Verwende das Komma, dass das deutsche Dezimalzeichen ist. Überflüssige Nullen nach dem Komma schreibst du nicht. Beispiel: 5,5 Millionen, 3,75 Prozent, 1,5 Kilometer, 2,25 Stunden.\n- Vor Franken-Rappen-Beträgen schreibst du immer «CHF». Nur nach ganzen Franken-Beträgen darfst du «Franken» schreiben. Bei Franken- Rappen-Beträgen setzt du einen Punkt als Dezimalzeichen. Anstatt des Null-Rappen-Strichs verwendest du «.00» oder lässt die Dezimalstellen weg. Z.B. 20 Franken, CHF 20, CHF 2.00, CHF 12.50, aber CHF 45,2 Millionen, EUR 14,90.\n- Die Anrede mit «Sie» schreibst du immer gross. Beispiel: «Sie haben».\n\n--------\nuser:\nAls Vernehmlassungsverfahren wird diejenige Phase innerhalb des Vorverfahrens der Gesetzgebung bezeichnet, in der Vorhaben des Bundes von erheblicher politischer, finanzieller, wirtschaftlicher, ökologischer, sozialer oder kultureller Tragweite auf ihre sachliche Richtigkeit, Vollzugstauglichkeit und Akzeptanz hin geprüft werden.   Die Vorlage wird zu diesem Zweck den Kantonen, den in der Bundesversammlung vertretenen Parteien, den Dachverbänden der Gemeinden, Städte und der Berggebiete, den Dachverbänden der Wirtschaft sowie weiteren, im Einzelfall interessierten Kreisen unterbreitet.",
-              "start_time": 1720041596.176157,
-              "end_time": 1720041596.178053,
+              "start_time": 1720372670.165565,
+              "end_time": 1720372670.168885,
               "error": null,
               "children": [],
               "node_name": "create_prompt",
               "parent_id": "",
-              "id": "0a1cffbf-0fc4-4eea-8b5a-04d8a4e5f7c3",
+              "id": "0530cb49-0391-48f4-8a71-720ee7645b91",
               "function": "render_template_jinja2",
               "system_metrics": {}
             },
@@ -90,23 +91,26 @@
               "type": "Function",
               "inputs": {
                 "prompt": "{{prepared_prompt}}\n",
-                "model": "gpt-4o",
+                "model": "gpt-3.5-turbo",
                 "response_format": {
                   "type": "text"
                 },
                 "prepared_prompt": "\nsystem:\n--------\nBitte schreibe den folgenden schwer verständlichen Text vollständig in Einfache Sprache, Sprachniveau B1 bis A2, um. \n\nBeachte dabei folgende Regeln für Einfache Sprache (B1 bis A2):\n\n- Achte immer sehr genau darauf, dass ALLE Informationen aus dem schwer verständlichen Text in dem Text in Leichter Sprache enthalten sind. Kürze niemals Informationen. Wo sinnvoll kannst du zusätzliche Beispiele hinzufügen, um den Text verständlicher zu machen und relevante Inhalte zu konkretisieren.\n- Schreibe kurze Sätze mit höchstens 12 Wörtern.\n- Beschränke dich auf eine Aussage, einen Gedanken pro Satz.\n- Verwende aktive Sprache anstelle von Passiv. \n- Formuliere grundsätzlich positiv und bejahend.\n- Strukturiere den Text übersichtlich mit kurzen Absätzen.\n- Verwende einfache, kurze, häufig gebräuchliche Wörter. \n- Wenn zwei Wörter dasselbe bedeuten, verwende das kürzere und einfachere Wort.\n- Vermeide Füllwörter und unnötige Wiederholungen.\n- Erkläre Fachbegriffe und Fremdwörter.\n- Schreibe immer einfach, direkt und klar. Vermeide komplizierte Konstruktionen und veraltete Begriffe. Vermeide «Behördendeutsch». \n- Benenne Gleiches immer gleich. Verwende für denselben Begriff, Gegenstand oder Sachverhalt immer dieselbe Bezeichnung. Wiederholungen von Begriffen sind in Texten in Einfacher Sprache normal.\n- Vermeide Substantivierungen. Verwende stattdessen Verben und Adjektive.\n- Vermeide Adjektive und Adverbien, wenn sie nicht unbedingt notwendig sind.\n- Wenn du vier oder mehr Wörter zusammensetzt, setzt du Bindestriche. Beispiel: «Motorfahrzeug-Ausweispflicht».\n- Achte auf die sprachliche Gleichbehandlung von Mann und Frau. Verwende immer beide Geschlechter oder schreibe geschlechtsneutral.\n- Vermeide Abkürzungen grundsätzlich. Schreibe stattdessen die Wörter aus. Z.B. «10 Millionen» statt «10 Mio.», «200 Kilometer pro Stunde» statt «200 km/h», «zum Beispiel» statt «z.B.», «30 Prozent» statt «30 %», «2 Meter» statt «2 m», «das heisst» statt «d.h.». \n- Vermeide das stumme «e» am Wortende, wenn es nicht unbedingt notwendig ist. Zum Beispiel: «des Fahrzeugs» statt «des Fahrzeuges».\n- Verwende immer französische Anführungszeichen (« ») anstelle von deutschen Anführungszeichen („ “).\n- Gliedere Telefonnummern mit vier Leerzeichen. Z.B. 044 123 45 67. Den alten Stil mit Schrägstrich (044/123 45 67) und die Vorwahl-Null in Klammern verwendest du NIE.\n- Formatiere Datumsangaben immer so: 1. Januar 2022, 15. Februar 2022.\n- Jahreszahlen schreibst du immer vierstellig aus: 2022, 2025-2030.\n- Formatiere Zeitangaben immer «Stunden Punkt Minuten Uhr». Verwende keinen Doppelpunkt, um Stunden von Minuten zu trennen. Ergänze immer .00 bei vollen Stunden. Beispiele: 9.25 Uhr (NICHT 9:30), 10.30 Uhr (NICHT 10:00), 14.00 Uhr (NICHT 14 Uhr), 15.45 Uhr, 18.00 Uhr, 20.15 Uhr, 22.30 Uhr.\n- Zahlen bis 12 schreibst du aus. Ab 13 verwendest du Ziffern.\n- Fristen, Geldbeträge und physikalische Grössen schreibst du immer in Ziffern.\n- Zahlen, die zusammengehören, schreibst du immer in Ziffern. Beispiel: 5-10, 20 oder 30.\n- Grosse Zahlen ab 5 Stellen gliederst du in Dreiergruppen mit Leerzeichen. Beispiel: 1 000 000.\n- Achtung: Identifikationszahlen übernimmst du 1:1. Beispiel: Stammnummer 123.456.789, AHV-Nummer 756.1234.5678.90, Konto 01-100101-9.\n- Verwende das Komma, dass das deutsche Dezimalzeichen ist. Überflüssige Nullen nach dem Komma schreibst du nicht. Beispiel: 5,5 Millionen, 3,75 Prozent, 1,5 Kilometer, 2,25 Stunden.\n- Vor Franken-Rappen-Beträgen schreibst du immer «CHF». Nur nach ganzen Franken-Beträgen darfst du «Franken» schreiben. Bei Franken- Rappen-Beträgen setzt du einen Punkt als Dezimalzeichen. Anstatt des Null-Rappen-Strichs verwendest du «.00» oder lässt die Dezimalstellen weg. Z.B. 20 Franken, CHF 20, CHF 2.00, CHF 12.50, aber CHF 45,2 Millionen, EUR 14,90.\n- Die Anrede mit «Sie» schreibst du immer gross. Beispiel: «Sie haben».\n\n--------\nuser:\nAls Vernehmlassungsverfahren wird diejenige Phase innerhalb des Vorverfahrens der Gesetzgebung bezeichnet, in der Vorhaben des Bundes von erheblicher politischer, finanzieller, wirtschaftlicher, ökologischer, sozialer oder kultureller Tragweite auf ihre sachliche Richtigkeit, Vollzugstauglichkeit und Akzeptanz hin geprüft werden.   Die Vorlage wird zu diesem Zweck den Kantonen, den in der Bundesversammlung vertretenen Parteien, den Dachverbänden der Gemeinden, Städte und der Berggebiete, den Dachverbänden der Wirtschaft sowie weiteren, im Einzelfall interessierten Kreisen unterbreitet.",
+                "_inputs_to_escape": [
+                  "model"
+                ],
                 "stream": false
               },
-              "output": "Ein Vernehmlassungsverfahren gehört zum Vorverfahren der Gesetzgebung.\n\nIn dieser Phase prüft der Bund Gesetze. \n\nDer Bund prüft, wie wichtig das Gesetz für Politik, Finanzen, Wirtschaft, Umwelt, Menschen und Kultur ist.\n\nDer Bund fragt auch, ob das Gesetz gut und richtig ist.\n\nDer Bund schickt den Gesetzesvorschlag an die Kantone.\n\nAuch einige Parteien im Parlament bekommen den Vorschlag.\n\nDie Verbände der Gemeinden, Städte und Berggebiete bekommen den Vorschlag ebenfalls.\n\nWirtschaftsverbände und andere Interessierte können den Vorschlag auch bekommen.",
-              "start_time": 1720041596.180359,
-              "end_time": 1720041598.489054,
+              "output": "Im Vernehmlassungsverfahren werden wichtige Vorhaben des Bundes von verschiedenen Gruppen überprüft. Dazu gehören die Kantone, Parteien, Gemeinde- und Wirtschaftsverbände. Es wird geprüft, ob die Vorhaben inhaltlich korrekt, umsetzbar und akzeptabel sind.",
+              "start_time": 1720372670.182719,
+              "end_time": 1720372671.601508,
               "error": null,
               "children": [
                 {
                   "name": "openai_chat",
                   "type": "LLM",
                   "inputs": {
-                    "model": "gpt-4o",
+                    "model": "gpt-3.5-turbo",
                     "messages": [
                       {
                         "role": "system",
@@ -130,67 +134,69 @@
                     }
                   },
                   "output": {
-                    "id": "chatcmpl-9h1gKAeQzvqByQdRfyTzg95MrbcEk",
+                    "id": "chatcmpl-9iPoE8uofipZpGMaGY7Csbh5uZlXU",
                     "choices": [
                       {
                         "finish_reason": "stop",
                         "index": 0,
                         "logprobs": null,
                         "message": {
-                          "content": "Ein Vernehmlassungsverfahren gehört zum Vorverfahren der Gesetzgebung.\n\nIn dieser Phase prüft der Bund Gesetze. \n\nDer Bund prüft, wie wichtig das Gesetz für Politik, Finanzen, Wirtschaft, Umwelt, Menschen und Kultur ist.\n\nDer Bund fragt auch, ob das Gesetz gut und richtig ist.\n\nDer Bund schickt den Gesetzesvorschlag an die Kantone.\n\nAuch einige Parteien im Parlament bekommen den Vorschlag.\n\nDie Verbände der Gemeinden, Städte und Berggebiete bekommen den Vorschlag ebenfalls.\n\nWirtschaftsverbände und andere Interessierte können den Vorschlag auch bekommen.",
+                          "content": "Im Vernehmlassungsverfahren werden wichtige Vorhaben des Bundes von verschiedenen Gruppen überprüft. Dazu gehören die Kantone, Parteien, Gemeinde- und Wirtschaftsverbände. Es wird geprüft, ob die Vorhaben inhaltlich korrekt, umsetzbar und akzeptabel sind.",
                           "role": "assistant",
                           "function_call": null,
                           "tool_calls": null
                         }
                       }
                     ],
-                    "created": 1720041596,
-                    "model": "gpt-4o-2024-05-13",
+                    "created": 1720372670,
+                    "model": "gpt-3.5-turbo-0125",
                     "object": "chat.completion",
-                    "system_fingerprint": "fp_d576307f90",
+                    "service_tier": null,
+                    "system_fingerprint": null,
                     "usage": {
-                      "completion_tokens": 121,
-                      "prompt_tokens": 1244,
-                      "total_tokens": 1365
+                      "completion_tokens": 74,
+                      "prompt_tokens": 1463,
+                      "total_tokens": 1537
                     }
                   },
-                  "start_time": 1720041596.183256,
-                  "end_time": 1720041598.488771,
+                  "start_time": 1720372670.192083,
+                  "end_time": 1720372671.601094,
                   "error": null,
                   "children": [],
                   "node_name": null,
-                  "parent_id": "29aab2bd-6352-4f42-b3cc-4a41e61e9855",
-                  "id": "69f8dbd9-7ccf-4274-8273-b3d8b16333d9",
+                  "parent_id": "98df2191-cc18-4732-9bbe-fba3a53ad874",
+                  "id": "4c4ef965-78e2-47b9-a10f-4d039fe754eb",
                   "function": "openai.resources.chat.completions.Completions.create",
                   "system_metrics": {
-                    "completion_tokens": 121,
-                    "prompt_tokens": 1244,
-                    "total_tokens": 1365
+                    "completion_tokens": 74,
+                    "prompt_tokens": 1463,
+                    "total_tokens": 1537
                   }
                 }
               ],
               "node_name": "simplify_es",
               "parent_id": "",
-              "id": "29aab2bd-6352-4f42-b3cc-4a41e61e9855",
+              "id": "98df2191-cc18-4732-9bbe-fba3a53ad874",
               "function": "OpenAI.chat",
               "system_metrics": {
-                "completion_tokens": 121,
-                "prompt_tokens": 1244,
-                "total_tokens": 1365
+                "completion_tokens": 74,
+                "prompt_tokens": 1463,
+                "total_tokens": 1537
               }
             }
           ],
           "system_metrics": {
-            "duration": 2.325216,
-            "prompt_tokens": 1244,
-            "completion_tokens": 121,
-            "total_tokens": 1365
+            "duration": 1.459479,
+            "prompt_tokens": 1463,
+            "completion_tokens": 74,
+            "total_tokens": 1537
           },
           "inputs": {
-            "original_text": "Als Vernehmlassungsverfahren wird diejenige Phase innerhalb des Vorverfahrens der Gesetzgebung bezeichnet, in der Vorhaben des Bundes von erheblicher politischer, finanzieller, wirtschaftlicher, ökologischer, sozialer oder kultureller Tragweite auf ihre sachliche Richtigkeit, Vollzugstauglichkeit und Akzeptanz hin geprüft werden.   Die Vorlage wird zu diesem Zweck den Kantonen, den in der Bundesversammlung vertretenen Parteien, den Dachverbänden der Gemeinden, Städte und der Berggebiete, den Dachverbänden der Wirtschaft sowie weiteren, im Einzelfall interessierten Kreisen unterbreitet."
+            "original_text": "Als Vernehmlassungsverfahren wird diejenige Phase innerhalb des Vorverfahrens der Gesetzgebung bezeichnet, in der Vorhaben des Bundes von erheblicher politischer, finanzieller, wirtschaftlicher, ökologischer, sozialer oder kultureller Tragweite auf ihre sachliche Richtigkeit, Vollzugstauglichkeit und Akzeptanz hin geprüft werden.   Die Vorlage wird zu diesem Zweck den Kantonen, den in der Bundesversammlung vertretenen Parteien, den Dachverbänden der Gemeinden, Städte und der Berggebiete, den Dachverbänden der Wirtschaft sowie weiteren, im Einzelfall interessierten Kreisen unterbreitet.",
+            "model": "gpt-3.5-turbo"
           },
           "output": {
-            "simplified_text": "Ein Vernehmlassungsverfahren gehört zum Vorverfahren der Gesetzgebung.\n\nIn dieser Phase prüft der Bund Gesetze. \n\nDer Bund prüft, wie wichtig das Gesetz für Politik, Finanzen, Wirtschaft, Umwelt, Menschen und Kultur ist.\n\nDer Bund fragt auch, ob das Gesetz gut und richtig ist.\n\nDer Bund schickt den Gesetzesvorschlag an die Kantone.\n\nAuch einige Parteien im Parlament bekommen den Vorschlag.\n\nDie Verbände der Gemeinden, Städte und Berggebiete bekommen den Vorschlag ebenfalls.\n\nWirtschaftsverbände und andere Interessierte können den Vorschlag auch bekommen.",
+            "simplified_text": "Im Vernehmlassungsverfahren werden wichtige Vorhaben des Bundes von verschiedenen Gruppen überprüft. Dazu gehören die Kantone, Parteien, Gemeinde- und Wirtschaftsverbände. Es wird geprüft, ob die Vorhaben inhaltlich korrekt, umsetzbar und akzeptabel sind.",
             "prompt": "\nsystem:\n--------\nBitte schreibe den folgenden schwer verständlichen Text vollständig in Einfache Sprache, Sprachniveau B1 bis A2, um. \n\nBeachte dabei folgende Regeln für Einfache Sprache (B1 bis A2):\n\n- Achte immer sehr genau darauf, dass ALLE Informationen aus dem schwer verständlichen Text in dem Text in Leichter Sprache enthalten sind. Kürze niemals Informationen. Wo sinnvoll kannst du zusätzliche Beispiele hinzufügen, um den Text verständlicher zu machen und relevante Inhalte zu konkretisieren.\n- Schreibe kurze Sätze mit höchstens 12 Wörtern.\n- Beschränke dich auf eine Aussage, einen Gedanken pro Satz.\n- Verwende aktive Sprache anstelle von Passiv. \n- Formuliere grundsätzlich positiv und bejahend.\n- Strukturiere den Text übersichtlich mit kurzen Absätzen.\n- Verwende einfache, kurze, häufig gebräuchliche Wörter. \n- Wenn zwei Wörter dasselbe bedeuten, verwende das kürzere und einfachere Wort.\n- Vermeide Füllwörter und unnötige Wiederholungen.\n- Erkläre Fachbegriffe und Fremdwörter.\n- Schreibe immer einfach, direkt und klar. Vermeide komplizierte Konstruktionen und veraltete Begriffe. Vermeide «Behördendeutsch». \n- Benenne Gleiches immer gleich. Verwende für denselben Begriff, Gegenstand oder Sachverhalt immer dieselbe Bezeichnung. Wiederholungen von Begriffen sind in Texten in Einfacher Sprache normal.\n- Vermeide Substantivierungen. Verwende stattdessen Verben und Adjektive.\n- Vermeide Adjektive und Adverbien, wenn sie nicht unbedingt notwendig sind.\n- Wenn du vier oder mehr Wörter zusammensetzt, setzt du Bindestriche. Beispiel: «Motorfahrzeug-Ausweispflicht».\n- Achte auf die sprachliche Gleichbehandlung von Mann und Frau. Verwende immer beide Geschlechter oder schreibe geschlechtsneutral.\n- Vermeide Abkürzungen grundsätzlich. Schreibe stattdessen die Wörter aus. Z.B. «10 Millionen» statt «10 Mio.», «200 Kilometer pro Stunde» statt «200 km/h», «zum Beispiel» statt «z.B.», «30 Prozent» statt «30 %», «2 Meter» statt «2 m», «das heisst» statt «d.h.». \n- Vermeide das stumme «e» am Wortende, wenn es nicht unbedingt notwendig ist. Zum Beispiel: «des Fahrzeugs» statt «des Fahrzeuges».\n- Verwende immer französische Anführungszeichen (« ») anstelle von deutschen Anführungszeichen („ “).\n- Gliedere Telefonnummern mit vier Leerzeichen. Z.B. 044 123 45 67. Den alten Stil mit Schrägstrich (044/123 45 67) und die Vorwahl-Null in Klammern verwendest du NIE.\n- Formatiere Datumsangaben immer so: 1. Januar 2022, 15. Februar 2022.\n- Jahreszahlen schreibst du immer vierstellig aus: 2022, 2025-2030.\n- Formatiere Zeitangaben immer «Stunden Punkt Minuten Uhr». Verwende keinen Doppelpunkt, um Stunden von Minuten zu trennen. Ergänze immer .00 bei vollen Stunden. Beispiele: 9.25 Uhr (NICHT 9:30), 10.30 Uhr (NICHT 10:00), 14.00 Uhr (NICHT 14 Uhr), 15.45 Uhr, 18.00 Uhr, 20.15 Uhr, 22.30 Uhr.\n- Zahlen bis 12 schreibst du aus. Ab 13 verwendest du Ziffern.\n- Fristen, Geldbeträge und physikalische Grössen schreibst du immer in Ziffern.\n- Zahlen, die zusammengehören, schreibst du immer in Ziffern. Beispiel: 5-10, 20 oder 30.\n- Grosse Zahlen ab 5 Stellen gliederst du in Dreiergruppen mit Leerzeichen. Beispiel: 1 000 000.\n- Achtung: Identifikationszahlen übernimmst du 1:1. Beispiel: Stammnummer 123.456.789, AHV-Nummer 756.1234.5678.90, Konto 01-100101-9.\n- Verwende das Komma, dass das deutsche Dezimalzeichen ist. Überflüssige Nullen nach dem Komma schreibst du nicht. Beispiel: 5,5 Millionen, 3,75 Prozent, 1,5 Kilometer, 2,25 Stunden.\n- Vor Franken-Rappen-Beträgen schreibst du immer «CHF». Nur nach ganzen Franken-Beträgen darfst du «Franken» schreiben. Bei Franken- Rappen-Beträgen setzt du einen Punkt als Dezimalzeichen. Anstatt des Null-Rappen-Strichs verwendest du «.00» oder lässt die Dezimalstellen weg. Z.B. 20 Franken, CHF 20, CHF 2.00, CHF 12.50, aber CHF 45,2 Millionen, EUR 14,90.\n- Die Anrede mit «Sie» schreibst du immer gross. Beispiel: «Sie haben».\n\n--------\nuser:\nAls Vernehmlassungsverfahren wird diejenige Phase innerhalb des Vorverfahrens der Gesetzgebung bezeichnet, in der Vorhaben des Bundes von erheblicher politischer, finanzieller, wirtschaftlicher, ökologischer, sozialer oder kultureller Tragweite auf ihre sachliche Richtigkeit, Vollzugstauglichkeit und Akzeptanz hin geprüft werden.   Die Vorlage wird zu diesem Zweck den Kantonen, den in der Bundesversammlung vertretenen Parteien, den Dachverbänden der Gemeinden, Städte und der Berggebiete, den Dachverbänden der Wirtschaft sowie weiteren, im Einzelfall interessierten Kreisen unterbreitet."
           },
           "error": null
@@ -200,33 +206,33 @@
       "description": "",
       "tags": null,
       "system_metrics": {
-        "duration": 2.325216,
-        "prompt_tokens": 1244,
-        "completion_tokens": 121,
-        "total_tokens": 1365
+        "duration": 1.459479,
+        "prompt_tokens": 1463,
+        "completion_tokens": 74,
+        "total_tokens": 1537
       },
       "result": {
-        "simplified_text": "Ein Vernehmlassungsverfahren gehört zum Vorverfahren der Gesetzgebung.\n\nIn dieser Phase prüft der Bund Gesetze. \n\nDer Bund prüft, wie wichtig das Gesetz für Politik, Finanzen, Wirtschaft, Umwelt, Menschen und Kultur ist.\n\nDer Bund fragt auch, ob das Gesetz gut und richtig ist.\n\nDer Bund schickt den Gesetzesvorschlag an die Kantone.\n\nAuch einige Parteien im Parlament bekommen den Vorschlag.\n\nDie Verbände der Gemeinden, Städte und Berggebiete bekommen den Vorschlag ebenfalls.\n\nWirtschaftsverbände und andere Interessierte können den Vorschlag auch bekommen.",
+        "simplified_text": "Im Vernehmlassungsverfahren werden wichtige Vorhaben des Bundes von verschiedenen Gruppen überprüft. Dazu gehören die Kantone, Parteien, Gemeinde- und Wirtschaftsverbände. Es wird geprüft, ob die Vorhaben inhaltlich korrekt, umsetzbar und akzeptabel sind.",
         "prompt": "\nsystem:\n--------\nBitte schreibe den folgenden schwer verständlichen Text vollständig in Einfache Sprache, Sprachniveau B1 bis A2, um. \n\nBeachte dabei folgende Regeln für Einfache Sprache (B1 bis A2):\n\n- Achte immer sehr genau darauf, dass ALLE Informationen aus dem schwer verständlichen Text in dem Text in Leichter Sprache enthalten sind. Kürze niemals Informationen. Wo sinnvoll kannst du zusätzliche Beispiele hinzufügen, um den Text verständlicher zu machen und relevante Inhalte zu konkretisieren.\n- Schreibe kurze Sätze mit höchstens 12 Wörtern.\n- Beschränke dich auf eine Aussage, einen Gedanken pro Satz.\n- Verwende aktive Sprache anstelle von Passiv. \n- Formuliere grundsätzlich positiv und bejahend.\n- Strukturiere den Text übersichtlich mit kurzen Absätzen.\n- Verwende einfache, kurze, häufig gebräuchliche Wörter. \n- Wenn zwei Wörter dasselbe bedeuten, verwende das kürzere und einfachere Wort.\n- Vermeide Füllwörter und unnötige Wiederholungen.\n- Erkläre Fachbegriffe und Fremdwörter.\n- Schreibe immer einfach, direkt und klar. Vermeide komplizierte Konstruktionen und veraltete Begriffe. Vermeide «Behördendeutsch». \n- Benenne Gleiches immer gleich. Verwende für denselben Begriff, Gegenstand oder Sachverhalt immer dieselbe Bezeichnung. Wiederholungen von Begriffen sind in Texten in Einfacher Sprache normal.\n- Vermeide Substantivierungen. Verwende stattdessen Verben und Adjektive.\n- Vermeide Adjektive und Adverbien, wenn sie nicht unbedingt notwendig sind.\n- Wenn du vier oder mehr Wörter zusammensetzt, setzt du Bindestriche. Beispiel: «Motorfahrzeug-Ausweispflicht».\n- Achte auf die sprachliche Gleichbehandlung von Mann und Frau. Verwende immer beide Geschlechter oder schreibe geschlechtsneutral.\n- Vermeide Abkürzungen grundsätzlich. Schreibe stattdessen die Wörter aus. Z.B. «10 Millionen» statt «10 Mio.», «200 Kilometer pro Stunde» statt «200 km/h», «zum Beispiel» statt «z.B.», «30 Prozent» statt «30 %», «2 Meter» statt «2 m», «das heisst» statt «d.h.». \n- Vermeide das stumme «e» am Wortende, wenn es nicht unbedingt notwendig ist. Zum Beispiel: «des Fahrzeugs» statt «des Fahrzeuges».\n- Verwende immer französische Anführungszeichen (« ») anstelle von deutschen Anführungszeichen („ “).\n- Gliedere Telefonnummern mit vier Leerzeichen. Z.B. 044 123 45 67. Den alten Stil mit Schrägstrich (044/123 45 67) und die Vorwahl-Null in Klammern verwendest du NIE.\n- Formatiere Datumsangaben immer so: 1. Januar 2022, 15. Februar 2022.\n- Jahreszahlen schreibst du immer vierstellig aus: 2022, 2025-2030.\n- Formatiere Zeitangaben immer «Stunden Punkt Minuten Uhr». Verwende keinen Doppelpunkt, um Stunden von Minuten zu trennen. Ergänze immer .00 bei vollen Stunden. Beispiele: 9.25 Uhr (NICHT 9:30), 10.30 Uhr (NICHT 10:00), 14.00 Uhr (NICHT 14 Uhr), 15.45 Uhr, 18.00 Uhr, 20.15 Uhr, 22.30 Uhr.\n- Zahlen bis 12 schreibst du aus. Ab 13 verwendest du Ziffern.\n- Fristen, Geldbeträge und physikalische Grössen schreibst du immer in Ziffern.\n- Zahlen, die zusammengehören, schreibst du immer in Ziffern. Beispiel: 5-10, 20 oder 30.\n- Grosse Zahlen ab 5 Stellen gliederst du in Dreiergruppen mit Leerzeichen. Beispiel: 1 000 000.\n- Achtung: Identifikationszahlen übernimmst du 1:1. Beispiel: Stammnummer 123.456.789, AHV-Nummer 756.1234.5678.90, Konto 01-100101-9.\n- Verwende das Komma, dass das deutsche Dezimalzeichen ist. Überflüssige Nullen nach dem Komma schreibst du nicht. Beispiel: 5,5 Millionen, 3,75 Prozent, 1,5 Kilometer, 2,25 Stunden.\n- Vor Franken-Rappen-Beträgen schreibst du immer «CHF». Nur nach ganzen Franken-Beträgen darfst du «Franken» schreiben. Bei Franken- Rappen-Beträgen setzt du einen Punkt als Dezimalzeichen. Anstatt des Null-Rappen-Strichs verwendest du «.00» oder lässt die Dezimalstellen weg. Z.B. 20 Franken, CHF 20, CHF 2.00, CHF 12.50, aber CHF 45,2 Millionen, EUR 14,90.\n- Die Anrede mit «Sie» schreibst du immer gross. Beispiel: «Sie haben».\n\n--------\nuser:\nAls Vernehmlassungsverfahren wird diejenige Phase innerhalb des Vorverfahrens der Gesetzgebung bezeichnet, in der Vorhaben des Bundes von erheblicher politischer, finanzieller, wirtschaftlicher, ökologischer, sozialer oder kultureller Tragweite auf ihre sachliche Richtigkeit, Vollzugstauglichkeit und Akzeptanz hin geprüft werden.   Die Vorlage wird zu diesem Zweck den Kantonen, den in der Bundesversammlung vertretenen Parteien, den Dachverbänden der Gemeinden, Städte und der Berggebiete, den Dachverbänden der Wirtschaft sowie weiteren, im Einzelfall interessierten Kreisen unterbreitet."
       },
       "upload_metrics": false,
-      "otel_trace_id": "0x0ffc8fb1cdeb33d04e484b2c68dadff0",
+      "otel_trace_id": "0x621a57d554d2b748b6a12560e775b1a4",
       "message_format": "basic"
     }
   ],
   "node_runs": [
     {
-      "node": "rules_es",
-      "flow_run_id": "ccbf94c2-2235-4a44-a950-781674c3c30c",
-      "run_id": "ccbf94c2-2235-4a44-a950-781674c3c30c_rules_es_0",
+      "node": "rules",
+      "flow_run_id": "2c69885a-9bb9-4ccd-9c8e-eb070238495e",
+      "run_id": "2c69885a-9bb9-4ccd-9c8e-eb070238495e_rules_0",
       "status": "Completed",
       "inputs": {},
       "output": "- Schreibe kurze Sätze mit höchstens 12 Wörtern.\n- Beschränke dich auf eine Aussage, einen Gedanken pro Satz.\n- Verwende aktive Sprache anstelle von Passiv. \n- Formuliere grundsätzlich positiv und bejahend.\n- Strukturiere den Text übersichtlich mit kurzen Absätzen.\n- Verwende einfache, kurze, häufig gebräuchliche Wörter. \n- Wenn zwei Wörter dasselbe bedeuten, verwende das kürzere und einfachere Wort.\n- Vermeide Füllwörter und unnötige Wiederholungen.\n- Erkläre Fachbegriffe und Fremdwörter.\n- Schreibe immer einfach, direkt und klar. Vermeide komplizierte Konstruktionen und veraltete Begriffe. Vermeide «Behördendeutsch». \n- Benenne Gleiches immer gleich. Verwende für denselben Begriff, Gegenstand oder Sachverhalt immer dieselbe Bezeichnung. Wiederholungen von Begriffen sind in Texten in Einfacher Sprache normal.\n- Vermeide Substantivierungen. Verwende stattdessen Verben und Adjektive.\n- Vermeide Adjektive und Adverbien, wenn sie nicht unbedingt notwendig sind.\n- Wenn du vier oder mehr Wörter zusammensetzt, setzt du Bindestriche. Beispiel: «Motorfahrzeug-Ausweispflicht».\n- Achte auf die sprachliche Gleichbehandlung von Mann und Frau. Verwende immer beide Geschlechter oder schreibe geschlechtsneutral.\n- Vermeide Abkürzungen grundsätzlich. Schreibe stattdessen die Wörter aus. Z.B. «10 Millionen» statt «10 Mio.», «200 Kilometer pro Stunde» statt «200 km/h», «zum Beispiel» statt «z.B.», «30 Prozent» statt «30 %», «2 Meter» statt «2 m», «das heisst» statt «d.h.». \n- Vermeide das stumme «e» am Wortende, wenn es nicht unbedingt notwendig ist. Zum Beispiel: «des Fahrzeugs» statt «des Fahrzeuges».\n- Verwende immer französische Anführungszeichen (« ») anstelle von deutschen Anführungszeichen („ “).\n- Gliedere Telefonnummern mit vier Leerzeichen. Z.B. 044 123 45 67. Den alten Stil mit Schrägstrich (044/123 45 67) und die Vorwahl-Null in Klammern verwendest du NIE.\n- Formatiere Datumsangaben immer so: 1. Januar 2022, 15. Februar 2022.\n- Jahreszahlen schreibst du immer vierstellig aus: 2022, 2025-2030.\n- Formatiere Zeitangaben immer «Stunden Punkt Minuten Uhr». Verwende keinen Doppelpunkt, um Stunden von Minuten zu trennen. Ergänze immer .00 bei vollen Stunden. Beispiele: 9.25 Uhr (NICHT 9:30), 10.30 Uhr (NICHT 10:00), 14.00 Uhr (NICHT 14 Uhr), 15.45 Uhr, 18.00 Uhr, 20.15 Uhr, 22.30 Uhr.\n- Zahlen bis 12 schreibst du aus. Ab 13 verwendest du Ziffern.\n- Fristen, Geldbeträge und physikalische Grössen schreibst du immer in Ziffern.\n- Zahlen, die zusammengehören, schreibst du immer in Ziffern. Beispiel: 5-10, 20 oder 30.\n- Grosse Zahlen ab 5 Stellen gliederst du in Dreiergruppen mit Leerzeichen. Beispiel: 1 000 000.\n- Achtung: Identifikationszahlen übernimmst du 1:1. Beispiel: Stammnummer 123.456.789, AHV-Nummer 756.1234.5678.90, Konto 01-100101-9.\n- Verwende das Komma, dass das deutsche Dezimalzeichen ist. Überflüssige Nullen nach dem Komma schreibst du nicht. Beispiel: 5,5 Millionen, 3,75 Prozent, 1,5 Kilometer, 2,25 Stunden.\n- Vor Franken-Rappen-Beträgen schreibst du immer «CHF». Nur nach ganzen Franken-Beträgen darfst du «Franken» schreiben. Bei Franken- Rappen-Beträgen setzt du einen Punkt als Dezimalzeichen. Anstatt des Null-Rappen-Strichs verwendest du «.00» oder lässt die Dezimalstellen weg. Z.B. 20 Franken, CHF 20, CHF 2.00, CHF 12.50, aber CHF 45,2 Millionen, EUR 14,90.\n- Die Anrede mit «Sie» schreibst du immer gross. Beispiel: «Sie haben».",
       "metrics": null,
       "error": null,
-      "parent_run_id": "ccbf94c2-2235-4a44-a950-781674c3c30c_0",
-      "start_time": "2024-07-03T21:19:56.169437Z",
-      "end_time": "2024-07-03T21:19:56.172342Z",
+      "parent_run_id": "2c69885a-9bb9-4ccd-9c8e-eb070238495e_0",
+      "start_time": "2024-07-07T17:17:50.150247Z",
+      "end_time": "2024-07-07T17:17:50.155268Z",
       "index": 0,
       "api_calls": [
         {
@@ -236,13 +242,13 @@
             "template": "- Schreibe kurze Sätze mit höchstens 12 Wörtern.\n- Beschränke dich auf eine Aussage, einen Gedanken pro Satz.\n- Verwende aktive Sprache anstelle von Passiv. \n- Formuliere grundsätzlich positiv und bejahend.\n- Strukturiere den Text übersichtlich mit kurzen Absätzen.\n- Verwende einfache, kurze, häufig gebräuchliche Wörter. \n- Wenn zwei Wörter dasselbe bedeuten, verwende das kürzere und einfachere Wort.\n- Vermeide Füllwörter und unnötige Wiederholungen.\n- Erkläre Fachbegriffe und Fremdwörter.\n- Schreibe immer einfach, direkt und klar. Vermeide komplizierte Konstruktionen und veraltete Begriffe. Vermeide «Behördendeutsch». \n- Benenne Gleiches immer gleich. Verwende für denselben Begriff, Gegenstand oder Sachverhalt immer dieselbe Bezeichnung. Wiederholungen von Begriffen sind in Texten in Einfacher Sprache normal.\n- Vermeide Substantivierungen. Verwende stattdessen Verben und Adjektive.\n- Vermeide Adjektive und Adverbien, wenn sie nicht unbedingt notwendig sind.\n- Wenn du vier oder mehr Wörter zusammensetzt, setzt du Bindestriche. Beispiel: «Motorfahrzeug-Ausweispflicht».\n- Achte auf die sprachliche Gleichbehandlung von Mann und Frau. Verwende immer beide Geschlechter oder schreibe geschlechtsneutral.\n- Vermeide Abkürzungen grundsätzlich. Schreibe stattdessen die Wörter aus. Z.B. «10 Millionen» statt «10 Mio.», «200 Kilometer pro Stunde» statt «200 km/h», «zum Beispiel» statt «z.B.», «30 Prozent» statt «30 %», «2 Meter» statt «2 m», «das heisst» statt «d.h.». \n- Vermeide das stumme «e» am Wortende, wenn es nicht unbedingt notwendig ist. Zum Beispiel: «des Fahrzeugs» statt «des Fahrzeuges».\n- Verwende immer französische Anführungszeichen (« ») anstelle von deutschen Anführungszeichen („ “).\n- Gliedere Telefonnummern mit vier Leerzeichen. Z.B. 044 123 45 67. Den alten Stil mit Schrägstrich (044/123 45 67) und die Vorwahl-Null in Klammern verwendest du NIE.\n- Formatiere Datumsangaben immer so: 1. Januar 2022, 15. Februar 2022.\n- Jahreszahlen schreibst du immer vierstellig aus: 2022, 2025-2030.\n- Formatiere Zeitangaben immer «Stunden Punkt Minuten Uhr». Verwende keinen Doppelpunkt, um Stunden von Minuten zu trennen. Ergänze immer .00 bei vollen Stunden. Beispiele: 9.25 Uhr (NICHT 9:30), 10.30 Uhr (NICHT 10:00), 14.00 Uhr (NICHT 14 Uhr), 15.45 Uhr, 18.00 Uhr, 20.15 Uhr, 22.30 Uhr.\n- Zahlen bis 12 schreibst du aus. Ab 13 verwendest du Ziffern.\n- Fristen, Geldbeträge und physikalische Grössen schreibst du immer in Ziffern.\n- Zahlen, die zusammengehören, schreibst du immer in Ziffern. Beispiel: 5-10, 20 oder 30.\n- Grosse Zahlen ab 5 Stellen gliederst du in Dreiergruppen mit Leerzeichen. Beispiel: 1 000 000.\n- Achtung: Identifikationszahlen übernimmst du 1:1. Beispiel: Stammnummer 123.456.789, AHV-Nummer 756.1234.5678.90, Konto 01-100101-9.\n- Verwende das Komma, dass das deutsche Dezimalzeichen ist. Überflüssige Nullen nach dem Komma schreibst du nicht. Beispiel: 5,5 Millionen, 3,75 Prozent, 1,5 Kilometer, 2,25 Stunden.\n- Vor Franken-Rappen-Beträgen schreibst du immer «CHF». Nur nach ganzen Franken-Beträgen darfst du «Franken» schreiben. Bei Franken- Rappen-Beträgen setzt du einen Punkt als Dezimalzeichen. Anstatt des Null-Rappen-Strichs verwendest du «.00» oder lässt die Dezimalstellen weg. Z.B. 20 Franken, CHF 20, CHF 2.00, CHF 12.50, aber CHF 45,2 Millionen, EUR 14,90.\n- Die Anrede mit «Sie» schreibst du immer gross. Beispiel: «Sie haben»."
           },
           "output": "- Schreibe kurze Sätze mit höchstens 12 Wörtern.\n- Beschränke dich auf eine Aussage, einen Gedanken pro Satz.\n- Verwende aktive Sprache anstelle von Passiv. \n- Formuliere grundsätzlich positiv und bejahend.\n- Strukturiere den Text übersichtlich mit kurzen Absätzen.\n- Verwende einfache, kurze, häufig gebräuchliche Wörter. \n- Wenn zwei Wörter dasselbe bedeuten, verwende das kürzere und einfachere Wort.\n- Vermeide Füllwörter und unnötige Wiederholungen.\n- Erkläre Fachbegriffe und Fremdwörter.\n- Schreibe immer einfach, direkt und klar. Vermeide komplizierte Konstruktionen und veraltete Begriffe. Vermeide «Behördendeutsch». \n- Benenne Gleiches immer gleich. Verwende für denselben Begriff, Gegenstand oder Sachverhalt immer dieselbe Bezeichnung. Wiederholungen von Begriffen sind in Texten in Einfacher Sprache normal.\n- Vermeide Substantivierungen. Verwende stattdessen Verben und Adjektive.\n- Vermeide Adjektive und Adverbien, wenn sie nicht unbedingt notwendig sind.\n- Wenn du vier oder mehr Wörter zusammensetzt, setzt du Bindestriche. Beispiel: «Motorfahrzeug-Ausweispflicht».\n- Achte auf die sprachliche Gleichbehandlung von Mann und Frau. Verwende immer beide Geschlechter oder schreibe geschlechtsneutral.\n- Vermeide Abkürzungen grundsätzlich. Schreibe stattdessen die Wörter aus. Z.B. «10 Millionen» statt «10 Mio.», «200 Kilometer pro Stunde» statt «200 km/h», «zum Beispiel» statt «z.B.», «30 Prozent» statt «30 %», «2 Meter» statt «2 m», «das heisst» statt «d.h.». \n- Vermeide das stumme «e» am Wortende, wenn es nicht unbedingt notwendig ist. Zum Beispiel: «des Fahrzeugs» statt «des Fahrzeuges».\n- Verwende immer französische Anführungszeichen (« ») anstelle von deutschen Anführungszeichen („ “).\n- Gliedere Telefonnummern mit vier Leerzeichen. Z.B. 044 123 45 67. Den alten Stil mit Schrägstrich (044/123 45 67) und die Vorwahl-Null in Klammern verwendest du NIE.\n- Formatiere Datumsangaben immer so: 1. Januar 2022, 15. Februar 2022.\n- Jahreszahlen schreibst du immer vierstellig aus: 2022, 2025-2030.\n- Formatiere Zeitangaben immer «Stunden Punkt Minuten Uhr». Verwende keinen Doppelpunkt, um Stunden von Minuten zu trennen. Ergänze immer .00 bei vollen Stunden. Beispiele: 9.25 Uhr (NICHT 9:30), 10.30 Uhr (NICHT 10:00), 14.00 Uhr (NICHT 14 Uhr), 15.45 Uhr, 18.00 Uhr, 20.15 Uhr, 22.30 Uhr.\n- Zahlen bis 12 schreibst du aus. Ab 13 verwendest du Ziffern.\n- Fristen, Geldbeträge und physikalische Grössen schreibst du immer in Ziffern.\n- Zahlen, die zusammengehören, schreibst du immer in Ziffern. Beispiel: 5-10, 20 oder 30.\n- Grosse Zahlen ab 5 Stellen gliederst du in Dreiergruppen mit Leerzeichen. Beispiel: 1 000 000.\n- Achtung: Identifikationszahlen übernimmst du 1:1. Beispiel: Stammnummer 123.456.789, AHV-Nummer 756.1234.5678.90, Konto 01-100101-9.\n- Verwende das Komma, dass das deutsche Dezimalzeichen ist. Überflüssige Nullen nach dem Komma schreibst du nicht. Beispiel: 5,5 Millionen, 3,75 Prozent, 1,5 Kilometer, 2,25 Stunden.\n- Vor Franken-Rappen-Beträgen schreibst du immer «CHF». Nur nach ganzen Franken-Beträgen darfst du «Franken» schreiben. Bei Franken- Rappen-Beträgen setzt du einen Punkt als Dezimalzeichen. Anstatt des Null-Rappen-Strichs verwendest du «.00» oder lässt die Dezimalstellen weg. Z.B. 20 Franken, CHF 20, CHF 2.00, CHF 12.50, aber CHF 45,2 Millionen, EUR 14,90.\n- Die Anrede mit «Sie» schreibst du immer gross. Beispiel: «Sie haben».",
-          "start_time": 1720041596.169585,
-          "end_time": 1720041596.171844,
+          "start_time": 1720372670.150538,
+          "end_time": 1720372670.154364,
           "error": null,
           "children": [],
-          "node_name": "rules_es",
+          "node_name": "rules",
           "parent_id": "",
-          "id": "a79d126a-47c2-444b-a251-a4791a46bc3a",
+          "id": "dabfd8d2-80ec-464e-a0ba-5c0e4e22581b",
           "function": "render_template_jinja2",
           "system_metrics": {}
         }
@@ -254,23 +260,23 @@
         "stderr": ""
       },
       "system_metrics": {
-        "duration": 0.002905
+        "duration": 0.005021
       },
       "result": "- Schreibe kurze Sätze mit höchstens 12 Wörtern.\n- Beschränke dich auf eine Aussage, einen Gedanken pro Satz.\n- Verwende aktive Sprache anstelle von Passiv. \n- Formuliere grundsätzlich positiv und bejahend.\n- Strukturiere den Text übersichtlich mit kurzen Absätzen.\n- Verwende einfache, kurze, häufig gebräuchliche Wörter. \n- Wenn zwei Wörter dasselbe bedeuten, verwende das kürzere und einfachere Wort.\n- Vermeide Füllwörter und unnötige Wiederholungen.\n- Erkläre Fachbegriffe und Fremdwörter.\n- Schreibe immer einfach, direkt und klar. Vermeide komplizierte Konstruktionen und veraltete Begriffe. Vermeide «Behördendeutsch». \n- Benenne Gleiches immer gleich. Verwende für denselben Begriff, Gegenstand oder Sachverhalt immer dieselbe Bezeichnung. Wiederholungen von Begriffen sind in Texten in Einfacher Sprache normal.\n- Vermeide Substantivierungen. Verwende stattdessen Verben und Adjektive.\n- Vermeide Adjektive und Adverbien, wenn sie nicht unbedingt notwendig sind.\n- Wenn du vier oder mehr Wörter zusammensetzt, setzt du Bindestriche. Beispiel: «Motorfahrzeug-Ausweispflicht».\n- Achte auf die sprachliche Gleichbehandlung von Mann und Frau. Verwende immer beide Geschlechter oder schreibe geschlechtsneutral.\n- Vermeide Abkürzungen grundsätzlich. Schreibe stattdessen die Wörter aus. Z.B. «10 Millionen» statt «10 Mio.», «200 Kilometer pro Stunde» statt «200 km/h», «zum Beispiel» statt «z.B.», «30 Prozent» statt «30 %», «2 Meter» statt «2 m», «das heisst» statt «d.h.». \n- Vermeide das stumme «e» am Wortende, wenn es nicht unbedingt notwendig ist. Zum Beispiel: «des Fahrzeugs» statt «des Fahrzeuges».\n- Verwende immer französische Anführungszeichen (« ») anstelle von deutschen Anführungszeichen („ “).\n- Gliedere Telefonnummern mit vier Leerzeichen. Z.B. 044 123 45 67. Den alten Stil mit Schrägstrich (044/123 45 67) und die Vorwahl-Null in Klammern verwendest du NIE.\n- Formatiere Datumsangaben immer so: 1. Januar 2022, 15. Februar 2022.\n- Jahreszahlen schreibst du immer vierstellig aus: 2022, 2025-2030.\n- Formatiere Zeitangaben immer «Stunden Punkt Minuten Uhr». Verwende keinen Doppelpunkt, um Stunden von Minuten zu trennen. Ergänze immer .00 bei vollen Stunden. Beispiele: 9.25 Uhr (NICHT 9:30), 10.30 Uhr (NICHT 10:00), 14.00 Uhr (NICHT 14 Uhr), 15.45 Uhr, 18.00 Uhr, 20.15 Uhr, 22.30 Uhr.\n- Zahlen bis 12 schreibst du aus. Ab 13 verwendest du Ziffern.\n- Fristen, Geldbeträge und physikalische Grössen schreibst du immer in Ziffern.\n- Zahlen, die zusammengehören, schreibst du immer in Ziffern. Beispiel: 5-10, 20 oder 30.\n- Grosse Zahlen ab 5 Stellen gliederst du in Dreiergruppen mit Leerzeichen. Beispiel: 1 000 000.\n- Achtung: Identifikationszahlen übernimmst du 1:1. Beispiel: Stammnummer 123.456.789, AHV-Nummer 756.1234.5678.90, Konto 01-100101-9.\n- Verwende das Komma, dass das deutsche Dezimalzeichen ist. Überflüssige Nullen nach dem Komma schreibst du nicht. Beispiel: 5,5 Millionen, 3,75 Prozent, 1,5 Kilometer, 2,25 Stunden.\n- Vor Franken-Rappen-Beträgen schreibst du immer «CHF». Nur nach ganzen Franken-Beträgen darfst du «Franken» schreiben. Bei Franken- Rappen-Beträgen setzt du einen Punkt als Dezimalzeichen. Anstatt des Null-Rappen-Strichs verwendest du «.00» oder lässt die Dezimalstellen weg. Z.B. 20 Franken, CHF 20, CHF 2.00, CHF 12.50, aber CHF 45,2 Millionen, EUR 14,90.\n- Die Anrede mit «Sie» schreibst du immer gross. Beispiel: «Sie haben».",
       "message_format": "basic"
     },
     {
       "node": "completeness",
-      "flow_run_id": "ccbf94c2-2235-4a44-a950-781674c3c30c",
-      "run_id": "ccbf94c2-2235-4a44-a950-781674c3c30c_completeness_0",
+      "flow_run_id": "2c69885a-9bb9-4ccd-9c8e-eb070238495e",
+      "run_id": "2c69885a-9bb9-4ccd-9c8e-eb070238495e_completeness_0",
       "status": "Completed",
       "inputs": {},
       "output": "- Achte immer sehr genau darauf, dass ALLE Informationen aus dem schwer verständlichen Text in dem Text in Leichter Sprache enthalten sind. Kürze niemals Informationen. Wo sinnvoll kannst du zusätzliche Beispiele hinzufügen, um den Text verständlicher zu machen und relevante Inhalte zu konkretisieren.",
       "metrics": null,
       "error": null,
-      "parent_run_id": "ccbf94c2-2235-4a44-a950-781674c3c30c_0",
-      "start_time": "2024-07-03T21:19:56.172719Z",
-      "end_time": "2024-07-03T21:19:56.175007Z",
+      "parent_run_id": "2c69885a-9bb9-4ccd-9c8e-eb070238495e_0",
+      "start_time": "2024-07-07T17:17:50.158077Z",
+      "end_time": "2024-07-07T17:17:50.160455Z",
       "index": 0,
       "api_calls": [
         {
@@ -280,13 +286,13 @@
             "template": "- Achte immer sehr genau darauf, dass ALLE Informationen aus dem schwer verständlichen Text in dem Text in Leichter Sprache enthalten sind. Kürze niemals Informationen. Wo sinnvoll kannst du zusätzliche Beispiele hinzufügen, um den Text verständlicher zu machen und relevante Inhalte zu konkretisieren."
           },
           "output": "- Achte immer sehr genau darauf, dass ALLE Informationen aus dem schwer verständlichen Text in dem Text in Leichter Sprache enthalten sind. Kürze niemals Informationen. Wo sinnvoll kannst du zusätzliche Beispiele hinzufügen, um den Text verständlicher zu machen und relevante Inhalte zu konkretisieren.",
-          "start_time": 1720041596.172839,
-          "end_time": 1720041596.173921,
+          "start_time": 1720372670.158209,
+          "end_time": 1720372670.159632,
           "error": null,
           "children": [],
           "node_name": "completeness",
           "parent_id": "",
-          "id": "4b6e7fe7-3640-439d-91fb-52fed7b2ce85",
+          "id": "747feaa1-b35d-4255-9a1d-7afbc72d6fe4",
           "function": "render_template_jinja2",
           "system_metrics": {}
         }
@@ -298,15 +304,15 @@
         "stderr": ""
       },
       "system_metrics": {
-        "duration": 0.002288
+        "duration": 0.002378
       },
       "result": "- Achte immer sehr genau darauf, dass ALLE Informationen aus dem schwer verständlichen Text in dem Text in Leichter Sprache enthalten sind. Kürze niemals Informationen. Wo sinnvoll kannst du zusätzliche Beispiele hinzufügen, um den Text verständlicher zu machen und relevante Inhalte zu konkretisieren.",
       "message_format": "basic"
     },
     {
       "node": "create_prompt",
-      "flow_run_id": "ccbf94c2-2235-4a44-a950-781674c3c30c",
-      "run_id": "ccbf94c2-2235-4a44-a950-781674c3c30c_create_prompt_0",
+      "flow_run_id": "2c69885a-9bb9-4ccd-9c8e-eb070238495e",
+      "run_id": "2c69885a-9bb9-4ccd-9c8e-eb070238495e_create_prompt_0",
       "status": "Completed",
       "inputs": {
         "completeness": "- Achte immer sehr genau darauf, dass ALLE Informationen aus dem schwer verständlichen Text in dem Text in Leichter Sprache enthalten sind. Kürze niemals Informationen. Wo sinnvoll kannst du zusätzliche Beispiele hinzufügen, um den Text verständlicher zu machen und relevante Inhalte zu konkretisieren.",
@@ -319,9 +325,9 @@
       "output": "\nsystem:\n--------\nBitte schreibe den folgenden schwer verständlichen Text vollständig in Einfache Sprache, Sprachniveau B1 bis A2, um. \n\nBeachte dabei folgende Regeln für Einfache Sprache (B1 bis A2):\n\n- Achte immer sehr genau darauf, dass ALLE Informationen aus dem schwer verständlichen Text in dem Text in Leichter Sprache enthalten sind. Kürze niemals Informationen. Wo sinnvoll kannst du zusätzliche Beispiele hinzufügen, um den Text verständlicher zu machen und relevante Inhalte zu konkretisieren.\n- Schreibe kurze Sätze mit höchstens 12 Wörtern.\n- Beschränke dich auf eine Aussage, einen Gedanken pro Satz.\n- Verwende aktive Sprache anstelle von Passiv. \n- Formuliere grundsätzlich positiv und bejahend.\n- Strukturiere den Text übersichtlich mit kurzen Absätzen.\n- Verwende einfache, kurze, häufig gebräuchliche Wörter. \n- Wenn zwei Wörter dasselbe bedeuten, verwende das kürzere und einfachere Wort.\n- Vermeide Füllwörter und unnötige Wiederholungen.\n- Erkläre Fachbegriffe und Fremdwörter.\n- Schreibe immer einfach, direkt und klar. Vermeide komplizierte Konstruktionen und veraltete Begriffe. Vermeide «Behördendeutsch». \n- Benenne Gleiches immer gleich. Verwende für denselben Begriff, Gegenstand oder Sachverhalt immer dieselbe Bezeichnung. Wiederholungen von Begriffen sind in Texten in Einfacher Sprache normal.\n- Vermeide Substantivierungen. Verwende stattdessen Verben und Adjektive.\n- Vermeide Adjektive und Adverbien, wenn sie nicht unbedingt notwendig sind.\n- Wenn du vier oder mehr Wörter zusammensetzt, setzt du Bindestriche. Beispiel: «Motorfahrzeug-Ausweispflicht».\n- Achte auf die sprachliche Gleichbehandlung von Mann und Frau. Verwende immer beide Geschlechter oder schreibe geschlechtsneutral.\n- Vermeide Abkürzungen grundsätzlich. Schreibe stattdessen die Wörter aus. Z.B. «10 Millionen» statt «10 Mio.», «200 Kilometer pro Stunde» statt «200 km/h», «zum Beispiel» statt «z.B.», «30 Prozent» statt «30 %», «2 Meter» statt «2 m», «das heisst» statt «d.h.». \n- Vermeide das stumme «e» am Wortende, wenn es nicht unbedingt notwendig ist. Zum Beispiel: «des Fahrzeugs» statt «des Fahrzeuges».\n- Verwende immer französische Anführungszeichen (« ») anstelle von deutschen Anführungszeichen („ “).\n- Gliedere Telefonnummern mit vier Leerzeichen. Z.B. 044 123 45 67. Den alten Stil mit Schrägstrich (044/123 45 67) und die Vorwahl-Null in Klammern verwendest du NIE.\n- Formatiere Datumsangaben immer so: 1. Januar 2022, 15. Februar 2022.\n- Jahreszahlen schreibst du immer vierstellig aus: 2022, 2025-2030.\n- Formatiere Zeitangaben immer «Stunden Punkt Minuten Uhr». Verwende keinen Doppelpunkt, um Stunden von Minuten zu trennen. Ergänze immer .00 bei vollen Stunden. Beispiele: 9.25 Uhr (NICHT 9:30), 10.30 Uhr (NICHT 10:00), 14.00 Uhr (NICHT 14 Uhr), 15.45 Uhr, 18.00 Uhr, 20.15 Uhr, 22.30 Uhr.\n- Zahlen bis 12 schreibst du aus. Ab 13 verwendest du Ziffern.\n- Fristen, Geldbeträge und physikalische Grössen schreibst du immer in Ziffern.\n- Zahlen, die zusammengehören, schreibst du immer in Ziffern. Beispiel: 5-10, 20 oder 30.\n- Grosse Zahlen ab 5 Stellen gliederst du in Dreiergruppen mit Leerzeichen. Beispiel: 1 000 000.\n- Achtung: Identifikationszahlen übernimmst du 1:1. Beispiel: Stammnummer 123.456.789, AHV-Nummer 756.1234.5678.90, Konto 01-100101-9.\n- Verwende das Komma, dass das deutsche Dezimalzeichen ist. Überflüssige Nullen nach dem Komma schreibst du nicht. Beispiel: 5,5 Millionen, 3,75 Prozent, 1,5 Kilometer, 2,25 Stunden.\n- Vor Franken-Rappen-Beträgen schreibst du immer «CHF». Nur nach ganzen Franken-Beträgen darfst du «Franken» schreiben. Bei Franken- Rappen-Beträgen setzt du einen Punkt als Dezimalzeichen. Anstatt des Null-Rappen-Strichs verwendest du «.00» oder lässt die Dezimalstellen weg. Z.B. 20 Franken, CHF 20, CHF 2.00, CHF 12.50, aber CHF 45,2 Millionen, EUR 14,90.\n- Die Anrede mit «Sie» schreibst du immer gross. Beispiel: «Sie haben».\n\n--------\nuser:\nAls Vernehmlassungsverfahren wird diejenige Phase innerhalb des Vorverfahrens der Gesetzgebung bezeichnet, in der Vorhaben des Bundes von erheblicher politischer, finanzieller, wirtschaftlicher, ökologischer, sozialer oder kultureller Tragweite auf ihre sachliche Richtigkeit, Vollzugstauglichkeit und Akzeptanz hin geprüft werden.   Die Vorlage wird zu diesem Zweck den Kantonen, den in der Bundesversammlung vertretenen Parteien, den Dachverbänden der Gemeinden, Städte und der Berggebiete, den Dachverbänden der Wirtschaft sowie weiteren, im Einzelfall interessierten Kreisen unterbreitet.",
       "metrics": null,
       "error": null,
-      "parent_run_id": "ccbf94c2-2235-4a44-a950-781674c3c30c_0",
-      "start_time": "2024-07-03T21:19:56.176043Z",
-      "end_time": "2024-07-03T21:19:56.179107Z",
+      "parent_run_id": "2c69885a-9bb9-4ccd-9c8e-eb070238495e_0",
+      "start_time": "2024-07-07T17:17:50.165419Z",
+      "end_time": "2024-07-07T17:17:50.171900Z",
       "index": 0,
       "api_calls": [
         {
@@ -337,13 +343,13 @@
             ]
           },
           "output": "\nsystem:\n--------\nBitte schreibe den folgenden schwer verständlichen Text vollständig in Einfache Sprache, Sprachniveau B1 bis A2, um. \n\nBeachte dabei folgende Regeln für Einfache Sprache (B1 bis A2):\n\n- Achte immer sehr genau darauf, dass ALLE Informationen aus dem schwer verständlichen Text in dem Text in Leichter Sprache enthalten sind. Kürze niemals Informationen. Wo sinnvoll kannst du zusätzliche Beispiele hinzufügen, um den Text verständlicher zu machen und relevante Inhalte zu konkretisieren.\n- Schreibe kurze Sätze mit höchstens 12 Wörtern.\n- Beschränke dich auf eine Aussage, einen Gedanken pro Satz.\n- Verwende aktive Sprache anstelle von Passiv. \n- Formuliere grundsätzlich positiv und bejahend.\n- Strukturiere den Text übersichtlich mit kurzen Absätzen.\n- Verwende einfache, kurze, häufig gebräuchliche Wörter. \n- Wenn zwei Wörter dasselbe bedeuten, verwende das kürzere und einfachere Wort.\n- Vermeide Füllwörter und unnötige Wiederholungen.\n- Erkläre Fachbegriffe und Fremdwörter.\n- Schreibe immer einfach, direkt und klar. Vermeide komplizierte Konstruktionen und veraltete Begriffe. Vermeide «Behördendeutsch». \n- Benenne Gleiches immer gleich. Verwende für denselben Begriff, Gegenstand oder Sachverhalt immer dieselbe Bezeichnung. Wiederholungen von Begriffen sind in Texten in Einfacher Sprache normal.\n- Vermeide Substantivierungen. Verwende stattdessen Verben und Adjektive.\n- Vermeide Adjektive und Adverbien, wenn sie nicht unbedingt notwendig sind.\n- Wenn du vier oder mehr Wörter zusammensetzt, setzt du Bindestriche. Beispiel: «Motorfahrzeug-Ausweispflicht».\n- Achte auf die sprachliche Gleichbehandlung von Mann und Frau. Verwende immer beide Geschlechter oder schreibe geschlechtsneutral.\n- Vermeide Abkürzungen grundsätzlich. Schreibe stattdessen die Wörter aus. Z.B. «10 Millionen» statt «10 Mio.», «200 Kilometer pro Stunde» statt «200 km/h», «zum Beispiel» statt «z.B.», «30 Prozent» statt «30 %», «2 Meter» statt «2 m», «das heisst» statt «d.h.». \n- Vermeide das stumme «e» am Wortende, wenn es nicht unbedingt notwendig ist. Zum Beispiel: «des Fahrzeugs» statt «des Fahrzeuges».\n- Verwende immer französische Anführungszeichen (« ») anstelle von deutschen Anführungszeichen („ “).\n- Gliedere Telefonnummern mit vier Leerzeichen. Z.B. 044 123 45 67. Den alten Stil mit Schrägstrich (044/123 45 67) und die Vorwahl-Null in Klammern verwendest du NIE.\n- Formatiere Datumsangaben immer so: 1. Januar 2022, 15. Februar 2022.\n- Jahreszahlen schreibst du immer vierstellig aus: 2022, 2025-2030.\n- Formatiere Zeitangaben immer «Stunden Punkt Minuten Uhr». Verwende keinen Doppelpunkt, um Stunden von Minuten zu trennen. Ergänze immer .00 bei vollen Stunden. Beispiele: 9.25 Uhr (NICHT 9:30), 10.30 Uhr (NICHT 10:00), 14.00 Uhr (NICHT 14 Uhr), 15.45 Uhr, 18.00 Uhr, 20.15 Uhr, 22.30 Uhr.\n- Zahlen bis 12 schreibst du aus. Ab 13 verwendest du Ziffern.\n- Fristen, Geldbeträge und physikalische Grössen schreibst du immer in Ziffern.\n- Zahlen, die zusammengehören, schreibst du immer in Ziffern. Beispiel: 5-10, 20 oder 30.\n- Grosse Zahlen ab 5 Stellen gliederst du in Dreiergruppen mit Leerzeichen. Beispiel: 1 000 000.\n- Achtung: Identifikationszahlen übernimmst du 1:1. Beispiel: Stammnummer 123.456.789, AHV-Nummer 756.1234.5678.90, Konto 01-100101-9.\n- Verwende das Komma, dass das deutsche Dezimalzeichen ist. Überflüssige Nullen nach dem Komma schreibst du nicht. Beispiel: 5,5 Millionen, 3,75 Prozent, 1,5 Kilometer, 2,25 Stunden.\n- Vor Franken-Rappen-Beträgen schreibst du immer «CHF». Nur nach ganzen Franken-Beträgen darfst du «Franken» schreiben. Bei Franken- Rappen-Beträgen setzt du einen Punkt als Dezimalzeichen. Anstatt des Null-Rappen-Strichs verwendest du «.00» oder lässt die Dezimalstellen weg. Z.B. 20 Franken, CHF 20, CHF 2.00, CHF 12.50, aber CHF 45,2 Millionen, EUR 14,90.\n- Die Anrede mit «Sie» schreibst du immer gross. Beispiel: «Sie haben».\n\n--------\nuser:\nAls Vernehmlassungsverfahren wird diejenige Phase innerhalb des Vorverfahrens der Gesetzgebung bezeichnet, in der Vorhaben des Bundes von erheblicher politischer, finanzieller, wirtschaftlicher, ökologischer, sozialer oder kultureller Tragweite auf ihre sachliche Richtigkeit, Vollzugstauglichkeit und Akzeptanz hin geprüft werden.   Die Vorlage wird zu diesem Zweck den Kantonen, den in der Bundesversammlung vertretenen Parteien, den Dachverbänden der Gemeinden, Städte und der Berggebiete, den Dachverbänden der Wirtschaft sowie weiteren, im Einzelfall interessierten Kreisen unterbreitet.",
-          "start_time": 1720041596.176157,
-          "end_time": 1720041596.178053,
+          "start_time": 1720372670.165565,
+          "end_time": 1720372670.168885,
           "error": null,
           "children": [],
           "node_name": "create_prompt",
           "parent_id": "",
-          "id": "0a1cffbf-0fc4-4eea-8b5a-04d8a4e5f7c3",
+          "id": "0530cb49-0391-48f4-8a71-720ee7645b91",
           "function": "render_template_jinja2",
           "system_metrics": {}
         }
@@ -355,29 +361,32 @@
         "stderr": ""
       },
       "system_metrics": {
-        "duration": 0.003064
+        "duration": 0.006481
       },
       "result": "\nsystem:\n--------\nBitte schreibe den folgenden schwer verständlichen Text vollständig in Einfache Sprache, Sprachniveau B1 bis A2, um. \n\nBeachte dabei folgende Regeln für Einfache Sprache (B1 bis A2):\n\n- Achte immer sehr genau darauf, dass ALLE Informationen aus dem schwer verständlichen Text in dem Text in Leichter Sprache enthalten sind. Kürze niemals Informationen. Wo sinnvoll kannst du zusätzliche Beispiele hinzufügen, um den Text verständlicher zu machen und relevante Inhalte zu konkretisieren.\n- Schreibe kurze Sätze mit höchstens 12 Wörtern.\n- Beschränke dich auf eine Aussage, einen Gedanken pro Satz.\n- Verwende aktive Sprache anstelle von Passiv. \n- Formuliere grundsätzlich positiv und bejahend.\n- Strukturiere den Text übersichtlich mit kurzen Absätzen.\n- Verwende einfache, kurze, häufig gebräuchliche Wörter. \n- Wenn zwei Wörter dasselbe bedeuten, verwende das kürzere und einfachere Wort.\n- Vermeide Füllwörter und unnötige Wiederholungen.\n- Erkläre Fachbegriffe und Fremdwörter.\n- Schreibe immer einfach, direkt und klar. Vermeide komplizierte Konstruktionen und veraltete Begriffe. Vermeide «Behördendeutsch». \n- Benenne Gleiches immer gleich. Verwende für denselben Begriff, Gegenstand oder Sachverhalt immer dieselbe Bezeichnung. Wiederholungen von Begriffen sind in Texten in Einfacher Sprache normal.\n- Vermeide Substantivierungen. Verwende stattdessen Verben und Adjektive.\n- Vermeide Adjektive und Adverbien, wenn sie nicht unbedingt notwendig sind.\n- Wenn du vier oder mehr Wörter zusammensetzt, setzt du Bindestriche. Beispiel: «Motorfahrzeug-Ausweispflicht».\n- Achte auf die sprachliche Gleichbehandlung von Mann und Frau. Verwende immer beide Geschlechter oder schreibe geschlechtsneutral.\n- Vermeide Abkürzungen grundsätzlich. Schreibe stattdessen die Wörter aus. Z.B. «10 Millionen» statt «10 Mio.», «200 Kilometer pro Stunde» statt «200 km/h», «zum Beispiel» statt «z.B.», «30 Prozent» statt «30 %», «2 Meter» statt «2 m», «das heisst» statt «d.h.». \n- Vermeide das stumme «e» am Wortende, wenn es nicht unbedingt notwendig ist. Zum Beispiel: «des Fahrzeugs» statt «des Fahrzeuges».\n- Verwende immer französische Anführungszeichen (« ») anstelle von deutschen Anführungszeichen („ “).\n- Gliedere Telefonnummern mit vier Leerzeichen. Z.B. 044 123 45 67. Den alten Stil mit Schrägstrich (044/123 45 67) und die Vorwahl-Null in Klammern verwendest du NIE.\n- Formatiere Datumsangaben immer so: 1. Januar 2022, 15. Februar 2022.\n- Jahreszahlen schreibst du immer vierstellig aus: 2022, 2025-2030.\n- Formatiere Zeitangaben immer «Stunden Punkt Minuten Uhr». Verwende keinen Doppelpunkt, um Stunden von Minuten zu trennen. Ergänze immer .00 bei vollen Stunden. Beispiele: 9.25 Uhr (NICHT 9:30), 10.30 Uhr (NICHT 10:00), 14.00 Uhr (NICHT 14 Uhr), 15.45 Uhr, 18.00 Uhr, 20.15 Uhr, 22.30 Uhr.\n- Zahlen bis 12 schreibst du aus. Ab 13 verwendest du Ziffern.\n- Fristen, Geldbeträge und physikalische Grössen schreibst du immer in Ziffern.\n- Zahlen, die zusammengehören, schreibst du immer in Ziffern. Beispiel: 5-10, 20 oder 30.\n- Grosse Zahlen ab 5 Stellen gliederst du in Dreiergruppen mit Leerzeichen. Beispiel: 1 000 000.\n- Achtung: Identifikationszahlen übernimmst du 1:1. Beispiel: Stammnummer 123.456.789, AHV-Nummer 756.1234.5678.90, Konto 01-100101-9.\n- Verwende das Komma, dass das deutsche Dezimalzeichen ist. Überflüssige Nullen nach dem Komma schreibst du nicht. Beispiel: 5,5 Millionen, 3,75 Prozent, 1,5 Kilometer, 2,25 Stunden.\n- Vor Franken-Rappen-Beträgen schreibst du immer «CHF». Nur nach ganzen Franken-Beträgen darfst du «Franken» schreiben. Bei Franken- Rappen-Beträgen setzt du einen Punkt als Dezimalzeichen. Anstatt des Null-Rappen-Strichs verwendest du «.00» oder lässt die Dezimalstellen weg. Z.B. 20 Franken, CHF 20, CHF 2.00, CHF 12.50, aber CHF 45,2 Millionen, EUR 14,90.\n- Die Anrede mit «Sie» schreibst du immer gross. Beispiel: «Sie haben».\n\n--------\nuser:\nAls Vernehmlassungsverfahren wird diejenige Phase innerhalb des Vorverfahrens der Gesetzgebung bezeichnet, in der Vorhaben des Bundes von erheblicher politischer, finanzieller, wirtschaftlicher, ökologischer, sozialer oder kultureller Tragweite auf ihre sachliche Richtigkeit, Vollzugstauglichkeit und Akzeptanz hin geprüft werden.   Die Vorlage wird zu diesem Zweck den Kantonen, den in der Bundesversammlung vertretenen Parteien, den Dachverbänden der Gemeinden, Städte und der Berggebiete, den Dachverbänden der Wirtschaft sowie weiteren, im Einzelfall interessierten Kreisen unterbreitet.",
       "message_format": "basic"
     },
     {
       "node": "simplify_es",
-      "flow_run_id": "ccbf94c2-2235-4a44-a950-781674c3c30c",
-      "run_id": "ccbf94c2-2235-4a44-a950-781674c3c30c_simplify_es_0",
+      "flow_run_id": "2c69885a-9bb9-4ccd-9c8e-eb070238495e",
+      "run_id": "2c69885a-9bb9-4ccd-9c8e-eb070238495e_simplify_es_0",
       "status": "Completed",
       "inputs": {
-        "model": "gpt-4o",
+        "model": "gpt-3.5-turbo",
         "response_format": {
           "type": "text"
         },
-        "prepared_prompt": "\nsystem:\n--------\nBitte schreibe den folgenden schwer verständlichen Text vollständig in Einfache Sprache, Sprachniveau B1 bis A2, um. \n\nBeachte dabei folgende Regeln für Einfache Sprache (B1 bis A2):\n\n- Achte immer sehr genau darauf, dass ALLE Informationen aus dem schwer verständlichen Text in dem Text in Leichter Sprache enthalten sind. Kürze niemals Informationen. Wo sinnvoll kannst du zusätzliche Beispiele hinzufügen, um den Text verständlicher zu machen und relevante Inhalte zu konkretisieren.\n- Schreibe kurze Sätze mit höchstens 12 Wörtern.\n- Beschränke dich auf eine Aussage, einen Gedanken pro Satz.\n- Verwende aktive Sprache anstelle von Passiv. \n- Formuliere grundsätzlich positiv und bejahend.\n- Strukturiere den Text übersichtlich mit kurzen Absätzen.\n- Verwende einfache, kurze, häufig gebräuchliche Wörter. \n- Wenn zwei Wörter dasselbe bedeuten, verwende das kürzere und einfachere Wort.\n- Vermeide Füllwörter und unnötige Wiederholungen.\n- Erkläre Fachbegriffe und Fremdwörter.\n- Schreibe immer einfach, direkt und klar. Vermeide komplizierte Konstruktionen und veraltete Begriffe. Vermeide «Behördendeutsch». \n- Benenne Gleiches immer gleich. Verwende für denselben Begriff, Gegenstand oder Sachverhalt immer dieselbe Bezeichnung. Wiederholungen von Begriffen sind in Texten in Einfacher Sprache normal.\n- Vermeide Substantivierungen. Verwende stattdessen Verben und Adjektive.\n- Vermeide Adjektive und Adverbien, wenn sie nicht unbedingt notwendig sind.\n- Wenn du vier oder mehr Wörter zusammensetzt, setzt du Bindestriche. Beispiel: «Motorfahrzeug-Ausweispflicht».\n- Achte auf die sprachliche Gleichbehandlung von Mann und Frau. Verwende immer beide Geschlechter oder schreibe geschlechtsneutral.\n- Vermeide Abkürzungen grundsätzlich. Schreibe stattdessen die Wörter aus. Z.B. «10 Millionen» statt «10 Mio.», «200 Kilometer pro Stunde» statt «200 km/h», «zum Beispiel» statt «z.B.», «30 Prozent» statt «30 %», «2 Meter» statt «2 m», «das heisst» statt «d.h.». \n- Vermeide das stumme «e» am Wortende, wenn es nicht unbedingt notwendig ist. Zum Beispiel: «des Fahrzeugs» statt «des Fahrzeuges».\n- Verwende immer französische Anführungszeichen (« ») anstelle von deutschen Anführungszeichen („ “).\n- Gliedere Telefonnummern mit vier Leerzeichen. Z.B. 044 123 45 67. Den alten Stil mit Schrägstrich (044/123 45 67) und die Vorwahl-Null in Klammern verwendest du NIE.\n- Formatiere Datumsangaben immer so: 1. Januar 2022, 15. Februar 2022.\n- Jahreszahlen schreibst du immer vierstellig aus: 2022, 2025-2030.\n- Formatiere Zeitangaben immer «Stunden Punkt Minuten Uhr». Verwende keinen Doppelpunkt, um Stunden von Minuten zu trennen. Ergänze immer .00 bei vollen Stunden. Beispiele: 9.25 Uhr (NICHT 9:30), 10.30 Uhr (NICHT 10:00), 14.00 Uhr (NICHT 14 Uhr), 15.45 Uhr, 18.00 Uhr, 20.15 Uhr, 22.30 Uhr.\n- Zahlen bis 12 schreibst du aus. Ab 13 verwendest du Ziffern.\n- Fristen, Geldbeträge und physikalische Grössen schreibst du immer in Ziffern.\n- Zahlen, die zusammengehören, schreibst du immer in Ziffern. Beispiel: 5-10, 20 oder 30.\n- Grosse Zahlen ab 5 Stellen gliederst du in Dreiergruppen mit Leerzeichen. Beispiel: 1 000 000.\n- Achtung: Identifikationszahlen übernimmst du 1:1. Beispiel: Stammnummer 123.456.789, AHV-Nummer 756.1234.5678.90, Konto 01-100101-9.\n- Verwende das Komma, dass das deutsche Dezimalzeichen ist. Überflüssige Nullen nach dem Komma schreibst du nicht. Beispiel: 5,5 Millionen, 3,75 Prozent, 1,5 Kilometer, 2,25 Stunden.\n- Vor Franken-Rappen-Beträgen schreibst du immer «CHF». Nur nach ganzen Franken-Beträgen darfst du «Franken» schreiben. Bei Franken- Rappen-Beträgen setzt du einen Punkt als Dezimalzeichen. Anstatt des Null-Rappen-Strichs verwendest du «.00» oder lässt die Dezimalstellen weg. Z.B. 20 Franken, CHF 20, CHF 2.00, CHF 12.50, aber CHF 45,2 Millionen, EUR 14,90.\n- Die Anrede mit «Sie» schreibst du immer gross. Beispiel: «Sie haben».\n\n--------\nuser:\nAls Vernehmlassungsverfahren wird diejenige Phase innerhalb des Vorverfahrens der Gesetzgebung bezeichnet, in der Vorhaben des Bundes von erheblicher politischer, finanzieller, wirtschaftlicher, ökologischer, sozialer oder kultureller Tragweite auf ihre sachliche Richtigkeit, Vollzugstauglichkeit und Akzeptanz hin geprüft werden.   Die Vorlage wird zu diesem Zweck den Kantonen, den in der Bundesversammlung vertretenen Parteien, den Dachverbänden der Gemeinden, Städte und der Berggebiete, den Dachverbänden der Wirtschaft sowie weiteren, im Einzelfall interessierten Kreisen unterbreitet."
+        "prepared_prompt": "\nsystem:\n--------\nBitte schreibe den folgenden schwer verständlichen Text vollständig in Einfache Sprache, Sprachniveau B1 bis A2, um. \n\nBeachte dabei folgende Regeln für Einfache Sprache (B1 bis A2):\n\n- Achte immer sehr genau darauf, dass ALLE Informationen aus dem schwer verständlichen Text in dem Text in Leichter Sprache enthalten sind. Kürze niemals Informationen. Wo sinnvoll kannst du zusätzliche Beispiele hinzufügen, um den Text verständlicher zu machen und relevante Inhalte zu konkretisieren.\n- Schreibe kurze Sätze mit höchstens 12 Wörtern.\n- Beschränke dich auf eine Aussage, einen Gedanken pro Satz.\n- Verwende aktive Sprache anstelle von Passiv. \n- Formuliere grundsätzlich positiv und bejahend.\n- Strukturiere den Text übersichtlich mit kurzen Absätzen.\n- Verwende einfache, kurze, häufig gebräuchliche Wörter. \n- Wenn zwei Wörter dasselbe bedeuten, verwende das kürzere und einfachere Wort.\n- Vermeide Füllwörter und unnötige Wiederholungen.\n- Erkläre Fachbegriffe und Fremdwörter.\n- Schreibe immer einfach, direkt und klar. Vermeide komplizierte Konstruktionen und veraltete Begriffe. Vermeide «Behördendeutsch». \n- Benenne Gleiches immer gleich. Verwende für denselben Begriff, Gegenstand oder Sachverhalt immer dieselbe Bezeichnung. Wiederholungen von Begriffen sind in Texten in Einfacher Sprache normal.\n- Vermeide Substantivierungen. Verwende stattdessen Verben und Adjektive.\n- Vermeide Adjektive und Adverbien, wenn sie nicht unbedingt notwendig sind.\n- Wenn du vier oder mehr Wörter zusammensetzt, setzt du Bindestriche. Beispiel: «Motorfahrzeug-Ausweispflicht».\n- Achte auf die sprachliche Gleichbehandlung von Mann und Frau. Verwende immer beide Geschlechter oder schreibe geschlechtsneutral.\n- Vermeide Abkürzungen grundsätzlich. Schreibe stattdessen die Wörter aus. Z.B. «10 Millionen» statt «10 Mio.», «200 Kilometer pro Stunde» statt «200 km/h», «zum Beispiel» statt «z.B.», «30 Prozent» statt «30 %», «2 Meter» statt «2 m», «das heisst» statt «d.h.». \n- Vermeide das stumme «e» am Wortende, wenn es nicht unbedingt notwendig ist. Zum Beispiel: «des Fahrzeugs» statt «des Fahrzeuges».\n- Verwende immer französische Anführungszeichen (« ») anstelle von deutschen Anführungszeichen („ “).\n- Gliedere Telefonnummern mit vier Leerzeichen. Z.B. 044 123 45 67. Den alten Stil mit Schrägstrich (044/123 45 67) und die Vorwahl-Null in Klammern verwendest du NIE.\n- Formatiere Datumsangaben immer so: 1. Januar 2022, 15. Februar 2022.\n- Jahreszahlen schreibst du immer vierstellig aus: 2022, 2025-2030.\n- Formatiere Zeitangaben immer «Stunden Punkt Minuten Uhr». Verwende keinen Doppelpunkt, um Stunden von Minuten zu trennen. Ergänze immer .00 bei vollen Stunden. Beispiele: 9.25 Uhr (NICHT 9:30), 10.30 Uhr (NICHT 10:00), 14.00 Uhr (NICHT 14 Uhr), 15.45 Uhr, 18.00 Uhr, 20.15 Uhr, 22.30 Uhr.\n- Zahlen bis 12 schreibst du aus. Ab 13 verwendest du Ziffern.\n- Fristen, Geldbeträge und physikalische Grössen schreibst du immer in Ziffern.\n- Zahlen, die zusammengehören, schreibst du immer in Ziffern. Beispiel: 5-10, 20 oder 30.\n- Grosse Zahlen ab 5 Stellen gliederst du in Dreiergruppen mit Leerzeichen. Beispiel: 1 000 000.\n- Achtung: Identifikationszahlen übernimmst du 1:1. Beispiel: Stammnummer 123.456.789, AHV-Nummer 756.1234.5678.90, Konto 01-100101-9.\n- Verwende das Komma, dass das deutsche Dezimalzeichen ist. Überflüssige Nullen nach dem Komma schreibst du nicht. Beispiel: 5,5 Millionen, 3,75 Prozent, 1,5 Kilometer, 2,25 Stunden.\n- Vor Franken-Rappen-Beträgen schreibst du immer «CHF». Nur nach ganzen Franken-Beträgen darfst du «Franken» schreiben. Bei Franken- Rappen-Beträgen setzt du einen Punkt als Dezimalzeichen. Anstatt des Null-Rappen-Strichs verwendest du «.00» oder lässt die Dezimalstellen weg. Z.B. 20 Franken, CHF 20, CHF 2.00, CHF 12.50, aber CHF 45,2 Millionen, EUR 14,90.\n- Die Anrede mit «Sie» schreibst du immer gross. Beispiel: «Sie haben».\n\n--------\nuser:\nAls Vernehmlassungsverfahren wird diejenige Phase innerhalb des Vorverfahrens der Gesetzgebung bezeichnet, in der Vorhaben des Bundes von erheblicher politischer, finanzieller, wirtschaftlicher, ökologischer, sozialer oder kultureller Tragweite auf ihre sachliche Richtigkeit, Vollzugstauglichkeit und Akzeptanz hin geprüft werden.   Die Vorlage wird zu diesem Zweck den Kantonen, den in der Bundesversammlung vertretenen Parteien, den Dachverbänden der Gemeinden, Städte und der Berggebiete, den Dachverbänden der Wirtschaft sowie weiteren, im Einzelfall interessierten Kreisen unterbreitet.",
+        "_inputs_to_escape": [
+          "model"
+        ]
       },
-      "output": "Ein Vernehmlassungsverfahren gehört zum Vorverfahren der Gesetzgebung.\n\nIn dieser Phase prüft der Bund Gesetze. \n\nDer Bund prüft, wie wichtig das Gesetz für Politik, Finanzen, Wirtschaft, Umwelt, Menschen und Kultur ist.\n\nDer Bund fragt auch, ob das Gesetz gut und richtig ist.\n\nDer Bund schickt den Gesetzesvorschlag an die Kantone.\n\nAuch einige Parteien im Parlament bekommen den Vorschlag.\n\nDie Verbände der Gemeinden, Städte und Berggebiete bekommen den Vorschlag ebenfalls.\n\nWirtschaftsverbände und andere Interessierte können den Vorschlag auch bekommen.",
+      "output": "Im Vernehmlassungsverfahren werden wichtige Vorhaben des Bundes von verschiedenen Gruppen überprüft. Dazu gehören die Kantone, Parteien, Gemeinde- und Wirtschaftsverbände. Es wird geprüft, ob die Vorhaben inhaltlich korrekt, umsetzbar und akzeptabel sind.",
       "metrics": null,
       "error": null,
-      "parent_run_id": "ccbf94c2-2235-4a44-a950-781674c3c30c_0",
-      "start_time": "2024-07-03T21:19:56.180134Z",
-      "end_time": "2024-07-03T21:19:58.490839Z",
+      "parent_run_id": "2c69885a-9bb9-4ccd-9c8e-eb070238495e_0",
+      "start_time": "2024-07-07T17:17:50.182469Z",
+      "end_time": "2024-07-07T17:17:51.604794Z",
       "index": 0,
       "api_calls": [
         {
@@ -385,23 +394,26 @@
           "type": "Function",
           "inputs": {
             "prompt": "{{prepared_prompt}}\n",
-            "model": "gpt-4o",
+            "model": "gpt-3.5-turbo",
             "response_format": {
               "type": "text"
             },
             "prepared_prompt": "\nsystem:\n--------\nBitte schreibe den folgenden schwer verständlichen Text vollständig in Einfache Sprache, Sprachniveau B1 bis A2, um. \n\nBeachte dabei folgende Regeln für Einfache Sprache (B1 bis A2):\n\n- Achte immer sehr genau darauf, dass ALLE Informationen aus dem schwer verständlichen Text in dem Text in Leichter Sprache enthalten sind. Kürze niemals Informationen. Wo sinnvoll kannst du zusätzliche Beispiele hinzufügen, um den Text verständlicher zu machen und relevante Inhalte zu konkretisieren.\n- Schreibe kurze Sätze mit höchstens 12 Wörtern.\n- Beschränke dich auf eine Aussage, einen Gedanken pro Satz.\n- Verwende aktive Sprache anstelle von Passiv. \n- Formuliere grundsätzlich positiv und bejahend.\n- Strukturiere den Text übersichtlich mit kurzen Absätzen.\n- Verwende einfache, kurze, häufig gebräuchliche Wörter. \n- Wenn zwei Wörter dasselbe bedeuten, verwende das kürzere und einfachere Wort.\n- Vermeide Füllwörter und unnötige Wiederholungen.\n- Erkläre Fachbegriffe und Fremdwörter.\n- Schreibe immer einfach, direkt und klar. Vermeide komplizierte Konstruktionen und veraltete Begriffe. Vermeide «Behördendeutsch». \n- Benenne Gleiches immer gleich. Verwende für denselben Begriff, Gegenstand oder Sachverhalt immer dieselbe Bezeichnung. Wiederholungen von Begriffen sind in Texten in Einfacher Sprache normal.\n- Vermeide Substantivierungen. Verwende stattdessen Verben und Adjektive.\n- Vermeide Adjektive und Adverbien, wenn sie nicht unbedingt notwendig sind.\n- Wenn du vier oder mehr Wörter zusammensetzt, setzt du Bindestriche. Beispiel: «Motorfahrzeug-Ausweispflicht».\n- Achte auf die sprachliche Gleichbehandlung von Mann und Frau. Verwende immer beide Geschlechter oder schreibe geschlechtsneutral.\n- Vermeide Abkürzungen grundsätzlich. Schreibe stattdessen die Wörter aus. Z.B. «10 Millionen» statt «10 Mio.», «200 Kilometer pro Stunde» statt «200 km/h», «zum Beispiel» statt «z.B.», «30 Prozent» statt «30 %», «2 Meter» statt «2 m», «das heisst» statt «d.h.». \n- Vermeide das stumme «e» am Wortende, wenn es nicht unbedingt notwendig ist. Zum Beispiel: «des Fahrzeugs» statt «des Fahrzeuges».\n- Verwende immer französische Anführungszeichen (« ») anstelle von deutschen Anführungszeichen („ “).\n- Gliedere Telefonnummern mit vier Leerzeichen. Z.B. 044 123 45 67. Den alten Stil mit Schrägstrich (044/123 45 67) und die Vorwahl-Null in Klammern verwendest du NIE.\n- Formatiere Datumsangaben immer so: 1. Januar 2022, 15. Februar 2022.\n- Jahreszahlen schreibst du immer vierstellig aus: 2022, 2025-2030.\n- Formatiere Zeitangaben immer «Stunden Punkt Minuten Uhr». Verwende keinen Doppelpunkt, um Stunden von Minuten zu trennen. Ergänze immer .00 bei vollen Stunden. Beispiele: 9.25 Uhr (NICHT 9:30), 10.30 Uhr (NICHT 10:00), 14.00 Uhr (NICHT 14 Uhr), 15.45 Uhr, 18.00 Uhr, 20.15 Uhr, 22.30 Uhr.\n- Zahlen bis 12 schreibst du aus. Ab 13 verwendest du Ziffern.\n- Fristen, Geldbeträge und physikalische Grössen schreibst du immer in Ziffern.\n- Zahlen, die zusammengehören, schreibst du immer in Ziffern. Beispiel: 5-10, 20 oder 30.\n- Grosse Zahlen ab 5 Stellen gliederst du in Dreiergruppen mit Leerzeichen. Beispiel: 1 000 000.\n- Achtung: Identifikationszahlen übernimmst du 1:1. Beispiel: Stammnummer 123.456.789, AHV-Nummer 756.1234.5678.90, Konto 01-100101-9.\n- Verwende das Komma, dass das deutsche Dezimalzeichen ist. Überflüssige Nullen nach dem Komma schreibst du nicht. Beispiel: 5,5 Millionen, 3,75 Prozent, 1,5 Kilometer, 2,25 Stunden.\n- Vor Franken-Rappen-Beträgen schreibst du immer «CHF». Nur nach ganzen Franken-Beträgen darfst du «Franken» schreiben. Bei Franken- Rappen-Beträgen setzt du einen Punkt als Dezimalzeichen. Anstatt des Null-Rappen-Strichs verwendest du «.00» oder lässt die Dezimalstellen weg. Z.B. 20 Franken, CHF 20, CHF 2.00, CHF 12.50, aber CHF 45,2 Millionen, EUR 14,90.\n- Die Anrede mit «Sie» schreibst du immer gross. Beispiel: «Sie haben».\n\n--------\nuser:\nAls Vernehmlassungsverfahren wird diejenige Phase innerhalb des Vorverfahrens der Gesetzgebung bezeichnet, in der Vorhaben des Bundes von erheblicher politischer, finanzieller, wirtschaftlicher, ökologischer, sozialer oder kultureller Tragweite auf ihre sachliche Richtigkeit, Vollzugstauglichkeit und Akzeptanz hin geprüft werden.   Die Vorlage wird zu diesem Zweck den Kantonen, den in der Bundesversammlung vertretenen Parteien, den Dachverbänden der Gemeinden, Städte und der Berggebiete, den Dachverbänden der Wirtschaft sowie weiteren, im Einzelfall interessierten Kreisen unterbreitet.",
+            "_inputs_to_escape": [
+              "model"
+            ],
             "stream": false
           },
-          "output": "Ein Vernehmlassungsverfahren gehört zum Vorverfahren der Gesetzgebung.\n\nIn dieser Phase prüft der Bund Gesetze. \n\nDer Bund prüft, wie wichtig das Gesetz für Politik, Finanzen, Wirtschaft, Umwelt, Menschen und Kultur ist.\n\nDer Bund fragt auch, ob das Gesetz gut und richtig ist.\n\nDer Bund schickt den Gesetzesvorschlag an die Kantone.\n\nAuch einige Parteien im Parlament bekommen den Vorschlag.\n\nDie Verbände der Gemeinden, Städte und Berggebiete bekommen den Vorschlag ebenfalls.\n\nWirtschaftsverbände und andere Interessierte können den Vorschlag auch bekommen.",
-          "start_time": 1720041596.180359,
-          "end_time": 1720041598.489054,
+          "output": "Im Vernehmlassungsverfahren werden wichtige Vorhaben des Bundes von verschiedenen Gruppen überprüft. Dazu gehören die Kantone, Parteien, Gemeinde- und Wirtschaftsverbände. Es wird geprüft, ob die Vorhaben inhaltlich korrekt, umsetzbar und akzeptabel sind.",
+          "start_time": 1720372670.182719,
+          "end_time": 1720372671.601508,
           "error": null,
           "children": [
             {
               "name": "openai_chat",
               "type": "LLM",
               "inputs": {
-                "model": "gpt-4o",
+                "model": "gpt-3.5-turbo",
                 "messages": [
                   {
                     "role": "system",
@@ -425,53 +437,54 @@
                 }
               },
               "output": {
-                "id": "chatcmpl-9h1gKAeQzvqByQdRfyTzg95MrbcEk",
+                "id": "chatcmpl-9iPoE8uofipZpGMaGY7Csbh5uZlXU",
                 "choices": [
                   {
                     "finish_reason": "stop",
                     "index": 0,
                     "logprobs": null,
                     "message": {
-                      "content": "Ein Vernehmlassungsverfahren gehört zum Vorverfahren der Gesetzgebung.\n\nIn dieser Phase prüft der Bund Gesetze. \n\nDer Bund prüft, wie wichtig das Gesetz für Politik, Finanzen, Wirtschaft, Umwelt, Menschen und Kultur ist.\n\nDer Bund fragt auch, ob das Gesetz gut und richtig ist.\n\nDer Bund schickt den Gesetzesvorschlag an die Kantone.\n\nAuch einige Parteien im Parlament bekommen den Vorschlag.\n\nDie Verbände der Gemeinden, Städte und Berggebiete bekommen den Vorschlag ebenfalls.\n\nWirtschaftsverbände und andere Interessierte können den Vorschlag auch bekommen.",
+                      "content": "Im Vernehmlassungsverfahren werden wichtige Vorhaben des Bundes von verschiedenen Gruppen überprüft. Dazu gehören die Kantone, Parteien, Gemeinde- und Wirtschaftsverbände. Es wird geprüft, ob die Vorhaben inhaltlich korrekt, umsetzbar und akzeptabel sind.",
                       "role": "assistant",
                       "function_call": null,
                       "tool_calls": null
                     }
                   }
                 ],
-                "created": 1720041596,
-                "model": "gpt-4o-2024-05-13",
+                "created": 1720372670,
+                "model": "gpt-3.5-turbo-0125",
                 "object": "chat.completion",
-                "system_fingerprint": "fp_d576307f90",
+                "service_tier": null,
+                "system_fingerprint": null,
                 "usage": {
-                  "completion_tokens": 121,
-                  "prompt_tokens": 1244,
-                  "total_tokens": 1365
+                  "completion_tokens": 74,
+                  "prompt_tokens": 1463,
+                  "total_tokens": 1537
                 }
               },
-              "start_time": 1720041596.183256,
-              "end_time": 1720041598.488771,
+              "start_time": 1720372670.192083,
+              "end_time": 1720372671.601094,
               "error": null,
               "children": [],
               "node_name": null,
-              "parent_id": "29aab2bd-6352-4f42-b3cc-4a41e61e9855",
-              "id": "69f8dbd9-7ccf-4274-8273-b3d8b16333d9",
+              "parent_id": "98df2191-cc18-4732-9bbe-fba3a53ad874",
+              "id": "4c4ef965-78e2-47b9-a10f-4d039fe754eb",
               "function": "openai.resources.chat.completions.Completions.create",
               "system_metrics": {
-                "completion_tokens": 121,
-                "prompt_tokens": 1244,
-                "total_tokens": 1365
+                "completion_tokens": 74,
+                "prompt_tokens": 1463,
+                "total_tokens": 1537
               }
             }
           ],
           "node_name": "simplify_es",
           "parent_id": "",
-          "id": "29aab2bd-6352-4f42-b3cc-4a41e61e9855",
+          "id": "98df2191-cc18-4732-9bbe-fba3a53ad874",
           "function": "OpenAI.chat",
           "system_metrics": {
-            "completion_tokens": 121,
-            "prompt_tokens": 1244,
-            "total_tokens": 1365
+            "completion_tokens": 74,
+            "prompt_tokens": 1463,
+            "total_tokens": 1537
           }
         }
       ],
@@ -482,12 +495,12 @@
         "stderr": ""
       },
       "system_metrics": {
-        "completion_tokens": 121,
-        "prompt_tokens": 1244,
-        "total_tokens": 1365,
-        "duration": 2.310705
+        "completion_tokens": 74,
+        "prompt_tokens": 1463,
+        "total_tokens": 1537,
+        "duration": 1.422325
       },
-      "result": "Ein Vernehmlassungsverfahren gehört zum Vorverfahren der Gesetzgebung.\n\nIn dieser Phase prüft der Bund Gesetze. \n\nDer Bund prüft, wie wichtig das Gesetz für Politik, Finanzen, Wirtschaft, Umwelt, Menschen und Kultur ist.\n\nDer Bund fragt auch, ob das Gesetz gut und richtig ist.\n\nDer Bund schickt den Gesetzesvorschlag an die Kantone.\n\nAuch einige Parteien im Parlament bekommen den Vorschlag.\n\nDie Verbände der Gemeinden, Städte und Berggebiete bekommen den Vorschlag ebenfalls.\n\nWirtschaftsverbände und andere Interessierte können den Vorschlag auch bekommen.",
+      "result": "Im Vernehmlassungsverfahren werden wichtige Vorhaben des Bundes von verschiedenen Gruppen überprüft. Dazu gehören die Kantone, Parteien, Gemeinde- und Wirtschaftsverbände. Es wird geprüft, ob die Vorhaben inhaltlich korrekt, umsetzbar und akzeptabel sind.",
       "message_format": "basic"
     }
   ]
