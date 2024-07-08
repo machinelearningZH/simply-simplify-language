@@ -1,8 +1,6 @@
 # Helper function to prepare configs for different flow configurations
 import json, os, re
 from promptflow.client import PFClient
-
-from IPython.display import JSON, Markdown
 import pandas as pd
 
 # Set the maximum column width to a higher value, e.g., None for no truncation
@@ -39,8 +37,9 @@ def execute_run(pf: PFClient, cfg: dict):
         flow=cfg["flow_path"],
         data=cfg["data_path"],
         column_mapping=cfg["column_mapping"],
-        environment_variables={"PF_LOGGING_LEVEL": "ERROR"},
+        environment_variables={"PF_LOGGING_LEVEL": "CRITICAL"},
         variant=cfg.get("variant", None),
+        stream=False
     )
 
     duration = run_result.properties["system_metrics"]["duration"]
@@ -64,9 +63,7 @@ def execute_run(pf: PFClient, cfg: dict):
     return result
 
 
-def execute_eval_run(
-    pf: PFClient, cfg, run_result, eval_flow_path="../eval-simplify"
-):
+def execute_eval_run(pf: PFClient, cfg, run_result, eval_flow_path="../eval-simplify", prompt_token_cost=0.005, completion_token_cost=0.015):
     eval_run_name = f"eval_{cfg['run_name']}"
 
     try:
@@ -80,16 +77,19 @@ def execute_eval_run(
         flow=eval_flow_path,
         data=cfg["data_path"],  # path to the data file
         run=run_result["run"],  # specify base_run as the run you want to evaluate
+        environment_variables={"PF_LOGGING_LEVEL": "CRITICAL"},
         column_mapping={
             "model": cfg["model"],
             "original_text": "${run.inputs.original_text}",
             "simplified_text": "${run.outputs.simplified_text}",
             "prompt": "${run.outputs.prompt}",
-        },  # map the url field from the data to the url input of the flow
-        stream=True,
+            "prompt_1k_token_cost": prompt_token_cost,
+            "completion_1k_token_cost": completion_token_cost,
+        },  
+        stream=False,
     )
-    
-    details = pf.runs.get_details(eval_run_result)
+
+    details = pf.runs.get_details(eval_run_result, all_results=True)
     metrics = pf.runs.get_metrics(eval_run_result)
 
     result = {
@@ -101,49 +101,7 @@ def execute_eval_run(
     return result
 
 
-def result_markdown(result):
-    return Markdown(
-        f"""##### Results for __\"{result['run_name']}\"__
-- __Model__: {result['model']}
-- __Variant__: {result['variant']}
-- __Duration__: {result['duration']} seconds
-- __Prompt tokens__: {result['prompt_tokens']}
-- __Completion tokens__: {result['completion_tokens']}
-- __Metrics__: {json.dumps(result['metrics'], indent=2)}"""
-    )
 
 
-def compare_simplified(results_list):
-    # Initialize an empty DataFrame for the combined results
-    combined_df = pd.DataFrame()
 
-    # Loop through each result in the results_list
-    for idx, result in enumerate(results_list, start=1):
-        # Extract the DataFrame from the result
-        df = result["details"]
 
-        # Ensure both required columns are present
-        if (
-            "inputs.original_text" in df.columns
-            and "outputs.simplified_text" in df.columns
-        ):
-            # Select the required columns
-            temp_df = df[["inputs.original_text", "outputs.simplified_text"]].copy()
-
-            # Rename 'outputs.simplified_text' to indicate the source/result
-            temp_df.rename(
-                columns={"outputs.simplified_text": f'{result["run_name"]}'},
-                inplace=True,
-            )
-
-            # If it's the first result, initialize combined_df with temp_df
-            if combined_df.empty:
-                combined_df = temp_df
-            else:
-                # Merge on 'inputs.original_text' to align simplified texts with their original texts
-                combined_df = pd.merge(
-                    combined_df, temp_df, on="inputs.original_text", how="outer"
-                )
-
-    # Display the combined DataFrame
-    return combined_df

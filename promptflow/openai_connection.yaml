@@ -6,6 +6,8 @@
 # Reference environment variable (e.g. provide key via env var): 
 #   pf connection create --file ./openai_connection.yaml --set api_key=$OPENAI_API_KEY
 # 
+# Alternativly, the connection can be created within the Python notebook (see there for details).
+#
 # see: https://microsoft.github.io/promptflow/reference/pf-command-reference.html#pf-connection-create
 #
 $schema: https://azuremlschemas.azureedge.net/promptflow/latest/OpenAIConnection.schema.json

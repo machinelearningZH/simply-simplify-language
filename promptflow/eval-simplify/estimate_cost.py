@@ -4,54 +4,73 @@ import numpy as np
 
 import tiktoken
 
-## Cost per 1000 INPUT token per model, in US-$
-## see: https://openai.com/api/pricing/
-input_token_price_1k = {}
-input_token_price_1k["gpt-4-turbo"] = 0.01
-input_token_price_1k["gpt-4"] = 0.03
-input_token_price_1k["gpt-4-32k"] = 0.06
-input_token_price_1k["gpt-4o"] = 0.005
-input_token_price_1k["gpt-3.5-turbo"] = 0.0005
+# ## Cost per 1000 INPUT token per model, in US-$
+# ## see: https://openai.com/api/pricing/
+# input_token_price_1k = {}
+# input_token_price_1k["gpt-4-turbo"] = 0.01
+# input_token_price_1k["gpt-4"] = 0.03
+# input_token_price_1k["gpt-4-32k"] = 0.06
+# input_token_price_1k["gpt-4o"] = 0.005
+# input_token_price_1k["gpt-3.5-turbo"] = 0.0005
 
 
-## Cost per 1000 OUTPUT token per model, in US-$
-## see: https://openai.com/api/pricing/
-output_token_price_1k = {}
-output_token_price_1k["gpt-4-turbo"] = 0.03
-output_token_price_1k["gpt-4"] = 0.06
-output_token_price_1k["gpt-4-32k"] = 0.12
-output_token_price_1k["gpt-4o"] = 0.015
-output_token_price_1k["gpt-3.5-turbo"] = 0.0015
+# ## Cost per 1000 OUTPUT token per model, in US-$
+# ## see: https://openai.com/api/pricing/
+# output_token_price_1k = {}
+# output_token_price_1k["gpt-4-turbo"] = 0.03
+# output_token_price_1k["gpt-4"] = 0.06
+# output_token_price_1k["gpt-4-32k"] = 0.12
+# output_token_price_1k["gpt-4o"] = 0.015
+# output_token_price_1k["gpt-3.5-turbo"] = 0.0015
 
 
 def count_tokens(model: str, text: str) -> int:
-    ## TODO use tiktoken
+    ## Use tiktoken for models
     count = len(tiktoken.encoding_for_model(model).encode(text))
     return count
 
 
 @tool
 def estimate_cost(
-    original: str,
-    simplified: str,
     model: str,
+    original_text: str,
+    simplified_text: str,
     prompt_used: str,
-    score_original: float,
-    score_simplified: float,
-) -> str:
-    estimated_cost = 0
-    value_for_money = 0
+    prompt_1k_token_cost: float,
+    completion_1k_token_cost: float,
+    score_improvement: float,
+    level_improvement: int,
+) -> dict:
 
-    input_tokens_used = count_tokens(model, prompt_used) + count_tokens(model, original)
-    output_tokens_used = count_tokens(model, simplified)
+    # num token of original text
+    original_token = count_tokens(model, original_text)
 
-    estimated_cost = (input_tokens_used / 1000.0) * input_token_price_1k[model] + (
-        output_tokens_used / 1000.0
-    ) * output_token_price_1k[model]
+    # num token of simplified text
+    simplified_token = count_tokens(model, simplified_text)
 
-    ## TODO adjust the formula to your needs.
-    score_improvement = score_simplified - score_original
-    # score_improvement_adjusted = np.sign(score_improvement) * logistic(abs(score_improvement), 10, 0.5, 20)
-    value_for_money = score_improvement / estimated_cost if estimated_cost != 0 else 0
+    # num token of full prompt (contains the original text)
+    prompt_token = count_tokens(model, prompt_used)
 
-    return {"cost": estimated_cost, "value": value_for_money}
+    # total number of tokens (must be <= max. context sitze of the model)
+    total_token = prompt_token + simplified_token
+
+    # Only the prompt template, without the actual original text
+    instructions_token = prompt_token - original_token
+
+    instructions_cost = (instructions_token / 1000.0) * prompt_1k_token_cost
+    prompt_cost = (prompt_token / 1000.0) * prompt_1k_token_cost
+    completion_cost = (simplified_token / 1000.0) * completion_1k_token_cost
+
+    total_cost = prompt_cost + completion_cost
+
+    score_improvement_ratio = round((score_improvement / 20.0) / (total_cost * 1000))
+    level_improvement_ratio = round((level_improvement / 7.0) / (total_cost * 1000))
+
+    return {
+        "instructions_cost": instructions_cost,
+        "prompt_cost": prompt_cost,
+        "completion_cost": completion_cost,
+        "total_cost": total_cost,
+        "score_improvement_ratio": score_improvement_ratio,
+        "level_improvement_ratio": level_improvement_ratio,
+    }

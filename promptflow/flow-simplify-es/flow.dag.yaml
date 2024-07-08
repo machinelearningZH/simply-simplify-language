@@ -32,6 +32,9 @@ nodes:
     response_format:
       type: text
     prepared_prompt: ${create_prompt.output}
+    temperature: 0.5
+    top_p: 1
+    max_tokens: 4096
   connection: openai_connection
   api: chat
 - name: rules

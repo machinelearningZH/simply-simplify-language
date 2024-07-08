@@ -1,4 +1,3 @@
-
 from promptflow.core import tool
 import pandas as pd
 import numpy as np
@@ -7,6 +6,10 @@ from spacy.language import Language
 import textdescriptives as td
 
 import re
+
+#
+# Logic copied from the original app to calculate the so-calles ZIX Score
+#
 
 
 def get_word_scores():
@@ -126,9 +129,6 @@ def calculate_understandability(data):
     return score
 
 
-
-
-
 def get_understandability(text):
     """Get understandability score from text."""
     # Replace newlines with punctuation, so that paragraphs
@@ -139,10 +139,16 @@ def get_understandability(text):
     return calculate_understandability(features)
 
 
-
 nlp = get_nlp_pipeline()
 
+
 @tool
-def calculate_score(text: str) -> float:
-    score = get_understandability(text)
-    return float(score)
+def calculate_readability(original_text: str, simplified_text: str) -> dict:
+    score_original = get_understandability(original_text)
+    score_simplified = get_understandability(simplified_text)
+
+    return {
+        "original_score": score_original,
+        "simplified_score": score_simplified,
+        "score_improvement": score_simplified - score_original,
+    }

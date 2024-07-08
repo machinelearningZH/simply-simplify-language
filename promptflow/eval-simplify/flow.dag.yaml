@@ -4,85 +4,88 @@ environment:
 inputs:
   original_text:
     type: string
-    default: Original text
+    default: Originaler text mit vielen komplexen Fachausdrücken.
   simplified_text:
     type: string
-    default: Simplified text
+    default: Einfacher text.
   model:
     type: string
     default: gpt-4o
   prompt:
     type: string
     default: The prompt used to generate the simplified text
+  prompt_1k_token_cost:
+    type: double
+    default: 0.005
+  completion_1k_token_cost:
+    type: double
+    default: 0.015
 outputs:
-  zix_score_original:
+  original_score:
     type: string
-    reference: ${score_original.output}
-  zix_score_simplified:
+    reference: ${calculate_scores.output.original_score}
+  simplified_score:
     type: string
-    reference: ${score_simplified.output}
-  level_original:
+    reference: ${calculate_scores.output.simplified_score}
+  original_level:
     type: string
-    reference: ${level_original.output}
-  level_simplified:
+    reference: ${calculate_levels.output.original_level}
+  simplified_level:
     type: string
-    reference: ${level_simplified.output}
-  estimated_cost:
+    reference: ${calculate_levels.output.simplified_level}
+  score_improvement:
     type: string
-    reference: ${estimate_cost.output.cost}
-  value_for_money:
+    reference: ${calculate_scores.output.score_improvement}
+  level_improvement:
     type: string
-    reference: ${estimate_cost.output.value}
+    reference: ${calculate_levels.output.level_improvement}
+  total_cost:
+    type: string
+    reference: ${estimate_cost.output.total_cost}
 nodes:
-- name: aggregate_scores
+- name: calculate_scores
   type: python
   source:
     type: code
-    path: aggregate.py
+    path: calculate_readability.py
   inputs:
-    scores_original: ${score_original.output}
-    scores_simplified: ${score_simplified.output}
-    estimated_cost: ${estimate_cost.output.cost}
-    value_for_money: ${estimate_cost.output.value}
-  aggregation: true
-- name: score_simplified
-  type: python
-  source:
-    type: code
-    path: calculate_score.py
-  inputs:
-    text: ${inputs.simplified_text}
-- name: level_original
+    original_text: ${inputs.original_text}
+    simplified_text: ${inputs.simplified_text}
+- name: calculate_levels
   type: python
   source:
     type: code
     path: cefr_level.py
   inputs:
-    score: ${score_original.output}
-  aggregation: false
-- name: score_original
-  type: python
-  source:
-    type: code
-    path: calculate_score.py
-  inputs:
-    text: ${inputs.original_text}
-- name: level_simplified
-  type: python
-  source:
-    type: code
-    path: cefr_level.py
-  inputs:
-    score: ${score_simplified.output}
+    original_score: ${calculate_scores.output.original_score}
+    simplified_score: ${calculate_scores.output.simplified_score}
 - name: estimate_cost
   type: python
   source:
     type: code
     path: estimate_cost.py
   inputs:
-    original: ${inputs.original_text}
-    simplified: ${inputs.simplified_text}
     model: ${inputs.model}
+    original_text: ${inputs.original_text}
+    simplified_text: ${inputs.simplified_text}
     prompt_used: ${inputs.prompt}
-    score_original: ${score_original.output}
-    score_simplified: ${score_simplified.output}
+    prompt_1k_token_cost: ${inputs.prompt_1k_token_cost}
+    completion_1k_token_cost: ${inputs.completion_1k_token_cost}
+    score_improvement: ${calculate_scores.output.score_improvement}
+    level_improvement: ${calculate_levels.output.level_improvement}
+- name: aggregate_metrics
+  type: python
+  source:
+    type: code
+    path: aggregate.py
+  inputs:
+    original_scores: ${calculate_scores.output.original_score}
+    simplified_scores: ${calculate_scores.output.simplified_score}
+    scores_improvements: ${calculate_scores.output.score_improvement}
+    original_levels: ${calculate_levels.output.original_level}
+    simplified_levels: ${calculate_levels.output.simplified_level}
+    levels_improvements: ${calculate_levels.output.level_improvement}
+    total_costs: ${estimate_cost.output.total_cost}
+    score_improvement_ratios: ${estimate_cost.output.score_improvement_ratio}
+    level_improvement_ratios: ${estimate_cost.output.level_improvement_ratio}
+  aggregation: true

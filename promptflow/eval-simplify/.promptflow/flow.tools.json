@@ -22,70 +22,86 @@
     "aggregate.py": {
       "type": "python",
       "inputs": {
-        "scores_original": {
+        "original_scores": {
           "type": [
             "object"
           ]
         },
-        "scores_simplified": {
+        "simplified_scores": {
           "type": [
             "object"
           ]
         },
-        "estimated_cost": {
+        "scores_improvements": {
           "type": [
             "object"
           ]
         },
-        "value_for_money": {
+        "original_levels": {
+          "type": [
+            "object"
+          ]
+        },
+        "simplified_levels": {
+          "type": [
+            "object"
+          ]
+        },
+        "levels_improvements": {
+          "type": [
+            "object"
+          ]
+        },
+        "total_costs": {
+          "type": [
+            "object"
+          ]
+        },
+        "score_improvement_ratios": {
+          "type": [
+            "object"
+          ]
+        },
+        "level_improvement_ratios": {
           "type": [
             "object"
           ]
         }
       },
-      "description": "This tool aggregates the processed result of all lines and calculate the accuracy. Then log metric for the accuracy.\n\n:param scores: List of the output of a readability scorer node.",
       "source": "aggregate.py",
       "function": "aggregate"
-    },
-    "calculate_score.py": {
-      "type": "python",
-      "inputs": {
-        "text": {
-          "type": [
-            "string"
-          ]
-        }
-      },
-      "source": "calculate_score.py",
-      "function": "calculate_score"
     },
     "cefr_level.py": {
       "type": "python",
       "inputs": {
-        "score": {
+        "original_score": {
+          "type": [
+            "double"
+          ]
+        },
+        "simplified_score": {
           "type": [
             "double"
           ]
         }
       },
-      "description": "Get CEFR level from understandability score.\n\nWe calculated these ranges by scoring various text samples where we had an approximate idea of their CEFR level. \nAgain these ranges are not perfect, but give a good indication of the CEFR level.",
       "source": "cefr_level.py",
-      "function": "get_cefr_level"
+      "function": "calculate_levels"
     },
     "estimate_cost.py": {
       "type": "python",
       "inputs": {
-        "original": {
-          "type": [
-            "string"
-          ]
-        },
-        "simplified": {
-          "type": [
-            "string"
-          ]
-        },
         "model": {
+          "type": [
+            "string"
+          ]
+        },
+        "original_text": {
+          "type": [
+            "string"
+          ]
+        },
+        "simplified_text": {
           "type": [
             "string"
           ]
@@ -95,19 +111,46 @@
             "string"
           ]
         },
-        "score_original": {
+        "prompt_1k_token_cost": {
           "type": [
             "double"
           ]
         },
-        "score_simplified": {
+        "completion_1k_token_cost": {
           "type": [
             "double"
+          ]
+        },
+        "score_improvement": {
+          "type": [
+            "double"
+          ]
+        },
+        "level_improvement": {
+          "type": [
+            "int"
           ]
         }
       },
       "source": "estimate_cost.py",
       "function": "estimate_cost"
+    },
+    "calculate_readability.py": {
+      "type": "python",
+      "inputs": {
+        "original_text": {
+          "type": [
+            "string"
+          ]
+        },
+        "simplified_text": {
+          "type": [
+            "string"
+          ]
+        }
+      },
+      "source": "calculate_readability.py",
+      "function": "calculate_readability"
     }
   }
 }
