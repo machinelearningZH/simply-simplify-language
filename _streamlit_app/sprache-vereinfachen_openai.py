@@ -110,7 +110,7 @@ def create_project_info(project_info):
     with st.expander("Detaillierte Informationen zum Projekt"):
         project_info = project_info.split("### Image ###")
         st.markdown(project_info[0], unsafe_allow_html=True)
-        st.image("score.png", use_column_width=True)
+        st.image("score.jpg", use_column_width=True)
         st.markdown(project_info[1], unsafe_allow_html=True)
 
 
