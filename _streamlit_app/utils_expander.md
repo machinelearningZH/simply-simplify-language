@@ -11,10 +11,16 @@ Dieser Prototyp ist Teil eines Projekts vom Statistischen Amt, Kanton Zürich. M
 
 Dein Text wird dazu in der App aufbereitet und an ein sogenanntes grosses Sprachmodell (LLM, Large Language Model) eines kommerziellen Anbieters geschickt. Diese Sprachmodelle sind in der Lage, Texte nach Anweisungen umzuformulieren und dabei zu vereinfachen.
 
+Du kannst die Texte nach den Regeln für Einfache Sprache oder Leichte Sprache übersetzen. 
+
+**Leichte Sprache** ist eine vereinfachte Form der deutschen Sprache, die nach bestimmten Regeln gestaltet wird. Leicht Sprache hilft u.a. Menschen mit Lernschwierigkeiten oder geringen Deutschkenntnissen.
+
+**Einfache Sprache** ist eine vereinfachte Version von Alltagssprache. Diese zielt darauf, Texte generell für ein breiteres Publikum verständlicher zu machen. 
+
 **Die Texte werden teils in sehr guter Qualität vereinfacht. Sie sind aber nie 100% korrekt. Die App liefert lediglich einen Entwurf. Die Texte müssen immer von dir überprüft und angepasst werden. Insbesondere bei Leichter Sprache ist [die Überprüfung der Ergebnisse durch Prüferinnen und Prüfer aus dem Zielpublikum essentiell](https://www.leichte-sprache.org/leichte-sprache/das-pruefen/).**
 
-### Was ist der Modus «Leichte Sprache»?
-Mit dem Schalter «Leichte Sprache» kannst du das Modell anweisen, einen ***Entwurf*** in Leichter Sprache zu schreiben. Wenn Leichte Sprache aktiviert ist, kannst du zusätzlich wählen, ob das Modell alle Informationen übernehmen oder versuchen soll, sinnvoll zu verdichten. 
+### Modus «Leichte Sprache»?
+In der Grundeinstellung übersetzt die App in Einfache Spache. Wenn du den Schalter «Leichte Sprache» klickst, weist du das Modell an, einen Entwurf in **Leichter Sprache** zu schreiben. Wenn Leichte Sprache aktiviert ist, kannst du zusätzlich wählen, ob das Modell alle Informationen übernehmen oder versuchen soll, sinnvoll zu verdichten. 
 
 
 ### Was sind die verschiedenen Sprachmodelle?
