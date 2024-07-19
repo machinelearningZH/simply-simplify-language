@@ -132,7 +132,7 @@ As mention above the index assumes the Swiss `ss` in your texts rather than the 
 - News, Wikipedia and many books have scores between 13 to 16.
 - Anything higher than 16: **You're on a good way.** 👍 Keep editing. **And validate with users!**
 
-![](_imgs/understandability.png)
+![](_imgs/understandability_en.jpg)
 
 
 ### Outlook
