@@ -17,6 +17,8 @@
     - [What does it cost?](#what-does-it-cost)
     - [Our language guidelines](#our-language-guidelines)
     - [A couple of findings](#a-couple-of-findings)
+    - [How does the understandability score work?](#how-does-the-understandability-score-work)
+    - [What does the score mean?](#what-does-the-score-mean)
     - [Outlook](#outlook)
 - [Project team](#project-team)
 - [Contributing](#feedback-and-contributing)
