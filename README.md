@@ -6,6 +6,8 @@
 [![GitHub Issues](https://img.shields.io/github/issues/machinelearningZH/simply-simplify-language.svg)](https://github.com/machinelearningZH/simply-simplify-language/issues)
 [![GitHub Issues](https://img.shields.io/github/issues-pr/machinelearningZH/simply-simplify-language.svg)](https://img.shields.io/github/issues-pr/machinelearningZH/simply-simplify-language) 
 [![Current Version](https://img.shields.io/badge/version-0.1.1-green.svg)](https://github.com/machinelearningZH/simply-simplify-language)
+![GitHub License](https://img.shields.io/github/license/machinelearningzh/simply-simplify-language)
+
 
 <details>
 
