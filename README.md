@@ -96,7 +96,7 @@ We developed this app following our communication guidelines. However, we believ
 - It **measures the understandability of your text** on a scale from 0 (very complex) to 20 (very easy to understand).
 - The **One-Click feature sends your text to six LLMs simultaneously**, delivering six drafts in a formatted Word document within seconds, ready for download.
 
-In English «Einfache Sprache» is roughly equivalent to [«Plain English](https://www.plainlanguage.gov/about/definitions/), while «Leichte Sprache» has similarities to [«Easy English](https://centreforinclusivedesign.org.au/wp-content/uploads/2020/04/Easy-English-vs-Plain-English_accessible.pdf). 
+In English «Einfache Sprache» is roughly equivalent to [«Plain English](https://www.plainlanguage.gov/about/definitions/), while «Leichte Sprache» has similarities to [«Easy English»](https://centreforinclusivedesign.org.au/wp-content/uploads/2020/04/Easy-English-vs-Plain-English_accessible.pdf). 
 
 > [!Important]
 > At the risk of stating the obvious: By using the app **you send data to a third-party provider** ([OpenAI](https://platform.openai.com/docs/overview), [Anthropic](https://www.anthropic.com/api), and [Mistral AI](https://docs.mistral.ai/) in case of the current state of the app). **Therefore strictly only use non-sensitive data.** Again, stating the obvious: **LLMs make errors.** They regularly hallucinate, make things up, and get things wrong. They often do so in subtle, non-obvious ways, that may be hard to detect. This app is **meant to be used as an assistive system**. It **only yields a draft, that you always must double- and triple-check.** 
