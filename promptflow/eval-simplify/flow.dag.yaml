@@ -1,0 +1,91 @@
+$schema: https://azuremlschemas.azureedge.net/promptflow/latest/Flow.schema.json
+environment:
+  python_requirements_txt: requirements.txt
+inputs:
+  original_text:
+    type: string
+    default: Originaler text mit vielen komplexen Fachausdrücken.
+  simplified_text:
+    type: string
+    default: Einfacher text.
+  model:
+    type: string
+    default: gpt-4o
+  prompt:
+    type: string
+    default: The prompt used to generate the simplified text
+  prompt_1k_token_cost:
+    type: double
+    default: 0.005
+  completion_1k_token_cost:
+    type: double
+    default: 0.015
+outputs:
+  original_score:
+    type: string
+    reference: ${calculate_scores.output.original_score}
+  simplified_score:
+    type: string
+    reference: ${calculate_scores.output.simplified_score}
+  original_level:
+    type: string
+    reference: ${calculate_levels.output.original_level}
+  simplified_level:
+    type: string
+    reference: ${calculate_levels.output.simplified_level}
+  score_improvement:
+    type: string
+    reference: ${calculate_scores.output.score_improvement}
+  level_improvement:
+    type: string
+    reference: ${calculate_levels.output.level_improvement}
+  total_cost:
+    type: string
+    reference: ${estimate_cost.output.total_cost}
+nodes:
+- name: calculate_scores
+  type: python
+  source:
+    type: code
+    path: calculate_readability.py
+  inputs:
+    original_text: ${inputs.original_text}
+    simplified_text: ${inputs.simplified_text}
+- name: calculate_levels
+  type: python
+  source:
+    type: code
+    path: cefr_level.py
+  inputs:
+    original_score: ${calculate_scores.output.original_score}
+    simplified_score: ${calculate_scores.output.simplified_score}
+- name: estimate_cost
+  type: python
+  source:
+    type: code
+    path: estimate_cost.py
+  inputs:
+    model: ${inputs.model}
+    original_text: ${inputs.original_text}
+    simplified_text: ${inputs.simplified_text}
+    prompt_used: ${inputs.prompt}
+    prompt_1k_token_cost: ${inputs.prompt_1k_token_cost}
+    completion_1k_token_cost: ${inputs.completion_1k_token_cost}
+    score_improvement: ${calculate_scores.output.score_improvement}
+    level_improvement: ${calculate_levels.output.level_improvement}
+- name: aggregate_metrics
+  type: python
+  source:
+    type: code
+    path: aggregate.py
+  inputs:
+    original_scores: ${calculate_scores.output.original_score}
+    simplified_scores: ${calculate_scores.output.simplified_score}
+    scores_improvements: ${calculate_scores.output.score_improvement}
+    original_levels: ${calculate_levels.output.original_level}
+    simplified_levels: ${calculate_levels.output.simplified_level}
+    levels_improvements: ${calculate_levels.output.level_improvement}
+    total_costs: ${estimate_cost.output.total_cost}
+    score_improvement_ratios: ${estimate_cost.output.score_improvement_ratio}
+    level_improvement_ratios: ${estimate_cost.output.level_improvement_ratio}
+  aggregation: true

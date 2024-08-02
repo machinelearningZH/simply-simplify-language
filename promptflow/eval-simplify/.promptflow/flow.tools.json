@@ -1,0 +1,156 @@
+{
+  "package": {},
+  "code": {
+    "line_process.py": {
+      "type": "python",
+      "inputs": {
+        "groundtruth": {
+          "type": [
+            "string"
+          ]
+        },
+        "prediction": {
+          "type": [
+            "string"
+          ]
+        }
+      },
+      "description": "This tool processes the prediction of a single line and returns the processed result.\n\n:param groundtruth: the groundtruth of a single line.\n:param prediction: the prediction of a single line.",
+      "source": "line_process.py",
+      "function": "line_process"
+    },
+    "aggregate.py": {
+      "type": "python",
+      "inputs": {
+        "original_scores": {
+          "type": [
+            "object"
+          ]
+        },
+        "simplified_scores": {
+          "type": [
+            "object"
+          ]
+        },
+        "scores_improvements": {
+          "type": [
+            "object"
+          ]
+        },
+        "original_levels": {
+          "type": [
+            "object"
+          ]
+        },
+        "simplified_levels": {
+          "type": [
+            "object"
+          ]
+        },
+        "levels_improvements": {
+          "type": [
+            "object"
+          ]
+        },
+        "total_costs": {
+          "type": [
+            "object"
+          ]
+        },
+        "score_improvement_ratios": {
+          "type": [
+            "object"
+          ]
+        },
+        "level_improvement_ratios": {
+          "type": [
+            "object"
+          ]
+        }
+      },
+      "source": "aggregate.py",
+      "function": "aggregate"
+    },
+    "cefr_level.py": {
+      "type": "python",
+      "inputs": {
+        "original_score": {
+          "type": [
+            "double"
+          ]
+        },
+        "simplified_score": {
+          "type": [
+            "double"
+          ]
+        }
+      },
+      "source": "cefr_level.py",
+      "function": "calculate_levels"
+    },
+    "estimate_cost.py": {
+      "type": "python",
+      "inputs": {
+        "model": {
+          "type": [
+            "string"
+          ]
+        },
+        "original_text": {
+          "type": [
+            "string"
+          ]
+        },
+        "simplified_text": {
+          "type": [
+            "string"
+          ]
+        },
+        "prompt_used": {
+          "type": [
+            "string"
+          ]
+        },
+        "prompt_1k_token_cost": {
+          "type": [
+            "double"
+          ]
+        },
+        "completion_1k_token_cost": {
+          "type": [
+            "double"
+          ]
+        },
+        "score_improvement": {
+          "type": [
+            "double"
+          ]
+        },
+        "level_improvement": {
+          "type": [
+            "int"
+          ]
+        }
+      },
+      "source": "estimate_cost.py",
+      "function": "estimate_cost"
+    },
+    "calculate_readability.py": {
+      "type": "python",
+      "inputs": {
+        "original_text": {
+          "type": [
+            "string"
+          ]
+        },
+        "simplified_text": {
+          "type": [
+            "string"
+          ]
+        }
+      },
+      "source": "calculate_readability.py",
+      "function": "calculate_readability"
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "nodeLayouts": {
+    "inputs": {
+      "x": 620,
+      "y": 42,
+      "index": -1
+    },
+    "outputs": {
+      "x": 550,
+      "y": 444,
+      "index": -1
+    },
+    "simplify_es": {
+      "x": 325,
+      "y": 310,
+      "index": 0
+    },
+    "rules": {
+      "x": 800,
+      "y": 42,
+      "index": 1
+    },
+    "completeness": {
+      "x": 140,
+      "y": 42,
+      "index": 2
+    },
+    "create_prompt": {
+      "x": 645,
+      "y": 176,
+      "index": 3
+    }
+  },
+  "orientation": "Vertical"
+}
