@@ -575,7 +575,7 @@ if do_simplification or do_analysis:
                 # Regular text simplification or analysis.
                 success, response = invoke_azure_openai_model(
                     text_input,
-                    modelId=MODEL_CHOICE,
+                    deployment=MODEL_CHOICE,
                     analysis=do_analysis,
                 )
 
