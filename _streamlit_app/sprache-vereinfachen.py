@@ -32,8 +32,7 @@ import textdescriptives as td
 
 from openai import OpenAI
 from anthropic import Anthropic
-from mistralai.client import MistralClient
-from mistralai.models.chat_completion import ChatMessage
+from mistralai import Mistral
 
 from utils_sample_texts import (
     SAMPLE_TEXT_01,
@@ -84,7 +83,7 @@ HAIKU = "claude-3-haiku-20240307"
 SONNET = "claude-3-5-sonnet-20240620"
 OPUS = "claude-3-opus-20240229"
 
-M_LARGE = "mistral-large-2402"
+M_LARGE = "mistral-large-latest"
 
 GPT4 = "gpt-4-turbo"
 GPT4o = "gpt-4o"
@@ -396,7 +395,7 @@ def invoke_openai_model(
 
 @st.cache_resource
 def get_mistral_client():
-    return MistralClient(api_key=MISTRAL_API_KEY)
+    return Mistral(api_key=MISTRAL_API_KEY)
 
 
 def invoke_mistral_model(
@@ -406,11 +405,11 @@ def invoke_mistral_model(
     # Our Claude templates seem to work fine for Mistral as well.
     final_prompt, system = create_prompt(text, *CLAUDE_TEMPLATES, analysis)
     messages = [
-        ChatMessage(role="system", content=system),
-        ChatMessage(role="user", content=final_prompt),
+        {"role": "system", "content": system},
+        {"role": "user", "content": final_prompt},
     ]
     try:
-        message = mistral_client.chat(
+        message = mistral_client.chat.complete(
             model=modelId,
             messages=messages,
             temperature=temperature,
