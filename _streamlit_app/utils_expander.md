@@ -39,18 +39,17 @@ Alle Modelle analysieren und schreiben unterschiedlich und sind alle einen Versu
 
 
 ### Wie funktioniert die Bewertung der Verständlichkeit?
-Wir haben einen Algorithmus entwickelt, der die Verständlichkeit von Texten auf einer Skala von 0 bis 20 Punkten bewertet. Dieser Algorithmus basiert auf drei Textmerkmalen: Dem [Lesbarkeitsindex RIX](https://www.jstor.org/stable/40031755), der Häufigkeit von einfachen, verständlichen, viel genutzten Worten, sowie Satzlängen. Wir haben dies systematisch ermittelt, indem wir geschaut haben, welche Merkmale am aussagekräftigsten für Verwaltungs- und Rechtssprache und deren Vereinfachung sind.
+Wir haben einen Algorithmus entwickelt, der die Verständlichkeit von Texten auf einer Skala von -10 bis 10 bewertet. Dieser Algorithmus basiert auf diversen Textmerkmalen: Den Wort- und Satzlängen, dem [Lesbarkeitsindex RIX](https://www.jstor.org/stable/40031755), der Häufigkeit von einfachen, verständlichen, viel genutzten Worten, sowie dem Anteil an Worten aus dem Standardvokabular A1, A2 und B1. Wir haben dies systematisch ermittelt, indem wir geschaut haben, welche Merkmale am aussagekräftigsten für Verwaltungs- und Rechtssprache und deren Vereinfachung sind.
 
 Die Bewertung kannst du so interpretieren:
 
-- **Sehr schwer verständliche Texte** wie Rechts- oder Verwaltungstexte haben meist Werte von **0 bis 13 Punkten**.
-- **Durchschnittlich verständliche Texte** wie Nachrichtentexte, Wikipediaartikel oder Bücher haben meist Werte von **13 bis 16 Punkten**.
-- **Gut verständliche Texte im Bereich Einfacher Sprache und Leichter Sprache** haben meist Werte von **16 bis 20 Punkten**.
+- **Sehr schwer verständliche Texte** wie Rechts- oder Verwaltungstexte haben meist Werte von **-10 bis -2**.
+- **Durchschnittlich verständliche Texte** wie Nachrichtentexte, Wikipediaartikel oder Bücher haben meist Werte von **-2 bis 0**.
+- **Gut verständliche Texte im Bereich Einfacher Sprache und Leichter Sprache** haben meist Werte von **0 oder grösser.**.
 
-Wir zeigen dir zusätzlich eine grobe Schätzung des Sprachniveaus gemäss [CEFR (Common European Framework of Reference for Languages)](https://www.coe.int/en/web/common-european-framework-reference-languages/level-descriptions) von A1 bis C2 an.  
+Wir zeigen dir zusätzlich eine **grobe** Schätzung des Sprachniveaus gemäss [CEFR (Common European Framework of Reference for Languages)](https://www.coe.int/en/web/common-european-framework-reference-languages/level-descriptions) von A1 bis C2 an.  
 
 ### Image ###
-
 Die Bewertung ist bei weitem nicht perfekt, aber sie ist ein guter erster Anhaltspunkt und hat sich bei unseren Praxistests bewährt.
 
 
@@ -59,5 +58,6 @@ Wir sind für Rückmeldungen und Anregungen jeglicher Art dankbar und nehmen die
 
 
 ## Versionsverlauf
+- **v0.2** - 18.08.2024 - *Neuen ZIX-Index integriert. Diverse Fehler behoben.*
 - **v0.1.1** - 21.06.2024 - *Update auf Claude Sonnet v3.5.*
 - **v0.1** - 1.06.2024 - *Erste Open Source-Version der App auf Basis des bisherigen Pilotprojekts.*

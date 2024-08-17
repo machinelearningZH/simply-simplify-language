@@ -26,9 +26,6 @@ logging.basicConfig(
 
 import pandas as pd
 import numpy as np
-import spacy
-from spacy.language import Language
-import textdescriptives as td
 
 from openai import OpenAI
 from anthropic import Anthropic
@@ -37,6 +34,8 @@ from mistralai import Mistral
 from utils_sample_texts import (
     SAMPLE_TEXT_01,
 )
+
+from utils_understandability import get_zix, get_cefr
 
 from utils_prompts import (
     SYSTEM_MESSAGE_ES,
@@ -100,7 +99,7 @@ TEXT_AREA_HEIGHT = 600
 MAX_CHARS_INPUT = 10_000
 
 
-USER_WARNING = """<sub>⚠️ Achtung: Diese App ist ein Prototyp. Nutze die App :red[**nur für öffentliche, nicht sensible Daten**]. Die App liefert lediglich einen Textentwurf. Überprüfe das Ergebnis immer und passe es an, wenn nötig. Die aktuelle App-Version ist v0.1.1 Die letzte Aktualisierung war am 21.6.2024."""
+USER_WARNING = """<sub>⚠️ Achtung: Diese App ist ein Prototyp. Nutze die App :red[**nur für öffentliche, nicht sensible Daten**]. Die App liefert lediglich einen Textentwurf. Überprüfe das Ergebnis immer und passe es an, wenn nötig. Die aktuelle App-Version ist v0.2 Die letzte Aktualisierung war am 18.8.2024."""
 
 
 # Constants for the formatting of the Word document that can be downloaded.
@@ -111,8 +110,8 @@ FONT_SIZE_FOOTER = 7
 
 
 # Limits for the understandability score to determine if the text is easy, medium or hard to understand.
-LIMIT_HARD = 13
-LIMIT_MEDIUM = 16
+LIMIT_HARD = 0
+LIMIT_MEDIUM = -2
 
 
 # ---------------------------------------------------------------
@@ -131,7 +130,7 @@ def create_project_info(project_info):
     with st.expander("Detaillierte Informationen zum Projekt"):
         project_info = project_info.split("### Image ###")
         st.markdown(project_info[0], unsafe_allow_html=True)
-        st.image("score.jpg", use_column_width=True)
+        st.image("zix_scores.jpg", use_column_width=True)
         st.markdown(project_info[1], unsafe_allow_html=True)
 
 
@@ -148,143 +147,11 @@ def get_word_scores():
     return word_scores
 
 
-@st.cache_resource
-def get_nlp_pipeline():
-    """Get NLP pipeline.
-
-    We create a spacy pipeline with a custom component to calculate the common word score. We also add the textdescriptives components for readability and descriptive statistics.
-    """
-
-    word_scores = get_word_scores()
-
-    @Language.component("common_word_score")
-    def extract_common_word_score(doc):
-        """Extract common word score and add to doc.user_data."""
-
-        # Calculate common word score.
-        doc_len = len([x for x in doc if not x.is_punct and not x.like_num])
-        doc_scores = 0
-        for token in doc:
-            lemma = token.lemma_.lower()
-            if lemma in word_scores:
-                doc_scores += word_scores[lemma]
-
-        doc_scores = doc_scores / doc_len
-        doc.user_data["common_word_score"] = doc_scores / 1000
-
-        return doc
-
-    nlp = spacy.load("de_core_news_sm")
-    nlp.add_pipe("textdescriptives/descriptive_stats")
-    nlp.add_pipe("textdescriptives/readability")
-    nlp.add_pipe("common_word_score")
-    return nlp
-
-
-def extract_text_features(text):
-    """Extract text features from text.
-
-    We use the spacy pipeline to extract text features needed for the understandability formula and return them as a DataFrame.
-    """
-    doc = nlp(text)
-    row_metrics = td.extractors.extract_dict(
-        doc,
-        metrics=[
-            "descriptive_stats",
-            "readability",
-        ],
-        include_text=False,
-    )
-    for metric in [
-        "common_word_score",
-    ]:
-        row_metrics[0][metric] = doc.user_data[metric]
-    return pd.DataFrame.from_dict(row_metrics)
-
-
-def punctuate_paragraphs_and_bulleted_lists(text):
-    """Add a dot to lines that do not end with a dot and do some additional clean up to correctly calculate the understandability score.
-
-    Texts in Einfache and Leichte Sprache often do not end sentences with a dot. This function adds a dot to lines that do not end with a dot. It also removes bullet points and hyphens from the beginning of lines and removes all line breaks and multiple spaces. This is necessary to correctly calculate the understandability score.
-    """
-
-    # Add a space to the end of the text to properly process the last sentence.
-    text = text + " "
-
-    # This regex pattern matches lines that do not end with a dot and are not empty.
-    pattern = r"(?<!(\.))[^\n]$"
-
-    # Replace lines not ending with a dot with the same line plus a dot.
-    # The 're.MULTILINE' flag treats each line as a separate string.
-    new_text = re.sub(pattern, r"\g<0>.", text, flags=re.MULTILINE)
-
-    # Remove bullet points and hyphens from the beginning of lines.
-    new_text = re.sub(r"^[\s]*[-•]", "", new_text, flags=re.MULTILINE)
-
-    # Remove all line breaks and multiple spaces.
-    new_text = new_text.replace("\n", " ")
-    new_text = re.sub(r"\s+", " ", new_text)
-
-    return new_text.strip()
-
-
-def calculate_understandability(data):
-    """Calculate understandability score from text metrics.
-
-    We derived this formula from a dataset of legal and administrative texts, as well as Einfache and Leichte Sprache. We trained a Logistic Regression model to differentiate between complex and simple texts. From the most significant model coefficients we devised this formula to estimate a text's understandability.
-
-    It is not a perfect measure, but it gives a good indication of how easy a text is to understand.
-
-    We do not take into account a couple of text features that are relevant to understandability, such as the use of passive voice, the use of pronouns, or the use of complex sentence structures. These features are not easily extracted from text and would require a more complex model to calculate.
-    """
-    cws = (data.common_word_score - 7.8) / 1.1
-    rix = (data.rix - 3.9) / 1.7
-    sls = (data.sentence_length_std - 6.4) / 4.2
-    slm = (data.sentence_length_mean - 11.7) / 3.7
-    cws = 1 - cws
-
-    score = ((cws * 0.2 + rix * 0.325 + sls * 0.225 + slm * 0.15) + 1.3) * 3.5
-
-    # We clip the score to a range of 0 to 20.
-    score = 20 - (score.values[0])
-    if score < 0:
-        score = 0
-    if score > 20:
-        score = 20
-    return score
-
-
-def get_cefr_level(score):
-    """Get CEFR level from understandability score.
-
-    We calculated these ranges by scoring various text samples where we had an approximate idea of their CEFR level. Again these ranges are not perfect, but give a good indication of the CEFR level.
-    """
-    if score >= 18.3:
-        return "A1"
-    elif score >= 17.7 and score < 18.3:
-        return "A2"
-    elif score >= 17.5 and score < 17.7:
-        return "A2 bis B1"
-    elif score >= 15.7 and score < 17.5:
-        return "B1"
-    elif score >= 13.7 and score < 15.7:
-        return "B2"
-    elif score >= 12.4 and score < 13.7:
-        return "C1"
-    elif score >= 12.2 and score < 12.4:
-        return "C1 bis C2"
-    elif score < 12.2:
-        return "C2"
-
-
 def get_understandability(text):
-    """Get understandability score from text."""
-    # Replace newlines with punctuation, so that paragraphs
-    # and bullet point lists are not counted as complex sentences.
-    text = punctuate_paragraphs_and_bulleted_lists(text)
-
-    features = extract_text_features(text)
-    return calculate_understandability(features)
+    """Get the understandability score and rough estimation of CEFR level for the text."""
+    zix, _ = get_zix(text)
+    cefr = get_cefr(zix)
+    return zix, cefr
 
 
 def create_prompt(text, prompt_es, prompt_ls, analysis_es, analysis_ls, analysis):
@@ -338,14 +205,14 @@ def invoke_anthropic_model(
     text,
     max_tokens=4096,
     temperature=TEMPERATURE,
-    modelId=HAIKU,
+    model_id=HAIKU,
     analysis=False,
 ):
     """Invoke Anthropic model."""
     final_prompt, system = create_prompt(text, *CLAUDE_TEMPLATES, analysis)
     try:
         message = anthropic_client.messages.create(
-            model=modelId,
+            model=model_id,
             max_tokens=max_tokens,
             temperature=temperature,
             system=system,
@@ -369,7 +236,7 @@ def get_openai_client():
 
 def invoke_openai_model(
     text,
-    modelId="gpt-4o",
+    model_id="gpt-4o",
     temperature=TEMPERATURE,
     max_tokens=4096,
     analysis=False,
@@ -378,7 +245,7 @@ def invoke_openai_model(
     final_prompt, system = create_prompt(text, *OPENAI_TEMPLATES, analysis)
     try:
         message = openai_client.chat.completions.create(
-            model=modelId,
+            model=model_id,
             temperature=temperature,
             max_tokens=max_tokens,
             messages=[
@@ -399,7 +266,7 @@ def get_mistral_client():
 
 
 def invoke_mistral_model(
-    text, modelId="mistral-large-latest", temperature=TEMPERATURE, analysis=False
+    text, model_id="mistral-large-latest", temperature=TEMPERATURE, analysis=False
 ):
     """Invoke Mistral model."""
     # Our Claude templates seem to work fine for Mistral as well.
@@ -410,7 +277,7 @@ def invoke_mistral_model(
     ]
     try:
         message = mistral_client.chat.complete(
-            model=modelId,
+            model=model_id,
             messages=messages,
             temperature=temperature,
         )
@@ -433,53 +300,53 @@ def get_one_click_results():
         future_mistral = executor.submit(
             invoke_mistral_model,
             text_input,
-            modelId=M_LARGE,
+            model_id=M_LARGE,
         )
         future_gpt = executor.submit(
             invoke_openai_model,
             text_input,
-            modelId=GPT4,
+            model_id=GPT4,
         )
         future_gpto = executor.submit(
             invoke_openai_model,
             text_input,
-            modelId=GPT4o,
+            model_id=GPT4o,
         )
         future_claude_v3_haiku = executor.submit(
             invoke_anthropic_model,
             text_input,
-            modelId=HAIKU,
+            model_id=HAIKU,
         )
         future_claude_v3_sonnet = executor.submit(
             invoke_anthropic_model,
             text_input,
-            modelId=SONNET,
+            model_id=SONNET,
         )
         future_claude_v3_opus = executor.submit(
             invoke_anthropic_model,
             text_input,
-            modelId=OPUS,
+            model_id=OPUS,
         )
 
     success_mistral, response_mistral = future_mistral.result()
-    zix_mistral = get_understandability(response_mistral)
+    zix_mistral, cefr_mistral = get_understandability(response_mistral)
 
     success_gpt, response_gpt = future_gpt.result()
-    zix_gpt = get_understandability(response_gpt)
+    zix_gpt, cefr_gpt = get_understandability(response_gpt)
 
     success_gpto, response_gpto = future_gpto.result()
-    zix_gpto = get_understandability(response_gpto)
+    zix_gpto, cefr_gpto = get_understandability(response_gpto)
 
     success_claude_v3_haiku, response_claude_v3_haiku = future_claude_v3_haiku.result()
-    zix_claude_v3_haiku = get_understandability(response_claude_v3_haiku)
+    zix_claude_v3_haiku, cefr_haiku = get_understandability(response_claude_v3_haiku)
 
     success_claude_v3_sonnet, response_claude_v3_sonnet = (
         future_claude_v3_sonnet.result()
     )
-    zix_claude_v3_sonnet = get_understandability(response_claude_v3_sonnet)
+    zix_claude_v3_sonnet, cefr_sonnet = get_understandability(response_claude_v3_sonnet)
 
     success_claude_v3_opus, response_claude_v3_opus = future_claude_v3_opus.result()
-    zix_claude_v3_opus = get_understandability(response_claude_v3_opus)
+    zix_claude_v3_opus, cefr_opus = get_understandability(response_claude_v3_opus)
 
     response = []
 
@@ -492,44 +359,46 @@ def get_one_click_results():
             "Die Sprachmodelle haben versucht, den Text in **Einfache Sprache** umzuschreiben."
         )
 
+    # We add 0 to the rounded ZIX score to avoid -0.
+    # https://stackoverflow.com/a/11010791/7117003
     if success_mistral:
         tmp = (
-            f"\n----- Ergebnis von Mistral Large (Verständlichkeit: {zix_mistral :.0f} Punkte) -----"
+            f"\n----- Ergebnis von Mistral Large (Verständlichkeit: {np.round(zix_mistral, 0) + 0}, CEFR-Niveau {cefr_mistral}) -----"
             + "\n\n"
             + response_mistral
         )
         response.append(tmp)
     if success_claude_v3_haiku:
         tmp = (
-            f"\n----- Ergebnis von Claude 3 Haiku (Verständlichkeit: {zix_claude_v3_haiku :.0f} Punkte) -----"
+            f"\n----- Ergebnis von Claude 3 Haiku (Verständlichkeit: {np.round(zix_claude_v3_haiku, 0) + 0}, CEFR-Niveau {cefr_haiku}) -----"
             + "\n\n"
             + response_claude_v3_haiku
         )
         response.append(tmp)
     if success_claude_v3_sonnet:
         tmp = (
-            f"\n----- Ergebnis von Claude 3 Sonnet (Verständlichkeit: {zix_claude_v3_sonnet :.0f} Punkte) -----"
+            f"\n----- Ergebnis von Claude 3 Sonnet (Verständlichkeit: {np.round(zix_claude_v3_sonnet, 0 + 0)}, CEFR-Niveau {cefr_sonnet}) -----"
             + "\n\n"
             + response_claude_v3_sonnet
         )
         response.append(tmp)
     if success_claude_v3_opus:
         tmp = (
-            f"\n----- Ergebnis von Claude 3 Opus (Verständlichkeit: {zix_claude_v3_opus :.0f} Punkte) -----"
+            f"\n----- Ergebnis von Claude 3 Opus (Verständlichkeit: {np.round(zix_claude_v3_opus, 0) + 0}, CEFR-Niveau {cefr_opus}) -----"
             + "\n\n"
             + response_claude_v3_opus
         )
         response.append(tmp)
     if success_gpt:
         tmp = (
-            f"\n------Ergebnis von GPT-4 (Verständlichkeit: {zix_gpt :.0f} Punkte) -----"
+            f"\n------Ergebnis von GPT-4 (Verständlichkeit: {np.round(zix_gpt, 0) + 0}, CEFR-Niveau {cefr_gpt}) -----"
             + "\n\n"
             + response_gpt
         )
         response.append(tmp)
     if success_gpto:
         tmp = (
-            f"\n----- Ergebnis von GPT-4o (Verständlichkeit: {zix_gpto :.0f} Punkte) -----"
+            f"\n----- Ergebnis von GPT-4o (Verständlichkeit: {np.round(zix_gpto, 0) + 0} CEFR {cefr_gpto}) -----"
             + "\n\n"
             + response_gpto
         )
@@ -612,7 +481,8 @@ def create_download_link(text_input, response, analysis=False):
 
 
 def clean_log(text):
-    """Remove linebreaks and tabs from log messages that otherwise would yield problems when parsing the logs."""
+    """Remove linebreaks and tabs from log messages
+    that otherwise would yield problems when parsing the logs."""
     text = text.replace("\n", " ")
     text = text.replace("\t", " ")
     return text
@@ -651,7 +521,6 @@ anthropic_client = get_anthropic_client()
 openai_client = get_openai_client()
 mistral_client = get_mistral_client()
 
-nlp = get_nlp_pipeline()
 project_info = get_project_info()
 
 
@@ -740,25 +609,25 @@ with placeholder_result:
     )
 with placeholder_analysis:
     text_analysis = st.metric(
-        label="Verständlichkeit 0-20 Punkte",
+        label="Verständlichkeit -10 bis 10",
         value=None,
         delta=None,
-        help="Texte in Einfacher Sprache haben meist einen Wert von 16 bis 20 Punkten, Texte in Leichter Sprache 18 bis 20 Punkte.",
+        help="Texte in Einfacher Sprache haben meist einen Wert von 0 bis 4 oder höher, Texte in Leichter Sprache 2 bis 4 oder höher.",
     )
 
 
-# Derive modelId from explicit model_choice.
-modelId = M_LARGE
+# Derive model_id from explicit model_choice.
+model_id = M_LARGE
 if model_choice == "Claude 3 Haiku":
-    modelId = HAIKU
+    model_id = HAIKU
 elif model_choice == "Claude 3 Sonnet":
-    modelId = SONNET
+    model_id = SONNET
 elif model_choice == "Claude 3 Opus":
-    modelId = OPUS
+    model_id = OPUS
 elif model_choice == "GPT-4":
-    modelId = GPT4
+    model_id = GPT4
 elif model_choice == "GPT-4o":
-    modelId = GPT4o
+    model_id = GPT4o
 
 
 # Start processing if one of the processing buttons is clicked.
@@ -768,30 +637,29 @@ if do_simplification or do_analysis or do_one_click:
         st.error("Bitte gib einen Text ein.")
         st.stop()
 
-    score_source = get_understandability(text_input)
+    score_source, cefr_source = get_understandability(text_input)
     score_source_rounded = int(np.round(score_source, 0))
-    cefr_source = get_cefr_level(score_source)
 
     # Analyze source text and display results.
     with source_text:
         if score_source < LIMIT_HARD:
             st.markdown(
-                f"Dein Ausgangstext ist **:red[schwer verständlich]**. ({score_source_rounded} von 20 Punkten). Das entspricht etwa dem **:red[Sprachniveau {cefr_source}]**."
+                f"Dein Ausgangstext ist **:red[schwer verständlich]**. ({score_source_rounded} auf einer Skala von -10 bis 10). Das entspricht etwa dem **:red[Sprachniveau {cefr_source}]**."
             )
         elif score_source >= LIMIT_HARD and score_source < LIMIT_MEDIUM:
             st.markdown(
-                f"Dein Ausgangstext ist **:orange[nur mässig verständlich]**. ({score_source_rounded} von 20 Punkten). Das entspricht etwa dem **:orange[Sprachniveau {cefr_source}]**."
+                f"Dein Ausgangstext ist **:orange[nur mässig verständlich]**. ({score_source_rounded} auf einer Skala von -10 bis 10). Das entspricht etwa dem **:orange[Sprachniveau {cefr_source}]**."
             )
         else:
             st.markdown(
-                f"Dein Ausgangstext ist **:green[gut verständlich]**. ({score_source_rounded} von 20 Punkten). Das entspricht etwa dem **:green[Sprachniveau {cefr_source}]**."
+                f"Dein Ausgangstext ist **:green[gut verständlich]**. ({score_source_rounded} auf einer Skala von -10 bis 10). Das entspricht etwa dem **:green[Sprachniveau {cefr_source}]**."
             )
         with placeholder_analysis.container():
             text_analysis = st.metric(
-                label="Verständlichkeit 0-20 Punkte",
+                label="Verständlichkeit von -10 bis 10",
                 value=score_source_rounded,
                 delta=None,
-                help="Verständlichkeit auf einer Skala von 0 bis 20 Punkten (von 0 = extrem schwer verständlich bis 20 = sehr gut verständlich). Texte in Einfacher Sprache haben meist einen Wert von 16 bis 20 Punkten, Texte in Leichter Sprache 18 bis 20 Punkte.",
+                help="Verständlichkeit auf einer Skala von -10 bis 10 Punkten (von -10 = extrem schwer verständlich bis 10 = sehr gut verständlich). Texte in Einfacher Sprache haben meist einen Wert von 0 bis 4 oder höher, Texte in Leichter Sprache 2 bis 6 oder höher.",
             )
 
         with placeholder_analysis.container():
@@ -804,16 +672,16 @@ if do_simplification or do_analysis or do_one_click:
                     if model_choice in ["GPT-4", "GPT-4o"]:
                         success, response = invoke_openai_model(
                             text_input,
-                            modelId=modelId,
+                            model_id=model_id,
                             analysis=do_analysis,
                         )
                     elif model_choice in ["Mistral Large"]:
                         success, response = invoke_mistral_model(
-                            text_input, modelId=modelId, analysis=do_analysis
+                            text_input, model_id=model_id, analysis=do_analysis
                         )
                     else:
                         success, response = invoke_anthropic_model(
-                            text_input, modelId=modelId, analysis=do_analysis
+                            text_input, model_id=model_id, analysis=do_analysis
                         )
     if success is False:
         st.error(
@@ -849,27 +717,26 @@ if do_simplification or do_analysis or do_one_click:
             value=response,
         )
         if do_simplification or do_one_click:
-            score_target = get_understandability(response)
-            score_target_rounded = int(np.round(score_target, 0))
-            cefr_target = get_cefr_level(score_target)
+            score_target, cefr_target = get_understandability(response)
+            score_target_rounded = np.round(score_target, 0) + 0
             if score_target < LIMIT_HARD:
                 st.markdown(
-                    f"Dein vereinfachter Text ist **:red[schwer verständlich]**. ({score_target_rounded} von 20 Punkten). Das entspricht etwa dem **:red[Sprachniveau {cefr_target}]**."
+                    f"Dein vereinfachter Text ist **:red[schwer verständlich]**. ({score_target_rounded}  auf einer Skala von -10 bis 10). Das entspricht etwa dem **:red[Sprachniveau {cefr_target}]**."
                 )
             elif score_target >= LIMIT_HARD and score_target < LIMIT_MEDIUM:
                 st.markdown(
-                    f"Dein vereinfachter Text ist **:orange[nur mässig verständlich]**. ({score_target_rounded} von 20 Punkten). Das entspricht etwa dem **:orange[Sprachniveau {cefr_target}]**."
+                    f"Dein vereinfachter Text ist **:orange[nur mässig verständlich]**. ({score_target_rounded}  auf einer Skala von -10 bis 10). Das entspricht etwa dem **:orange[Sprachniveau {cefr_target}]**."
                 )
             else:
                 st.markdown(
-                    f"Dein vereinfachter Text ist **:green[gut verständlich]**. ({score_target_rounded} von 20 Punkten). Das entspricht etwa dem **:green[Sprachniveau {cefr_target}]**."
+                    f"Dein vereinfachter Text ist **:green[gut verständlich]**. ({score_target_rounded}  auf einer Skala von -10 bis 10). Das entspricht etwa dem **:green[Sprachniveau {cefr_target}]**."
                 )
             with placeholder_analysis.container():
                 text_analysis = st.metric(
-                    label="Verständlichkeit 0-20 Punkte",
+                    label="Verständlichkeit -10 bis 10",
                     value=score_target_rounded,
                     delta=int(np.round(score_target - score_source, 0)),
-                    help="Verständlichkeit auf einer Skala von 0 bis 20 Punkten (von 0 = extrem schwer verständlich bis 20 = sehr gut verständlich). Texte in Einfacher Sprache haben meist einen Wert von 16 bis 20 Punkten.",
+                    help="Verständlichkeit auf einer Skala von -10 bis 10 (von -10 = extrem schwer verständlich bis 10 = sehr gut verständlich). Texte in Einfacher Sprache haben meist einen Wert von 0 bis 4 oder höher.",
                 )
 
                 create_download_link(text_input, response)
@@ -877,9 +744,9 @@ if do_simplification or do_analysis or do_one_click:
         else:
             with placeholder_analysis.container():
                 text_analysis = st.metric(
-                    label="Verständlichkeit 0-20 Punkte",
+                    label="Verständlichkeit -10 bis 10",
                     value=score_source_rounded,
-                    help="Verständlichkeit auf einer Skala von 0 bis 20 Punkten (von 0 = extrem schwer verständlich bis 20 = sehr gut verständlich). Texte in Einfacher Sprache haben meist einen Wert von 16 bis 20 Punkten.",
+                    help="Verständlichkeit auf einer Skala von -10 bis 10 (von -10 = extrem schwer verständlich bis 10 = sehr gut verständlich). Texte in Einfacher Sprache haben meist einen Wert von 0 bis 4 oder höher.",
                 )
                 create_download_link(text_input, response, analysis=True)
                 st.caption(f"Verarbeitet in {time_processed:.1f} Sekunden.")
