@@ -26,7 +26,8 @@ logging.basicConfig(
 import pandas as pd
 import numpy as np
 
-# For usage of the Azure OpenAI client, see: https://github.com/openai/openai-python?tab=readme-ov-file#microsoft-azure-openai.
+# For usage of the Azure OpenAI client
+# see: https://github.com/openai/openai-python?tab=readme-ov-file#microsoft-azure-openai.
 from openai import AzureOpenAI
 
 from utils_sample_texts import (
@@ -119,7 +120,7 @@ def create_project_info(project_info):
 
 def get_understandability(text):
     """Get the understandability score and rough estimation of CEFR level for the text."""
-    zix, _ = get_zix(text)
+    zix = get_zix(text)
     cefr = get_cefr(zix)
     return zix, cefr
 
@@ -489,7 +490,7 @@ if do_simplification or do_analysis:
                 create_download_link(text_input, response)
                 st.caption(f"Verarbeitet in {time_processed:.1f} Sekunden.")
         else:
-             with placeholder_analysis.container():
+            with placeholder_analysis.container():
                 text_analysis = st.metric(
                     label="Verständlichkeit -10 bis 10",
                     value=score_source_rounded,

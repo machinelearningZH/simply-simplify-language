@@ -8,13 +8,20 @@ from pickle import load
 import warnings
 
 FEATURES = {
-    "token_length_mean": None,
     "sentence_length_mean": None,
     "rix": None,
     "vocab_a1": None,
     "vocab_a2": None,
     "vocab_b1": None,
     "common_word_score": None,
+    "rix_cws": None,
+    "rix_vocab_a1": None,
+    "rix_vocab_a2": None,
+    "rix_vocab_b1": None,
+    "slm_cws": None,
+    "slm_vocab_a1": None,
+    "slm_vocab_a2": None,
+    "slm_vocab_b1": None,
 }
 
 cefr_vocab = pd.read_parquet("data/cefr_vocab.parq")
@@ -25,13 +32,16 @@ vocab_a1 = cefr_vocab[cefr_vocab["level"] == "A1"]["lemma_ch"].values
 vocab_a2 = cefr_vocab[cefr_vocab["level"] == "A2"]["lemma_ch"].values
 vocab_b1 = cefr_vocab[cefr_vocab["level"] == "B1"]["lemma_ch"].values
 
+# Load the common word scores. This list contains the lemmas
 # of around ~8k most common German words.
 word_scores = pd.read_parquet("data/word_scores_final_0728.parq")
 word_scores = dict(zip(word_scores["lemma"], word_scores["score"]))
 
-# Load the fitted gaussian mixture model to identify outliers.
-with open("data/gaussian_mixture_model.pkl", "rb") as f:
-    gmm = load(f)
+# Load the fitted scaler and Ridge regressor model.
+with open("data/standard_scaler.pkl", "rb") as f:
+    scaler = load(f)
+with open("data/ridge_regressor.pkl", "rb") as f:
+    clf = load(f)
 
 
 @Language.component("additional_metrics")
@@ -50,13 +60,8 @@ def _additional_metrics(doc):
     doc_len = len([token for token in doc if not token.is_punct and not token.like_num])
 
     if doc_len == 0:
-        doc.user_data["vocab_b1"] = None
-        doc.user_data["vocab_a2"] = None
-        doc.user_data["vocab_a1"] = None
-        doc.user_data["common_word_score"] = None
-        doc.user_data["token_length_mean"] = None
-        doc.user_data["sentence_length_mean"] = None
-        doc.user_data["rix"] = None
+        for feature in FEATURES:
+            doc.user_data[feature] = None
         return doc
 
     # Counters for B1, A2, A1 vocabularies.
@@ -91,10 +96,6 @@ def _additional_metrics(doc):
     doc.user_data["vocab_a1"] = vocab_scores[2]
     doc.user_data["common_word_score"] = doc_word_scores / 1000
 
-    # Calculate token length mean.
-    token_lengths = [len(token) for token in doc if not token.is_punct]
-    doc.user_data["token_length_mean"] = mean(token_lengths)
-
     # Calculate sentence length mean.
     sentences_clean = [
         [token.text for token in sent if not token.is_punct] for sent in doc.sents
@@ -108,6 +109,24 @@ def _additional_metrics(doc):
     n_sentences = len(list(doc.sents))
     rix = long_words / n_sentences
     doc.user_data["rix"] = rix
+
+    # Create interaction terms.
+    doc.user_data["rix_cws"] = doc.user_data["rix"] * doc.user_data["common_word_score"]
+    doc.user_data["rix_vocab_a1"] = doc.user_data["rix"] * doc.user_data["vocab_a1"]
+    doc.user_data["rix_vocab_a2"] = doc.user_data["rix"] * doc.user_data["vocab_a2"]
+    doc.user_data["rix_vocab_b1"] = doc.user_data["rix"] * doc.user_data["vocab_b1"]
+    doc.user_data["slm_cws"] = (
+        doc.user_data["sentence_length_mean"] * doc.user_data["common_word_score"]
+    )
+    doc.user_data["slm_vocab_a1"] = (
+        doc.user_data["sentence_length_mean"] * doc.user_data["vocab_a1"]
+    )
+    doc.user_data["slm_vocab_a2"] = (
+        doc.user_data["sentence_length_mean"] * doc.user_data["vocab_a2"]
+    )
+    doc.user_data["slm_vocab_b1"] = (
+        doc.user_data["sentence_length_mean"] * doc.user_data["vocab_b1"]
+    )
 
     return doc
 
@@ -176,66 +195,16 @@ def _punctuate_lines(text):
     return " ".join(lines_punct)
 
 
-def _get_outliers(data):
-    """Get the outlier score of text sample.
-
-    We want to make sure, that the values of the features of a text
-    are within the range of the training data. We have modeled the
-    training data as a Gaussian Mixture Model (GMM) and can use the
-    log likelihood of the data to determine how likely unseen data
-    are an outlier. This does not mean that the calculated ZIX score
-    is wrong, but it might be less reliable.
-
-    Args:
-        data (pd.DataFrame): A DataFrame containing the features of a text.
-
-    Returns:
-        float: The log likelihood of the text sample being an outlier.
-    """
-    log_likelihood = gmm.score_samples(data)
-    result = log_likelihood
-    return result[0]
-
 
 def _calculate_score(data):
-    """Calculate the understandability of a text based on its features.
+    """Calculate the understandability of a text based on its features."""
+    # Scale data and predict understandability.
+    X = scaler.transform(data)
+    understandability = 1 - clf.predict(X)[0]
 
-    Args:
-        data (pd.Series): A pandas Series containing the features of a text.
-
-    Returns:
-        float: The understandability score of the text.
-
-    """
-    # Standardize values.
-    # Reverse values so that higher values signify easier texts.
-    tlm = 1 - (data.token_length_mean - 5.8) / 0.7
-    slm = 1 - (data.sentence_length_mean - 13.5) / 4.6
-    rix = 1 - (data.rix - 4.6) / 2.2
-
-    # Standardize values.
-    # Higher values for these features already signify easier texts.
-    a1 = (data.vocab_a1 - 0.6) / 0.1
-    a2 = (data.vocab_a2 - 0.6) / 0.1
-    b1 = (data.vocab_b1 - 0.7) / 0.1
-    cws = (data.common_word_score - 7.3) / 1.0
-
-    score = (
-        (
-            slm * 0.2
-            + rix * 0.2
-            + tlm * 0.1
-            + a1 * 0.125
-            + a2 * 0.125
-            + b1 * 0.125
-            + cws * 0.125
-        )
-        * 3.4  # Spread the score over a wider range.
-        + 5.8  # Shift the score to be centered on 10.
-        - 10  # Shift the score to be centered on 0.
-    )
-    score = score.values[0]
-
+    # Spread the score and shift it to a range from -10 to 10.
+    score = understandability * 2.5 + 6.6
+    
     # Clip to range -10 to 10.
     if score > 10:
         score = 10
@@ -249,11 +218,9 @@ def get_zix(text):
 
     Args:
         text (str): The text to be analyzed.
-        detect_outlier (bool): If True, return the outlier score as well.
 
     Returns:
         float: The understandability score of the text.
-        float: The outlier score of the text.
     """
 
     # If text is not a string, raise an error.
@@ -276,10 +243,9 @@ def get_zix(text):
     text = _punctuate_lines(text)
     features = _extract_features(text)
     if features.isnull().values.any():
-        return None, None
+        return None
     score = _calculate_score(features)
-    log_likelihood = _get_outliers(features)
-    return score, log_likelihood
+    return score
 
 
 def get_cefr(zix_score):

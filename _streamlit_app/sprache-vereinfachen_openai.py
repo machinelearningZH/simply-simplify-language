@@ -115,7 +115,7 @@ def create_project_info(project_info):
 
 def get_understandability(text):
     """Get the understandability score and rough estimation of CEFR level for the text."""
-    zix, _ = get_zix(text)
+    zix = get_zix(text)
     cefr = get_cefr(zix)
     return zix, cefr
 

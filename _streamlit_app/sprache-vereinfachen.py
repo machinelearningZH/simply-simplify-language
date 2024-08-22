@@ -134,22 +134,9 @@ def create_project_info(project_info):
         st.markdown(project_info[1], unsafe_allow_html=True)
 
 
-@st.cache_resource
-def get_word_scores():
-    """Get commond word scores from the parquet file.
-
-    This is a list of common German words in texts written in Einfache and Leichte Sprache. We use this ranking to calculate, how common the vocabulary in the text ist and therefore how easy the text is to understand.
-
-    We have lemmatized and lower cased the words. Also note that the German `ß` has been replaced with `ss`.
-    """
-    word_scores = pd.read_parquet("word_scores.parq")
-    word_scores = dict(zip(word_scores["lemma"], word_scores["score"]))
-    return word_scores
-
-
 def get_understandability(text):
     """Get the understandability score and rough estimation of CEFR level for the text."""
-    zix, _ = get_zix(text)
+    zix = get_zix(text)
     cefr = get_cefr(zix)
     return zix, cefr
 
