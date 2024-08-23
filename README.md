@@ -84,9 +84,7 @@
 
 
 ## Project information
-**Institutional communication is often overly complicated and hard to understand.**
-
-This particularly affects citizens who do not speak German as their first language or who struggle with complex texts for other reasons. Clear and simple communication is essential to [ensure everyone can participate in public processes and access services equally](https://www.zh.ch/de/direktion-der-justiz-und-des-innern/schwerpunkt-teilhabe.html).
+**Institutional communication is often overly complicated and hard to understand.** This particularly affects citizens who do not speak German as their first language or who struggle with complex texts for other reasons. Clear and simple communication is essential to [ensure everyone can participate in public processes and access services equally](https://www.zh.ch/de/direktion-der-justiz-und-des-innern/schwerpunkt-teilhabe.html).
 
 For many years, the cantonal administration of Zurich has gone to great lengths to make communication more inclusive and accessible. With the increasing volume of content, we wanted to explore the potential of AI to assist in this effort. In autumn 2023, we launched a pilot project. This app is one of the results. The code in this repository represents a snapshot of our ongoing efforts.
 
@@ -133,6 +131,8 @@ We derived the current rules in the prompts mainly from these of our language gu
 ### How does the understandability score work?
 - The score takes into account sentence lengths, the [readability metric RIX](https://hlasse.github.io/TextDescriptives/readability.html), the occurrence of common words and overlap with the standard CEFR vocabularies A1, A2 and B1.
 - At the moment the score does **not** take into account other language properties that are essential for e.g. [Einfache Sprache](https://de.wikipedia.org/wiki/Einfache_Sprache) (B1 or easier, similar to «Plain English») or [Leichte Sprache](https://de.wikipedia.org/wiki/Leichte_Sprache) (A2, A1, similar to «Easy English») like use of passive voice, subjunctives, negations, etc. 
+
+We have published the ZIX understandability index as a pip installable package. You can find it [here](https://github.com/machinelearningZH/zix_understandability-index).
 
 > [!Note]
 > The index is slightly adjusted to Swiss German. Specifically we use `ss` instead of `ß` in our vocabulary lists. In practice this should not make a big difference. For High German text that actually contains `ß` the index will likely underestimate the understandability slightly with a difference of around 0.1.
