@@ -25,6 +25,7 @@ logging.basicConfig(
 
 import pandas as pd
 import numpy as np
+from utils_understandability import get_zix, get_cefr
 
 # For usage of the Azure OpenAI client
 # see: https://github.com/openai/openai-python?tab=readme-ov-file#microsoft-azure-openai.
@@ -33,8 +34,6 @@ from openai import AzureOpenAI
 from utils_sample_texts import (
     SAMPLE_TEXT_01,
 )
-
-from utils_understandability import get_zix, get_cefr
 
 from utils_prompts import (
     SYSTEM_MESSAGE_ES,
@@ -48,7 +47,6 @@ from utils_prompts import (
     OPENAI_TEMPLATE_ANALYSIS_ES,
     OPENAI_TEMPLATE_ANALYSIS_LS,
 )
-
 
 OPENAI_TEMPLATES = [
     OPENAI_TEMPLATE_ES,
@@ -109,6 +107,7 @@ def get_project_info():
         return f.read()
 
 
+@st.cache_resource
 def create_project_info(project_info):
     """Create expander for project info. Add the image in the middle of the content."""
     with st.expander("Detaillierte Informationen zum Projekt"):
@@ -116,13 +115,6 @@ def create_project_info(project_info):
         st.markdown(project_info[0], unsafe_allow_html=True)
         st.image("zix_scores.jpg", use_column_width=True)
         st.markdown(project_info[1], unsafe_allow_html=True)
-
-
-def get_understandability(text):
-    """Get the understandability score and rough estimation of CEFR level for the text."""
-    zix = get_zix(text)
-    cefr = get_cefr(zix)
-    return zix, cefr
 
 
 def create_prompt(text, prompt_es, prompt_ls, analysis_es, analysis_ls, analysis):
@@ -167,8 +159,8 @@ def get_result_from_response(response):
     return result.strip()
 
 
-@st.cache_resource
 # https://learn.microsoft.com/azure/cognitive-services/openai/how-to/create-resource?pivots=web-portal#create-a-resource
+@st.cache_resource
 def get_azure_openai_client():
     return AzureOpenAI(
         api_key=AZURE_OPENAI_API_KEY,  # This is the default, but let's make it explicit.
@@ -313,9 +305,12 @@ def log_event(
 # Main
 
 azure_openai_client = get_azure_openai_client()
-
 project_info = get_project_info()
 
+# Persist text input across sessions in session state.
+# Otherwise, the text input sometimes gets lost when the user clicks on a button.
+if "key_textinput" not in st.session_state:
+    st.session_state.key_textinput = ""
 
 st.markdown("## 🙋‍♀️ Sprache einfach vereinfachen (Version GPT-4o only)")
 create_project_info(project_info)
@@ -370,8 +365,9 @@ with cols[2]:
 
 # Populate containers.
 with source_text:
-    text_input = st.text_area(
+    st.text_area(
         "Ausgangstext, den du vereinfachen möchtest",
+        value=None,
         height=TEXT_AREA_HEIGHT,
         max_chars=MAX_CHARS_INPUT,
         key="key_textinput",
@@ -394,13 +390,14 @@ with placeholder_analysis:
 # Start processing if one of the processing buttons is clicked.
 if do_simplification or do_analysis:
     start_time = time.time()
-    if text_input == "":
+    if st.session_state.key_textinput == "":
         st.error("Bitte gib einen Text ein.")
         st.stop()
 
-    score_source = get_understandability(text_input)
-    score_source_rounded = int(np.round(score_source, 0))
-    cefr_source = get_cefr_level(score_source)
+    score_source = get_zix(st.session_state.key_textinput)
+    # We add 0 to avoid negative zero.
+    score_source_rounded = int(np.round(score_source, 0) + 0)
+    cefr_source = get_cefr(score_source)
 
     # Analyze source text and display results.
     with source_text:
@@ -428,7 +425,7 @@ if do_simplification or do_analysis:
             with st.spinner("Ich arbeite..."):
                 # Regular text simplification or analysis.
                 success, response = invoke_azure_openai_model(
-                    text_input,
+                    st.session_state.key_textinput,
                     deployment=MODEL_CHOICE,
                     analysis=do_analysis,
                 )
@@ -465,8 +462,9 @@ if do_simplification or do_analysis:
             value=response,
         )
         if do_simplification:
-            score_target, cefr_target = get_understandability(response)
-            score_target_rounded = np.round(score_target, 0) + 0
+            score_target = get_zix(response)
+            score_target_rounded = int(np.round(score_target, 0) + 0)
+            cefr_target = get_cefr(score_target)
             if score_target < LIMIT_HARD:
                 st.markdown(
                     f"Dein vereinfachter Text ist **:red[schwer verständlich]**. ({score_target_rounded}  auf einer Skala von -10 bis 10). Das entspricht etwa dem **:red[Sprachniveau {cefr_target}]**."
@@ -487,7 +485,7 @@ if do_simplification or do_analysis:
                     help="Verständlichkeit auf einer Skala von -10 bis 10 (von -10 = extrem schwer verständlich bis 10 = sehr gut verständlich). Texte in Einfacher Sprache haben meist einen Wert von 0 bis 4 oder höher.",
                 )
 
-                create_download_link(text_input, response)
+                create_download_link(st.session_state.key_textinput, response)
                 st.caption(f"Verarbeitet in {time_processed:.1f} Sekunden.")
         else:
             with placeholder_analysis.container():
@@ -496,11 +494,11 @@ if do_simplification or do_analysis:
                     value=score_source_rounded,
                     help="Verständlichkeit auf einer Skala von -10 bis 10 (von -10 = extrem schwer verständlich bis 10 = sehr gut verständlich). Texte in Einfacher Sprache haben meist einen Wert von 0 bis 4 oder höher.",
                 )
-                create_download_link(text_input, response, analysis=True)
+                create_download_link(st.session_state.key_textinput, response, analysis=True)
                 st.caption(f"Verarbeitet in {time_processed:.1f} Sekunden.")
 
         log_event(
-            text_input,
+            st.session_state.key_textinput,
             response,
             do_analysis,
             do_simplification,

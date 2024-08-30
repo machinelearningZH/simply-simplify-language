@@ -510,7 +510,7 @@ mistral_client = get_mistral_client()
 
 project_info = get_project_info()
 
-# Persist text input across sessions. 
+# Persist text input across sessions in session state.
 # Otherwise, the text input sometimes gets lost when the user clicks on a button.
 if "key_textinput" not in st.session_state:
     st.session_state.key_textinput = ""
@@ -597,7 +597,6 @@ with placeholder_result:
     text_output = st.text_area(
         "Ergebnis",
         height=TEXT_AREA_HEIGHT,
-        key="key_textoutput",
     )
 with placeholder_analysis:
     text_analysis = st.metric(
@@ -630,6 +629,7 @@ if do_simplification or do_analysis or do_one_click:
         st.stop()
 
     score_source = get_zix(st.session_state.key_textinput)
+    # We add 0 to avoid negative zero.
     score_source_rounded = int(np.round(score_source, 0) + 0)
     cefr_source = get_cefr(score_source)
 
