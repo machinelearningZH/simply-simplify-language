@@ -42,6 +42,7 @@ Wir sind für Rückmeldungen und Anregungen jeglicher Art dankbar und nehmen die
 
 
 ## Versionsverlauf
+- **v0.3** - 30.08.2024 - *Fehler behoben.*
 - **v0.2** - 18.08.2024 - *Neuen ZIX-Index integriert. Diverse Fehler behoben.*
 - **v0.1.1** - 14.06.2024 - *App-Variante, die nur GPT-4o verwendet.*
 - **v0.1** - 1.06.2024 - *Erste Open Source-Version der App auf Basis des bisherigen Pilotprojekts.*
