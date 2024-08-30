@@ -30,12 +30,11 @@ import numpy as np
 from openai import OpenAI
 from anthropic import Anthropic
 from mistralai import Mistral
+from utils_understandability import get_zix, get_cefr
 
 from utils_sample_texts import (
     SAMPLE_TEXT_01,
 )
-
-from utils_understandability import get_zix, get_cefr
 
 from utils_prompts import (
     SYSTEM_MESSAGE_ES,
@@ -67,7 +66,6 @@ OPENAI_TEMPLATES = [
     OPENAI_TEMPLATE_ANALYSIS_ES,
     OPENAI_TEMPLATE_ANALYSIS_LS,
 ]
-
 
 # ---------------------------------------------------------------
 # Constants
@@ -125,6 +123,7 @@ def get_project_info():
         return f.read()
 
 
+@st.cache_resource
 def create_project_info(project_info):
     """Create expander for project info. Add the image in the middle of the content."""
     with st.expander("Detaillierte Informationen zum Projekt"):
@@ -133,12 +132,6 @@ def create_project_info(project_info):
         st.image("zix_scores.jpg", use_column_width=True)
         st.markdown(project_info[1], unsafe_allow_html=True)
 
-
-def get_understandability(text):
-    """Get the understandability score and rough estimation of CEFR level for the text."""
-    zix = get_zix(text)
-    cefr = get_cefr(zix)
-    return zix, cefr
 
 
 def create_prompt(text, prompt_es, prompt_ls, analysis_es, analysis_ls, analysis):
@@ -286,54 +279,43 @@ def get_one_click_results():
     with ThreadPoolExecutor(max_workers=6) as executor:
         future_mistral = executor.submit(
             invoke_mistral_model,
-            text_input,
+            st.session_state.key_textinput,
             model_id=M_LARGE,
         )
         future_gpt = executor.submit(
             invoke_openai_model,
-            text_input,
+            st.session_state.key_textinput,
             model_id=GPT4,
         )
         future_gpto = executor.submit(
             invoke_openai_model,
-            text_input,
+            st.session_state.key_textinput,
             model_id=GPT4o,
         )
         future_claude_v3_haiku = executor.submit(
             invoke_anthropic_model,
-            text_input,
+            st.session_state.key_textinput,
             model_id=HAIKU,
         )
         future_claude_v3_sonnet = executor.submit(
             invoke_anthropic_model,
-            text_input,
+            st.session_state.key_textinput,
             model_id=SONNET,
         )
         future_claude_v3_opus = executor.submit(
             invoke_anthropic_model,
-            text_input,
+            st.session_state.key_textinput,
             model_id=OPUS,
         )
 
     success_mistral, response_mistral = future_mistral.result()
-    zix_mistral, cefr_mistral = get_understandability(response_mistral)
-
     success_gpt, response_gpt = future_gpt.result()
-    zix_gpt, cefr_gpt = get_understandability(response_gpt)
-
     success_gpto, response_gpto = future_gpto.result()
-    zix_gpto, cefr_gpto = get_understandability(response_gpto)
-
     success_claude_v3_haiku, response_claude_v3_haiku = future_claude_v3_haiku.result()
-    zix_claude_v3_haiku, cefr_haiku = get_understandability(response_claude_v3_haiku)
-
     success_claude_v3_sonnet, response_claude_v3_sonnet = (
         future_claude_v3_sonnet.result()
     )
-    zix_claude_v3_sonnet, cefr_sonnet = get_understandability(response_claude_v3_sonnet)
-
     success_claude_v3_opus, response_claude_v3_opus = future_claude_v3_opus.result()
-    zix_claude_v3_opus, cefr_opus = get_understandability(response_claude_v3_opus)
 
     response = []
 
@@ -349,43 +331,61 @@ def get_one_click_results():
     # We add 0 to the rounded ZIX score to avoid -0.
     # https://stackoverflow.com/a/11010791/7117003
     if success_mistral:
+        zix_mistral = get_zix(response_mistral)
+        zix_mistral = int(np.round(zix_mistral, 0) + 0)
+        cefr_mistral = get_cefr(zix_mistral)
         tmp = (
-            f"\n----- Ergebnis von Mistral Large (Verständlichkeit: {np.round(zix_mistral, 0) + 0}, CEFR-Niveau {cefr_mistral}) -----"
+            f"\n----- Ergebnis von Mistral Large (Verständlichkeit: {zix_mistral}, Niveau etwa {cefr_mistral}) -----"
             + "\n\n"
             + response_mistral
         )
         response.append(tmp)
     if success_claude_v3_haiku:
+        zix_haiku = get_zix(response_claude_v3_haiku)
+        zix_haiku = int(np.round(zix_haiku, 0) + 0)
+        cefr_haiku = get_cefr(zix_haiku)
         tmp = (
-            f"\n----- Ergebnis von Claude 3 Haiku (Verständlichkeit: {np.round(zix_claude_v3_haiku, 0) + 0}, CEFR-Niveau {cefr_haiku}) -----"
+            f"\n----- Ergebnis von Claude 3 Haiku (Verständlichkeit: {zix_haiku}, Niveau etwa {cefr_haiku}) -----"
             + "\n\n"
             + response_claude_v3_haiku
         )
         response.append(tmp)
     if success_claude_v3_sonnet:
+        zix_sonnet = get_zix(response_claude_v3_sonnet)
+        zix_sonnet = int(np.round(zix_sonnet, 0) + 0)
+        cefr_sonnet = get_cefr(zix_sonnet)
         tmp = (
-            f"\n----- Ergebnis von Claude 3 Sonnet (Verständlichkeit: {np.round(zix_claude_v3_sonnet, 0 + 0)}, CEFR-Niveau {cefr_sonnet}) -----"
+            f"\n----- Ergebnis von Claude 3.5 Sonnet (Verständlichkeit: {zix_sonnet}, Niveau etwa {cefr_sonnet}) -----"
             + "\n\n"
             + response_claude_v3_sonnet
         )
         response.append(tmp)
     if success_claude_v3_opus:
+        zix_opus = get_zix(response_claude_v3_opus)
+        zix_opus = int(np.round(zix_opus, 0) + 0)
+        cefr_opus = get_cefr(zix_opus)
         tmp = (
-            f"\n----- Ergebnis von Claude 3 Opus (Verständlichkeit: {np.round(zix_claude_v3_opus, 0) + 0}, CEFR-Niveau {cefr_opus}) -----"
+            f"\n----- Ergebnis von Claude 3 Opus (Verständlichkeit: {zix_opus :.0f}, Niveau etwa {cefr_opus}) -----"
             + "\n\n"
             + response_claude_v3_opus
         )
         response.append(tmp)
     if success_gpt:
+        zix_gpt = get_zix(response_gpt)
+        zix_gpt = int(np.round(zix_gpt, 0) + 0)
+        cefr_gpt = get_cefr(zix_gpt)
         tmp = (
-            f"\n------Ergebnis von GPT-4 (Verständlichkeit: {np.round(zix_gpt, 0) + 0}, CEFR-Niveau {cefr_gpt}) -----"
+            f"\n------Ergebnis von GPT-4 (Verständlichkeit: {zix_gpt}, Niveau etwa {cefr_gpt}) -----"
             + "\n\n"
             + response_gpt
         )
         response.append(tmp)
     if success_gpto:
+        zix_gpto = get_zix(response_gpto)
+        zix_gpto = int(np.round(zix_gpto, 0) + 0)
+        cefr_gpto = get_cefr(zix_gpto)
         tmp = (
-            f"\n----- Ergebnis von GPT-4o (Verständlichkeit: {np.round(zix_gpto, 0) + 0} CEFR {cefr_gpto}) -----"
+            f"\n----- Ergebnis von GPT-4o (Verständlichkeit: {zix_gpto}, Niveau etwa {cefr_gpto}) -----"
             + "\n\n"
             + response_gpto
         )
@@ -510,6 +510,10 @@ mistral_client = get_mistral_client()
 
 project_info = get_project_info()
 
+# Persist text input across sessions. 
+# Otherwise, the text input sometimes gets lost when the user clicks on a button.
+if "key_textinput" not in st.session_state:
+    st.session_state.key_textinput = ""
 
 st.markdown("## 🙋‍♀️ Sprache einfach vereinfachen")
 create_project_info(project_info)
@@ -582,8 +586,9 @@ with cols[2]:
 
 # Populate containers.
 with source_text:
-    text_input = st.text_area(
+    st.text_area(
         "Ausgangstext, den du vereinfachen möchtest",
+        value=None,
         height=TEXT_AREA_HEIGHT,
         max_chars=MAX_CHARS_INPUT,
         key="key_textinput",
@@ -620,12 +625,13 @@ elif model_choice == "GPT-4o":
 # Start processing if one of the processing buttons is clicked.
 if do_simplification or do_analysis or do_one_click:
     start_time = time.time()
-    if text_input == "":
+    if st.session_state.key_textinput == "":
         st.error("Bitte gib einen Text ein.")
         st.stop()
 
-    score_source, cefr_source = get_understandability(text_input)
-    score_source_rounded = int(np.round(score_source, 0))
+    score_source = get_zix(st.session_state.key_textinput)
+    score_source_rounded = int(np.round(score_source, 0) + 0)
+    cefr_source = get_cefr(score_source)
 
     # Analyze source text and display results.
     with source_text:
@@ -658,17 +664,17 @@ if do_simplification or do_analysis or do_one_click:
                 else:
                     if model_choice in ["GPT-4", "GPT-4o"]:
                         success, response = invoke_openai_model(
-                            text_input,
+                            st.session_state.key_textinput,
                             model_id=model_id,
                             analysis=do_analysis,
                         )
                     elif model_choice in ["Mistral Large"]:
                         success, response = invoke_mistral_model(
-                            text_input, model_id=model_id, analysis=do_analysis
+                            st.session_state.key_textinput, model_id=model_id, analysis=do_analysis
                         )
                     else:
                         success, response = invoke_anthropic_model(
-                            text_input, model_id=model_id, analysis=do_analysis
+                            st.session_state.key_textinput, model_id=model_id, analysis=do_analysis
                         )
     if success is False:
         st.error(
@@ -676,7 +682,7 @@ if do_simplification or do_analysis or do_one_click:
         )
         time_processed = time.time() - start_time
         log_event(
-            text_input,
+            st.session_state.key_textinput,
             "Error from model call",
             do_analysis,
             do_simplification,
@@ -704,8 +710,9 @@ if do_simplification or do_analysis or do_one_click:
             value=response,
         )
         if do_simplification or do_one_click:
-            score_target, cefr_target = get_understandability(response)
-            score_target_rounded = np.round(score_target, 0) + 0
+            score_target = get_zix(response)
+            score_target_rounded = int(np.round(score_target, 0) + 0)
+            cefr_target = get_cefr(score_target)
             if score_target < LIMIT_HARD:
                 st.markdown(
                     f"Dein vereinfachter Text ist **:red[schwer verständlich]**. ({score_target_rounded}  auf einer Skala von -10 bis 10). Das entspricht etwa dem **:red[Sprachniveau {cefr_target}]**."
@@ -726,7 +733,7 @@ if do_simplification or do_analysis or do_one_click:
                     help="Verständlichkeit auf einer Skala von -10 bis 10 (von -10 = extrem schwer verständlich bis 10 = sehr gut verständlich). Texte in Einfacher Sprache haben meist einen Wert von 0 bis 4 oder höher.",
                 )
 
-                create_download_link(text_input, response)
+                create_download_link(st.session_state.key_textinput, response)
                 st.caption(f"Verarbeitet in {time_processed:.1f} Sekunden.")
         else:
             with placeholder_analysis.container():
@@ -735,11 +742,11 @@ if do_simplification or do_analysis or do_one_click:
                     value=score_source_rounded,
                     help="Verständlichkeit auf einer Skala von -10 bis 10 (von -10 = extrem schwer verständlich bis 10 = sehr gut verständlich). Texte in Einfacher Sprache haben meist einen Wert von 0 bis 4 oder höher.",
                 )
-                create_download_link(text_input, response, analysis=True)
+                create_download_link(st.session_state.key_textinput, response, analysis=True)
                 st.caption(f"Verarbeitet in {time_processed:.1f} Sekunden.")
 
         log_event(
-            text_input,
+            st.session_state.key_textinput,
             response,
             do_analysis,
             do_simplification,
