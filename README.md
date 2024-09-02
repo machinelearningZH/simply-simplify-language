@@ -148,8 +148,7 @@ We have published the ZIX understandability index as a pip installable package. 
 ### Outlook
 These are a couple of areas that we are actively working on:
 - **Conduct more quantitative tests**: We aim to quantitatively evaluate LLM responses for completeness and accuracy. One approach we are testing is using LLMs as judges to assess these responses.
-- **Enhance our understandability index**: We plan to improve word scoring by incorporating standard vocabularies for A1 to B1 levels from the Goethe Institut. Additionally, we aim to detect issues like passive voice and other problems that are currently missed.
-- **Implement hard-coded guideline rules**: We want to hard-code specific rules that are difficult to prompt, such as formatting specific data or converting URLs to vanity links.
+- **Enhance our understandability index**: We plan to improve word scoring by detecting issues like passive voice, subjunctives and other linguistic properties that are currently missed.
 - **Establish standard vocabularies for administrative terms**: Consistent output for terms and names is crucial for our clients. We need to create a system that allows clients to manage these vocabularies themselves.
 - **Experiment with open-weight models on-premise**: To process sensitive data, we are exploring lightweight models fine-tuned with German data that can be used on-premise.
 
