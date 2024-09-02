@@ -27,7 +27,7 @@ import pandas as pd
 import numpy as np
 from utils_understandability import get_zix, get_cefr
 
-from openai import OpenAI
+import google.generativeai as genai
 
 from utils_sample_texts import (
     SAMPLE_TEXT_01,
@@ -61,10 +61,11 @@ OPENAI_TEMPLATES = [
 
 load_dotenv()
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+genai.configure(api_key=GOOGLE_API_KEY)
 
-MODEL_CHOICE = "gpt-4o"
-MODEL_NAME = "GPT-4o"
+GEM_1_5_FLASH = "gemini-1.5-flash-latest"
+GEM_1_5_PRO = "gemini-1.5-pro-latest"
 
 # From our testing we derive a sensible temperature of 0.5 as a good trade-off between creativity and coherence. Adjust this to your needs.
 TEMPERATURE = 0.5
@@ -78,7 +79,7 @@ TEXT_AREA_HEIGHT = 600
 MAX_CHARS_INPUT = 10_000
 
 
-USER_WARNING = """<sub>⚠️ Achtung: Diese App ist ein Prototyp. Nutze die App :red[**nur für öffentliche, nicht sensible Daten**]. Die App liefert lediglich einen Textentwurf. Überprüfe das Ergebnis immer und passe es an, wenn nötig. Die aktuelle App-Version ist v0.3 Die letzte Aktualisierung war am 30.8.2024."""
+USER_WARNING = """<sub>⚠️ Achtung: Diese App ist ein Prototyp. Nutze die App :red[**nur für öffentliche, nicht sensible Daten**]. Die App liefert lediglich einen Textentwurf. Überprüfe das Ergebnis immer und passe es an, wenn nötig. Die aktuelle App-Version ist v0.4 Die letzte Aktualisierung war am 2.9.2024."""
 
 
 # Constants for the formatting of the Word document that can be downloaded.
@@ -100,7 +101,7 @@ LIMIT_MEDIUM = -2
 @st.cache_resource
 def get_project_info():
     """Get markdown for project information that is shown in the expander section at the top of the app."""
-    with open("utils_expander_openai.md") as f:
+    with open("utils_expander_google.md") as f:
         return f.read()
 
 
@@ -156,32 +157,33 @@ def get_result_from_response(response):
     return result.strip()
 
 
-@st.cache_resource
-def get_openai_client():
-    return OpenAI()
+def strip_markdown(text):
+    """Strip markdown from text."""
+    # Remove markdown headers.
+    text = re.sub(r"#+\s", "", text)
+    # Remove markdown italic and bold.
+    text = re.sub(r"\*\*|\*|__|_", "", text)
+    return text
 
 
-def invoke_openai_model(
-    text,
-    model_id=MODEL_CHOICE,
-    temperature=TEMPERATURE,
-    max_tokens=4096,
-    analysis=False,
+def invoke_google_model(
+    text, model_id=GEM_1_5_FLASH, temperature=TEMPERATURE, analysis=False
 ):
-    """Invoke OpenAI model."""
+    """Invoke Google model."""
     final_prompt, system = create_prompt(text, *OPENAI_TEMPLATES, analysis)
+    google_client = genai.GenerativeModel(
+        model_id,
+        generation_config={"temperature": temperature},
+        system_instruction=system,
+    )
     try:
-        message = openai_client.chat.completions.create(
-            model=model_id,
-            temperature=temperature,
-            max_tokens=max_tokens,
-            messages=[
-                {"role": "system", "content": system},
-                {"role": "user", "content": final_prompt},
-            ],
+        message = google_client.generate_content(
+            final_prompt,
         )
-        message = message.choices[0].message.content.strip()
-        return True, get_result_from_response(message)
+        message = message.text.strip()
+        message = get_result_from_response(message)
+        message = strip_markdown(message)
+        return True, message
     except Exception as e:
         print(f"Error: {e}")
         return False, e
@@ -200,10 +202,10 @@ def create_download_link(text_input, response, analysis=False):
     p1 = document.add_paragraph("\n" + text_input)
 
     if analysis:
-        h2 = document.add_heading(f"Analyse von Sprachmodell {MODEL_NAME} von OpenAI")
+        h2 = document.add_heading(f"Analyse von Sprachmodell {model_choice} von Google")
     else:
         h2 = document.add_heading(
-            f"Vereinfachter Text von Sprachmodell {MODEL_NAME} von OpenAI"
+            f"Vereinfachter Text von Sprachmodell {model_choice} von Google"
         )
 
     p2 = document.add_paragraph(response)
@@ -212,7 +214,7 @@ def create_download_link(text_input, response, analysis=False):
     footer = document.sections[0].footer
     footer.paragraphs[
         0
-    ].text = f"Erstellt am {timestamp} mit der Prototyp-App «Einfache Sprache», Statistisches Amt, Kanton Zürich.\nSprachmodell: {MODEL_NAME}\nVerarbeitungszeit: {time_processed:.1f} Sekunden"
+    ].text = f"Erstellt am {timestamp} mit der Prototyp-App «Einfache Sprache», Statistisches Amt, Kanton Zürich.\nSprachmodell: {model_choice}\nVerarbeitungszeit: {time_processed:.1f} Sekunden"
 
     # Set font for all paragraphs.
     for paragraph in document.paragraphs:
@@ -289,7 +291,6 @@ def log_event(
 # ---------------------------------------------------------------
 # Main
 
-openai_client = get_openai_client()
 project_info = get_project_info()
 
 # Persist text input across sessions in session state.
@@ -297,7 +298,7 @@ project_info = get_project_info()
 if "key_textinput" not in st.session_state:
     st.session_state.key_textinput = ""
 
-st.markdown("## 🙋‍♀️ Sprache einfach vereinfachen (Version GPT-4o only)")
+st.markdown("## 🙋‍♀️ Sprache einfach vereinfachen (Version Google Gemini only)")
 create_project_info(project_info)
 st.caption(USER_WARNING, unsafe_allow_html=True)
 st.markdown("---")
@@ -312,19 +313,19 @@ with button_cols[0]:
         type="secondary",
         help="Fügt einen Beispieltext ein.",
     )
-with button_cols[1]:
     do_analysis = st.button(
         "Text analysieren",
         use_container_width=True,
         help="Analysiert deinen Ausgangstext Satz für Satz.",
     )
-with button_cols[2]:
+with button_cols[1]:
     do_simplification = st.button(
         "Text vereinfachen",
         use_container_width=True,
         help="Vereinfacht deinen Ausgangstext.",
     )
-with button_cols[3]:
+
+with button_cols[2]:
     leichte_sprache = st.toggle(
         "Leichte Sprache",
         value=False,
@@ -336,6 +337,18 @@ with button_cols[3]:
             value=True,
             help="**Schalter aktiviert**: Modell konzentriert sich auf essentielle Informationen und versucht, Unwichtiges wegzulassen. **Schalter nicht aktiviert**: Modell versucht, alle Informationen zu übernehmen.",
         )
+
+with button_cols[3]:
+    model_choice = st.radio(
+        label="Sprachmodell",
+        options=(
+            "Gemini 1.5 Flash",
+            "Gemini 1.5 Pro",
+        ),
+        index=0,
+        horizontal=True,
+        help="Google Gemini 1.5 Flash ist schneller und weniger genau. Google Gemini 1.5 Pro ist langsamer und genauer.",
+    )
 
 
 # Instantiate empty containers for the text areas.
@@ -369,6 +382,10 @@ with placeholder_analysis:
         delta=None,
         help="Texte in Einfacher Sprache haben meist einen Wert von 0 bis 4 oder höher, Texte in Leichter Sprache 2 bis 6 oder höher",
     )
+
+model_id = GEM_1_5_FLASH
+if model_choice == "Gemini 1.5 Pro":
+    model_id = GEM_1_5_PRO
 
 
 # Start processing if one of the processing buttons is clicked.
@@ -408,9 +425,9 @@ if do_simplification or do_analysis:
         with placeholder_analysis.container():
             with st.spinner("Ich arbeite..."):
                 # Regular text simplification or analysis.
-                success, response = invoke_openai_model(
+                success, response = invoke_google_model(
                     st.session_state.key_textinput,
-                    model_id=MODEL_CHOICE,
+                    model_id=model_id,
                     analysis=do_analysis,
                 )
 
@@ -478,7 +495,9 @@ if do_simplification or do_analysis:
                     value=score_source_rounded,
                     help="Verständlichkeit auf einer Skala von -10 bis 10 (von -10 = extrem schwer verständlich bis 10 = sehr gut verständlich). Texte in Einfacher Sprache haben meist einen Wert von 0 bis 4 oder höher.",
                 )
-                create_download_link(st.session_state.key_textinput, response, analysis=True)
+                create_download_link(
+                    st.session_state.key_textinput, response, analysis=True
+                )
                 st.caption(f"Verarbeitet in {time_processed:.1f} Sekunden.")
 
         log_event(
