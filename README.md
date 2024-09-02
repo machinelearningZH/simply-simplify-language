@@ -38,7 +38,7 @@
 - You can run the app **locally**, **in the cloud** or **in a [GitHub Codespace](https://github.com/features/codespaces)**. 
 - If you just have an [OpenAI](https://openai.com/api/) account and do not want to use other LLMs you also can run **a variant of the app that only uses GPT-4o**. However, we recommend to give the [Mistral](https://mistral.ai/) and [Anthropic](https://www.anthropic.com/api) models a spin too. These models are very powerful too and we continuously achieve very good results.
 - We also added an app version that uses the [**Azure OpenAI Service**](https://azure.microsoft.com/en-us/products/ai-services/openai-service).
-- We also added an app version that leverages the Google Gemini models (1.5 Flash and Pro). 
+- We also added an app version that leverages the **Google Gemini models** (1.5 Flash and Pro). 
 
 
 ### Run the app locally
