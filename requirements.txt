@@ -8,3 +8,4 @@ python-docx
 python-dotenv
 pyarrow
 fastparquet
+scikit-learn
