@@ -60,7 +60,6 @@ OPENAI_TEMPLATES = [
 # Constants
 
 load_dotenv()
-load_dotenv("/Volumes/1TB Home SSD/GitHub/.env_stat")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 MODEL_IDS = {
