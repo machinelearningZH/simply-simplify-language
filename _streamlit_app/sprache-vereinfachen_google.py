@@ -333,11 +333,7 @@ with button_cols[2]:
 with button_cols[3]:
     model_choice = st.radio(
         label="Sprachmodell",
-        options=(
-            "Gemini 1.5 Flash",
-            "Gemini 2.0 Flash",
-            "Gemini 1.5 Pro",
-        ),
+        options=([model_name for model_name in MODEL_IDS.keys()]),
         index=0,
         horizontal=True,
         help="Google Gemini Flash ist schneller und liefert sehr gute Qualität. Google Gemini 1.5 Pro ist langsamer bei bester Qualität.",

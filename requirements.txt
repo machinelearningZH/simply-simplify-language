@@ -2,6 +2,7 @@ streamlit
 openai
 anthropic
 mistralai
+google-generativeai
 spacy
 textdescriptives
 python-docx

@@ -24,12 +24,13 @@ logging.basicConfig(
     level=logging.WARNING,
 )
 
-import pandas as pd
 import numpy as np
 
 from openai import OpenAI
 from anthropic import Anthropic
 from mistralai import Mistral
+import google.generativeai as genai
+
 from utils_understandability import get_zix, get_cefr
 
 from utils_sample_texts import (
@@ -72,21 +73,32 @@ OPENAI_TEMPLATES = [
 
 load_dotenv()
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
-MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")
+API_KEYS = {
+    "OPENAI": os.getenv("OPENAI_API_KEY"),
+    "ANTHROPIC": os.getenv("ANTHROPIC_API_KEY"),
+    "MISTRAL": os.getenv("MISTRAL_API_KEY"),
+    "GOOGLE": os.getenv("GOOGLE_API_KEY"),
+}
+genai.configure(api_key=API_KEYS["GOOGLE"])
 
-HAIKU = "claude-3-haiku-20240307"
-SONNET = "claude-3-5-sonnet-20240620"
-OPUS = "claude-3-opus-20240229"
 
-M_LARGE = "mistral-large-latest"
-
-GPT4 = "gpt-4-turbo"
-GPT4o = "gpt-4o"
+MODEL_IDS = {
+    "Mistral Nemo": "open-mistral-nemo",
+    "Mistral large": "mistral-large-latest",
+    "Claude Haiku 3.5": "claude-3-5-haiku-latest",
+    "Claude Sonnet 3.5": "claude-3-5-sonnet-latest",
+    "GPT-4o mini": "gpt-4o-mini",
+    "GPT-4o": "gpt-4o",
+    "o1 mini": "o1-mini",
+    "o1": "o1-preview",
+    "Gemini 1.5 Flash": "gemini-1.5-flash",
+    "Gemini 2.0 Flash": "gemini-2.0-flash-exp",
+    "Gemini 1.5 Pro": "gemini-1.5-pro",
+}
 
 # From our testing we derive a sensible temperature of 0.5 as a good trade-off between creativity and coherence. Adjust this to your needs.
 TEMPERATURE = 0.5
+MAX_TOKENS = 8192
 
 # Height of the text areas for input and output.
 TEXT_AREA_HEIGHT = 600
@@ -97,7 +109,7 @@ TEXT_AREA_HEIGHT = 600
 MAX_CHARS_INPUT = 10_000
 
 
-USER_WARNING = """<sub>⚠️ Achtung: Diese App ist ein Prototyp. Nutze die App :red[**nur für öffentliche, nicht sensible Daten**]. Die App liefert lediglich einen Textentwurf. Überprüfe das Ergebnis immer und passe es an, wenn nötig. Die aktuelle App-Version ist v0.3 Die letzte Aktualisierung war am 30.8.2024."""
+USER_WARNING = """<sub>⚠️ Achtung: Diese App ist ein Prototyp. Nutze die App :red[**nur für öffentliche, nicht sensible Daten**]. Die App liefert lediglich einen Textentwurf. Überprüfe das Ergebnis immer und passe es an, wenn nötig. Die aktuelle App-Version ist v0.5 Die letzte Aktualisierung war am 22.12.2024."""
 
 
 # Constants for the formatting of the Word document that can be downloaded.
@@ -105,12 +117,14 @@ FONT_WORDDOC = "Arial"
 FONT_SIZE_HEADING = 12
 FONT_SIZE_PARAGRAPH = 9
 FONT_SIZE_FOOTER = 7
-
+DEFAULT_OUTPUT_FILENAME = "Ergebnis.docx"
+ANALYSIS_FILENAME = "Analyse.docx"
 
 # Limits for the understandability score to determine if the text is easy, medium or hard to understand.
 LIMIT_HARD = 0
 LIMIT_MEDIUM = -2
 
+DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 # ---------------------------------------------------------------
 # Functions
@@ -129,30 +143,25 @@ def create_project_info(project_info):
     with st.expander("Detaillierte Informationen zum Projekt"):
         project_info = project_info.split("### Image ###")
         st.markdown(project_info[0], unsafe_allow_html=True)
-        st.image("zix_scores.jpg", use_column_width=True)
+        st.image("zix_scores.jpg", use_container_width=True)
         st.markdown(project_info[1], unsafe_allow_html=True)
-
 
 
 def create_prompt(text, prompt_es, prompt_ls, analysis_es, analysis_ls, analysis):
     """Create prompt and system message according the app settings."""
     if analysis:
-        if leichte_sprache:
-            final_prompt = analysis_ls.format(rules=RULES_LS, prompt=text)
-            system = SYSTEM_MESSAGE_LS
-        else:
-            final_prompt = analysis_es.format(rules=RULES_ES, prompt=text)
-            system = SYSTEM_MESSAGE_ES
+        final_prompt = (
+            analysis_ls.format(rules=RULES_LS, prompt=text)
+            if leichte_sprache
+            else analysis_es.format(rules=RULES_ES, prompt=text)
+        )
+        system = SYSTEM_MESSAGE_LS if leichte_sprache else SYSTEM_MESSAGE_ES
     else:
         if leichte_sprache:
-            if condense_text:
-                final_prompt = prompt_ls.format(
-                    rules=RULES_LS, completeness=REWRITE_CONDENSED, prompt=text
-                )
-            else:
-                final_prompt = prompt_ls.format(
-                    rules=RULES_LS, completeness=REWRITE_COMPLETE, prompt=text
-                )
+            completeness = REWRITE_CONDENSED if condense_text else REWRITE_COMPLETE
+            final_prompt = prompt_ls.format(
+                rules=RULES_LS, completeness=completeness, prompt=text
+            )
             system = SYSTEM_MESSAGE_LS
         else:
             final_prompt = prompt_es.format(
@@ -164,28 +173,38 @@ def create_prompt(text, prompt_es, prompt_ls, analysis_es, analysis_ls, analysis
 
 def get_result_from_response(response):
     """Extract text between tags from response."""
-    if leichte_sprache:
-        result = re.findall(
-            r"<leichtesprache>(.*?)</leichtesprache>", response, re.DOTALL
-        )
-    else:
-        result = re.findall(
-            r"<einfachesprache>(.*?)</einfachesprache>", response, re.DOTALL
-        )
-    result = "\n".join(result)
-    return result.strip()
+    tag = "leichtesprache" if leichte_sprache else "einfachesprache"
+    result = re.findall(rf"<{tag}>(.*?)</{tag}>", response, re.DOTALL)
+    return "\n".join(result).strip()
+
+
+def strip_markdown(text):
+    """Strip markdown from text."""
+    # Remove markdown headers.
+    text = re.sub(r"#+\s", "", text)
+    # Remove markdown italic and bold.
+    text = re.sub(r"\*\*|\*|__|_", "", text)
+    return text
 
 
 @st.cache_resource
 def get_anthropic_client():
-    return Anthropic(api_key=ANTHROPIC_API_KEY)
+    return Anthropic(api_key=API_KEYS["ANTHROPIC"])
+
+
+@st.cache_resource
+def get_openai_client():
+    return OpenAI(api_key=API_KEYS["OPENAI"])
+
+
+@st.cache_resource
+def get_mistral_client():
+    return Mistral(api_key=API_KEYS["MISTRAL"])
 
 
 def invoke_anthropic_model(
     text,
-    max_tokens=4096,
-    temperature=TEMPERATURE,
-    model_id=HAIKU,
+    model_id=MODEL_IDS["Claude Haiku 3.5"],
     analysis=False,
 ):
     """Invoke Anthropic model."""
@@ -193,8 +212,8 @@ def invoke_anthropic_model(
     try:
         message = anthropic_client.messages.create(
             model=model_id,
-            max_tokens=max_tokens,
-            temperature=temperature,
+            temperature=TEMPERATURE,
+            max_tokens=MAX_TOKENS,
             system=system,
             messages=[
                 {
@@ -204,21 +223,17 @@ def invoke_anthropic_model(
             ],
         )
         message = message.content[0].text.strip()
-        return True, get_result_from_response(message)
+        message = get_result_from_response(message)
+        message = strip_markdown(message)
+        return True, message
     except Exception as e:
+        print(f"Error: {e}")
         return False, e
-
-
-@st.cache_resource
-def get_openai_client():
-    return OpenAI()
 
 
 def invoke_openai_model(
     text,
-    model_id="gpt-4o",
-    temperature=TEMPERATURE,
-    max_tokens=4096,
+    model_id=MODEL_IDS["GPT-4o mini"],
     analysis=False,
 ):
     """Invoke OpenAI model."""
@@ -226,27 +241,47 @@ def invoke_openai_model(
     try:
         message = openai_client.chat.completions.create(
             model=model_id,
-            temperature=temperature,
-            max_tokens=max_tokens,
+            temperature=TEMPERATURE,
+            max_tokens=MAX_TOKENS,
             messages=[
                 {"role": "system", "content": system},
                 {"role": "user", "content": final_prompt},
             ],
         )
         message = message.choices[0].message.content.strip()
-        return True, get_result_from_response(message)
+        message = get_result_from_response(message)
+        message = strip_markdown(message)
+        return True, message
     except Exception as e:
         print(f"Error: {e}")
         return False, e
 
 
-@st.cache_resource
-def get_mistral_client():
-    return Mistral(api_key=MISTRAL_API_KEY)
+def invoke_openai_reasoning_model(
+    text,
+    model_id=MODEL_IDS["o1 mini"],
+    analysis=False,
+):
+    """Invoke OpenAI model."""
+    final_prompt, _ = create_prompt(text, *OPENAI_TEMPLATES, analysis)
+    try:
+        message = openai_client.chat.completions.create(
+            model=model_id,
+            messages=[
+                {"role": "user", "content": final_prompt},
+            ],
+        )
+        message = message.choices[0].message.content.strip()
+        message = get_result_from_response(message)
+        message = strip_markdown(message)
+        return True, message
+    except Exception as e:
+        print(f"Error: {e}")
+        return False, e
 
 
 def invoke_mistral_model(
-    text, model_id="mistral-large-latest", temperature=TEMPERATURE, analysis=False
+    text, model_id=MODEL_IDS["Mistral large"], temperature=TEMPERATURE, analysis=False
 ):
     """Invoke Mistral model."""
     # Our Claude templates seem to work fine for Mistral as well.
@@ -259,10 +294,37 @@ def invoke_mistral_model(
         message = mistral_client.chat.complete(
             model=model_id,
             messages=messages,
-            temperature=temperature,
+            temperature=TEMPERATURE,
         )
         message = message.choices[0].message.content.strip()
-        return True, get_result_from_response(message)
+        message = get_result_from_response(message)
+        message = strip_markdown(message)
+        return True, message
+    except Exception as e:
+        print(f"Error: {e}")
+        return False, e
+
+
+def invoke_google_model(
+    text,
+    model_id=MODEL_IDS["Gemini 2.0 Flash"],
+    analysis=False,
+):
+    """Invoke Google model."""
+    final_prompt, system = create_prompt(text, *OPENAI_TEMPLATES, analysis)
+    google_client = genai.GenerativeModel(
+        model_id,
+        generation_config={"temperature": TEMPERATURE},
+        system_instruction=system,
+    )
+    try:
+        message = google_client.generate_content(
+            final_prompt,
+        )
+        message = message.text.strip()
+        message = get_result_from_response(message)
+        message = strip_markdown(message)
+        return True, message
     except Exception as e:
         print(f"Error: {e}")
         return False, e
@@ -274,126 +336,82 @@ def enter_sample_text():
 
 
 def get_one_click_results():
-    """Send prompt to all models in parallel and collect results."""
+    with ThreadPoolExecutor(max_workers=9) as executor:
+        futures = {
+            "Mistral large": executor.submit(
+                invoke_mistral_model,
+                st.session_state.key_textinput,
+                MODEL_IDS["Mistral large"],
+            ),
+            "Mistral Nemo": executor.submit(
+                invoke_mistral_model,
+                st.session_state.key_textinput,
+                MODEL_IDS["Mistral Nemo"],
+            ),
+            "GPT-4o mini": executor.submit(
+                invoke_openai_model,
+                st.session_state.key_textinput,
+                MODEL_IDS["GPT-4o mini"],
+            ),
+            "GPT-4o": executor.submit(
+                invoke_openai_model,
+                st.session_state.key_textinput,
+                MODEL_IDS["GPT-4o"],
+            ),
+            "o1 mini": executor.submit(
+                invoke_openai_reasoning_model,
+                st.session_state.key_textinput,
+                MODEL_IDS["o1 mini"],
+            ),
+            "o1": executor.submit(
+                invoke_openai_reasoning_model,
+                st.session_state.key_textinput,
+                MODEL_IDS["o1"],
+            ),
+            "Claude Haiku 3.5": executor.submit(
+                invoke_anthropic_model,
+                st.session_state.key_textinput,
+                MODEL_IDS["Claude Haiku 3.5"],
+            ),
+            "Claude Sonnet 3.5": executor.submit(
+                invoke_anthropic_model,
+                st.session_state.key_textinput,
+                MODEL_IDS["Claude Sonnet 3.5"],
+            ),
+            "Gemini 1.5 Flash": executor.submit(
+                invoke_google_model,
+                st.session_state.key_textinput,
+                MODEL_IDS["Gemini 1.5 Flash"],
+            ),
+            "Gemini 2.0 Flash": executor.submit(
+                invoke_google_model,
+                st.session_state.key_textinput,
+                MODEL_IDS["Gemini 2.0 Flash"],
+            ),
+            "Gemini 1.5 Pro": executor.submit(
+                invoke_google_model,
+                st.session_state.key_textinput,
+                MODEL_IDS["Gemini 1.5 Pro"],
+            ),
+        }
 
-    with ThreadPoolExecutor(max_workers=6) as executor:
-        future_mistral = executor.submit(
-            invoke_mistral_model,
-            st.session_state.key_textinput,
-            model_id=M_LARGE,
-        )
-        future_gpt = executor.submit(
-            invoke_openai_model,
-            st.session_state.key_textinput,
-            model_id=GPT4,
-        )
-        future_gpto = executor.submit(
-            invoke_openai_model,
-            st.session_state.key_textinput,
-            model_id=GPT4o,
-        )
-        future_claude_v3_haiku = executor.submit(
-            invoke_anthropic_model,
-            st.session_state.key_textinput,
-            model_id=HAIKU,
-        )
-        future_claude_v3_sonnet = executor.submit(
-            invoke_anthropic_model,
-            st.session_state.key_textinput,
-            model_id=SONNET,
-        )
-        future_claude_v3_opus = executor.submit(
-            invoke_anthropic_model,
-            st.session_state.key_textinput,
-            model_id=OPUS,
-        )
-
-    success_mistral, response_mistral = future_mistral.result()
-    success_gpt, response_gpt = future_gpt.result()
-    success_gpto, response_gpto = future_gpto.result()
-    success_claude_v3_haiku, response_claude_v3_haiku = future_claude_v3_haiku.result()
-    success_claude_v3_sonnet, response_claude_v3_sonnet = (
-        future_claude_v3_sonnet.result()
-    )
-    success_claude_v3_opus, response_claude_v3_opus = future_claude_v3_opus.result()
-
-    response = []
-
-    if leichte_sprache:
-        response.append(
-            "Die Sprachmodelle haben versucht, den Ausgangstext in **Leichte Sprache** umzuschreiben."
-        )
-    else:
-        response.append(
-            "Die Sprachmodelle haben versucht, den Text in **Einfache Sprache** umzuschreiben."
-        )
+    responses = {name: future.result() for name, future in futures.items()}
+    response_texts = []
 
     # We add 0 to the rounded ZIX score to avoid -0.
     # https://stackoverflow.com/a/11010791/7117003
-    if success_mistral:
-        zix_mistral = get_zix(response_mistral)
-        zix_mistral = int(np.round(zix_mistral, 0) + 0)
-        cefr_mistral = get_cefr(zix_mistral)
-        tmp = (
-            f"\n----- Ergebnis von Mistral Large (Verständlichkeit: {zix_mistral}, Niveau etwa {cefr_mistral}) -----"
-            + "\n\n"
-            + response_mistral
-        )
-        response.append(tmp)
-    if success_claude_v3_haiku:
-        zix_haiku = get_zix(response_claude_v3_haiku)
-        zix_haiku = int(np.round(zix_haiku, 0) + 0)
-        cefr_haiku = get_cefr(zix_haiku)
-        tmp = (
-            f"\n----- Ergebnis von Claude 3 Haiku (Verständlichkeit: {zix_haiku}, Niveau etwa {cefr_haiku}) -----"
-            + "\n\n"
-            + response_claude_v3_haiku
-        )
-        response.append(tmp)
-    if success_claude_v3_sonnet:
-        zix_sonnet = get_zix(response_claude_v3_sonnet)
-        zix_sonnet = int(np.round(zix_sonnet, 0) + 0)
-        cefr_sonnet = get_cefr(zix_sonnet)
-        tmp = (
-            f"\n----- Ergebnis von Claude 3.5 Sonnet (Verständlichkeit: {zix_sonnet}, Niveau etwa {cefr_sonnet}) -----"
-            + "\n\n"
-            + response_claude_v3_sonnet
-        )
-        response.append(tmp)
-    if success_claude_v3_opus:
-        zix_opus = get_zix(response_claude_v3_opus)
-        zix_opus = int(np.round(zix_opus, 0) + 0)
-        cefr_opus = get_cefr(zix_opus)
-        tmp = (
-            f"\n----- Ergebnis von Claude 3 Opus (Verständlichkeit: {zix_opus :.0f}, Niveau etwa {cefr_opus}) -----"
-            + "\n\n"
-            + response_claude_v3_opus
-        )
-        response.append(tmp)
-    if success_gpt:
-        zix_gpt = get_zix(response_gpt)
-        zix_gpt = int(np.round(zix_gpt, 0) + 0)
-        cefr_gpt = get_cefr(zix_gpt)
-        tmp = (
-            f"\n------Ergebnis von GPT-4 (Verständlichkeit: {zix_gpt}, Niveau etwa {cefr_gpt}) -----"
-            + "\n\n"
-            + response_gpt
-        )
-        response.append(tmp)
-    if success_gpto:
-        zix_gpto = get_zix(response_gpto)
-        zix_gpto = int(np.round(zix_gpto, 0) + 0)
-        cefr_gpto = get_cefr(zix_gpto)
-        tmp = (
-            f"\n----- Ergebnis von GPT-4o (Verständlichkeit: {zix_gpto}, Niveau etwa {cefr_gpto}) -----"
-            + "\n\n"
-            + response_gpto
-        )
-        response.append(tmp)
-    response = "\n\n\n".join(response)
-    if response == "":
+    for name, (success, response) in responses.items():
+        if success:
+            zix = get_zix(response)
+            zix = int(np.round(zix, 0) + 0)
+            cefr = get_cefr(zix)
+            response_texts.append(
+                f"\n----- Ergebnis von {name} (Verständlichkeit: {zix}, Niveau etwa {cefr}) -----\n\n{response}"
+            )
+
+    if not response_texts:
         return False, "Es ist ein Fehler aufgetreten."
-    return True, response
+    return True, "\n\n\n".join(response_texts)
 
 
 def create_download_link(text_input, response, analysis=False):
@@ -412,10 +430,10 @@ def create_download_link(text_input, response, analysis=False):
 
     p2 = document.add_paragraph(response)
 
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    timestamp = datetime.now().strftime(DATETIME_FORMAT)
     models_used = model_choice
     if do_one_click:
-        models_used = "Mistral Large, Claude 3 Haiku, Claude 3 Sonnet, Claude 3 Opus, GPT-4, GPT-4o"
+        models_used = ", ".join([model for model in MODEL_IDS.keys()])
     footer = document.sections[0].footer
     footer.paragraphs[
         0
@@ -453,7 +471,7 @@ def create_download_link(text_input, response, analysis=False):
     # https://discuss.streamlit.io/t/creating-a-pdf-file-generator/7613?u=volodymyr_holomb
 
     b64 = base64.b64encode(io_stream.getvalue())
-    file_name = "Ergebnis.docx"
+    file_name = DEFAULT_OUTPUT_FILENAME
 
     if do_one_click:
         caption = "Vereinfachte Texte herunterladen"
@@ -461,7 +479,7 @@ def create_download_link(text_input, response, analysis=False):
         caption = "Vereinfachten Text herunterladen"
 
     if analysis:
-        file_name = "Analyse.docx"
+        file_name = ANALYSIS_FILENAME
         caption = "Analyse herunterladen"
     download_url = f'<a href="data:application/octet-stream;base64,{b64.decode()}" download="{file_name}">{caption}</a>'
     st.markdown(download_url, unsafe_allow_html=True)
@@ -470,9 +488,7 @@ def create_download_link(text_input, response, analysis=False):
 def clean_log(text):
     """Remove linebreaks and tabs from log messages
     that otherwise would yield problems when parsing the logs."""
-    text = text.replace("\n", " ")
-    text = text.replace("\t", " ")
-    return text
+    return text.replace("\n", " ").replace("\t", " ")
 
 
 def log_event(
@@ -487,7 +503,7 @@ def log_event(
     success,
 ):
     """Log event."""
-    log_string = f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}'
+    log_string = f"{datetime.now().strftime(DATETIME_FORMAT)}"
     log_string += f"\t{clean_log(text)}"
     log_string += f"\t{clean_log(response)}"
     log_string += f"\t{do_analysis}"
@@ -561,17 +577,10 @@ with button_cols[2]:
 with button_cols[3]:
     model_choice = st.radio(
         label="Sprachmodell",
-        options=(
-            "Mistral Large",
-            "Claude 3 Haiku",
-            "Claude 3 Sonnet",
-            "Claude 3 Opus",
-            "GPT-4",
-            "GPT-4o",
-        ),
-        index=5,
+        options=([model_name for model_name in MODEL_IDS.keys()]),
+        index=3,
         horizontal=True,
-        help="Alle Modelle liefern je nach Ausgangstext meist gute bis sehr gute Ergebnisse und sind alle einen Versuch wert. Claude Haiku und GPT-4o sind am schnellsten. Mehr Details siehe Infobox oben auf der Seite.",
+        help="Alle Modelle liefern je nach Ausgangstext meist gute bis sehr gute Ergebnisse und sind alle einen Versuch wert. Claude Haiku, GPT-4o mini und Gemini Flash sind am schnellsten. Mehr Details siehe Infobox oben auf der Seite.",
     )
 
 # Instantiate empty containers for the text areas.
@@ -603,23 +612,12 @@ with placeholder_analysis:
         label="Verständlichkeit -10 bis 10",
         value=None,
         delta=None,
-        help="Texte in Einfacher Sprache haben meist einen Wert von 0 bis 4 oder höher, Texte in Leichter Sprache 2 bis 4 oder höher.",
+        help="Verständlichkeit auf einer Skala von -10 bis 10 Punkten (von -10 = extrem schwer verständlich bis 10 = sehr gut verständlich). Texte in Einfacher Sprache haben meist einen Wert von 0 bis 4 oder höher, Texte in Leichter Sprache 2 bis 6 oder höher.",
     )
 
 
 # Derive model_id from explicit model_choice.
-model_id = M_LARGE
-if model_choice == "Claude 3 Haiku":
-    model_id = HAIKU
-elif model_choice == "Claude 3 Sonnet":
-    model_id = SONNET
-elif model_choice == "Claude 3 Opus":
-    model_id = OPUS
-elif model_choice == "GPT-4":
-    model_id = GPT4
-elif model_choice == "GPT-4o":
-    model_id = GPT4o
-
+model_id = MODEL_IDS[model_choice]
 
 # Start processing if one of the processing buttons is clicked.
 if do_simplification or do_analysis or do_one_click:
@@ -660,21 +658,41 @@ if do_simplification or do_analysis or do_one_click:
                 # One-click simplification.
                 if do_one_click:
                     success, response = get_one_click_results()
-                # Regular text simplification or analysis.
+                # Regular text simplification or analysis
                 else:
-                    if model_choice in ["GPT-4", "GPT-4o"]:
+                    if model_choice in ["GPT-4o mini", "GPT-4o"]:
                         success, response = invoke_openai_model(
                             st.session_state.key_textinput,
                             model_id=model_id,
                             analysis=do_analysis,
                         )
-                    elif model_choice in ["Mistral Large"]:
+                    elif model_choice in ["o1 mini", "o1"]:
+                        success, response = invoke_openai_reasoning_model(
+                            st.session_state.key_textinput,
+                            model_id=model_id,
+                            analysis=do_analysis,
+                        )
+                    elif model_choice in ["Mistral large", "Mistral Nemo"]:
                         success, response = invoke_mistral_model(
-                            st.session_state.key_textinput, model_id=model_id, analysis=do_analysis
+                            st.session_state.key_textinput,
+                            model_id=model_id,
+                            analysis=do_analysis,
+                        )
+                    elif model_choice in [
+                        "Gemini 1.5 Flash",
+                        "Gemini 2.0 Flash",
+                        "Gemini 1.5 Pro",
+                    ]:
+                        success, response = invoke_google_model(
+                            st.session_state.key_textinput,
+                            model_id=model_id,
+                            analysis=do_analysis,
                         )
                     else:
                         success, response = invoke_anthropic_model(
-                            st.session_state.key_textinput, model_id=model_id, analysis=do_analysis
+                            st.session_state.key_textinput,
+                            model_id=model_id,
+                            analysis=do_analysis,
                         )
     if success is False:
         st.error(
@@ -742,7 +760,9 @@ if do_simplification or do_analysis or do_one_click:
                     value=score_source_rounded,
                     help="Verständlichkeit auf einer Skala von -10 bis 10 (von -10 = extrem schwer verständlich bis 10 = sehr gut verständlich). Texte in Einfacher Sprache haben meist einen Wert von 0 bis 4 oder höher.",
                 )
-                create_download_link(st.session_state.key_textinput, response, analysis=True)
+                create_download_link(
+                    st.session_state.key_textinput, response, analysis=True
+                )
                 st.caption(f"Verarbeitet in {time_processed:.1f} Sekunden.")
 
         log_event(

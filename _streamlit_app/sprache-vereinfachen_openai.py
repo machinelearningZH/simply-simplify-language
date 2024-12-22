@@ -367,12 +367,7 @@ with button_cols[2]:
 with button_cols[3]:
     model_choice = st.radio(
         label="Sprachmodell",
-        options=(
-            "GPT-4o mini",
-            "GPT-4o",
-            "o1 mini",
-            "o1",
-        ),
+        options=([model_name for model_name in MODEL_IDS.keys()]),
         index=0,
         horizontal=True,
     )
