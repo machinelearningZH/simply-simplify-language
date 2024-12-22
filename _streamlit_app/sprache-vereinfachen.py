@@ -526,6 +526,7 @@ mistral_client = get_mistral_client()
 
 project_info = get_project_info()
 
+
 # Persist text input across sessions in session state.
 # Otherwise, the text input sometimes gets lost when the user clicks on a button.
 if "key_textinput" not in st.session_state:
