@@ -57,9 +57,9 @@
 
 - Change into app directory: `cd _streamlit_app/`
 - Start app: `streamlit run sprache-vereinfachen.py`
-- To **run the GPT-4o only app version** use `streamlit run sprache-vereinfachen_openai.py`.
-- To **run the Google Gemini app version** use `streamlit run sprache-vereinfachen_google.py`. Get your API key from here: [Google AI Studio](https://ai.google.dev/aistudio).
-- To **run the Azure OpenAI app version** use `streamlit run sprache-vereinfachen_azure.py`. Have a look [here to learn more about how to setup the app with Azure](AZURE_HOWTO.md).
+- To **run the OpenAI only version** use `streamlit run sprache-vereinfachen_openai.py`.
+- To **run the Google Gemini only version** use `streamlit run sprache-vereinfachen_google.py`. Get your API key from here: [Google AI Studio](https://ai.google.dev/aistudio).
+- To **run the Azure OpenAI only version** use `streamlit run sprache-vereinfachen_azure.py`. Have a look [here to learn more about how to setup the app with Azure](AZURE_HOWTO.md).
 
 ### Run the app in the cloud
 
