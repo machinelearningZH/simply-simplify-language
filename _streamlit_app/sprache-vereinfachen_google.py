@@ -23,7 +23,6 @@ logging.basicConfig(
     level=logging.WARNING,
 )
 
-import pandas as pd
 import numpy as np
 from utils_understandability import get_zix, get_cefr
 
@@ -60,15 +59,18 @@ OPENAI_TEMPLATES = [
 # Constants
 
 load_dotenv()
-
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 genai.configure(api_key=GOOGLE_API_KEY)
 
-GEM_1_5_FLASH = "gemini-1.5-flash-latest"
-GEM_1_5_PRO = "gemini-1.5-pro-latest"
+MODEL_IDS = {
+    "Gemini 1.5 Flash": "gemini-1.5-flash",
+    "Gemini 2.0 Flash": "gemini-2.0-flash-exp",
+    "Gemini 1.5 Pro": "gemini-1.5-pro",
+}
 
 # From our testing we derive a sensible temperature of 0.5 as a good trade-off between creativity and coherence. Adjust this to your needs.
 TEMPERATURE = 0.5
+MAX_TOKENS = 8192
 
 # Height of the text areas for input and output.
 TEXT_AREA_HEIGHT = 600
@@ -78,21 +80,21 @@ TEXT_AREA_HEIGHT = 600
 # Adjust to your needs. However, we found that users can work and validate better when we nudge to work with shorter texts.
 MAX_CHARS_INPUT = 10_000
 
-
-USER_WARNING = """<sub>⚠️ Achtung: Diese App ist ein Prototyp. Nutze die App :red[**nur für öffentliche, nicht sensible Daten**]. Die App liefert lediglich einen Textentwurf. Überprüfe das Ergebnis immer und passe es an, wenn nötig. Die aktuelle App-Version ist v0.4 Die letzte Aktualisierung war am 2.9.2024."""
-
+USER_WARNING = """<sub>⚠️ Achtung: Diese App ist ein Prototyp. Nutze die App :red[**nur für öffentliche, nicht sensible Daten**]. Die App liefert lediglich einen Textentwurf. Überprüfe das Ergebnis immer und passe es an, wenn nötig. Die aktuelle App-Version ist v0.2 Die letzte Aktualisierung war am 22.12.2024."""
 
 # Constants for the formatting of the Word document that can be downloaded.
 FONT_WORDDOC = "Arial"
 FONT_SIZE_HEADING = 12
 FONT_SIZE_PARAGRAPH = 9
 FONT_SIZE_FOOTER = 7
-
+DEFAULT_OUTPUT_FILENAME = "Ergebnis.docx"
+ANALYSIS_FILENAME = "Analyse.docx"
 
 # Limits for the understandability score to determine if the text is easy, medium or hard to understand.
 LIMIT_HARD = 0
 LIMIT_MEDIUM = -2
 
+DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 # ---------------------------------------------------------------
 # Functions
@@ -111,7 +113,7 @@ def create_project_info(project_info):
     with st.expander("Detaillierte Informationen zum Projekt"):
         project_info = project_info.split("### Image ###")
         st.markdown(project_info[0], unsafe_allow_html=True)
-        st.image("zix_scores.jpg", use_column_width=True)
+        st.image("zix_scores.jpg", use_container_width=True)
         st.markdown(project_info[1], unsafe_allow_html=True)
 
 
@@ -145,16 +147,9 @@ def create_prompt(text, prompt_es, prompt_ls, analysis_es, analysis_ls, analysis
 
 def get_result_from_response(response):
     """Extract text between tags from response."""
-    if leichte_sprache:
-        result = re.findall(
-            r"<leichtesprache>(.*?)</leichtesprache>", response, re.DOTALL
-        )
-    else:
-        result = re.findall(
-            r"<einfachesprache>(.*?)</einfachesprache>", response, re.DOTALL
-        )
-    result = "\n".join(result)
-    return result.strip()
+    tag = "leichtesprache" if leichte_sprache else "einfachesprache"
+    result = re.findall(rf"<{tag}>(.*?)</{tag}>", response, re.DOTALL)
+    return "\n".join(result).strip()
 
 
 def strip_markdown(text):
@@ -167,7 +162,7 @@ def strip_markdown(text):
 
 
 def invoke_google_model(
-    text, model_id=GEM_1_5_FLASH, temperature=TEMPERATURE, analysis=False
+    text, model_id=MODEL_IDS["Gemini 1.5 Flash"], temperature=TEMPERATURE, analysis=False
 ):
     """Invoke Google model."""
     final_prompt, system = create_prompt(text, *OPENAI_TEMPLATES, analysis)
@@ -248,12 +243,11 @@ def create_download_link(text_input, response, analysis=False):
     # https://discuss.streamlit.io/t/creating-a-pdf-file-generator/7613?u=volodymyr_holomb
 
     b64 = base64.b64encode(io_stream.getvalue())
-    file_name = "Ergebnis.docx"
-
+    file_name = DEFAULT_OUTPUT_FILENAME
     caption = "Vereinfachten Text herunterladen"
 
     if analysis:
-        file_name = "Analyse.docx"
+        file_name = ANALYSIS_FILENAME
         caption = "Analyse herunterladen"
     download_url = f'<a href="data:application/octet-stream;base64,{b64.decode()}" download="{file_name}">{caption}</a>'
     st.markdown(download_url, unsafe_allow_html=True)
@@ -261,9 +255,7 @@ def create_download_link(text_input, response, analysis=False):
 
 def clean_log(text):
     """Remove linebreaks and tabs from log messages that otherwise would yield problems when parsing the logs."""
-    text = text.replace("\n", " ")
-    text = text.replace("\t", " ")
-    return text
+    return text.replace("\n", " ").replace("\t", " ")
 
 
 def log_event(
@@ -314,13 +306,13 @@ with button_cols[0]:
         help="Fügt einen Beispieltext ein.",
     )
     do_analysis = st.button(
-        "Text analysieren",
+        "Analysieren",
         use_container_width=True,
         help="Analysiert deinen Ausgangstext Satz für Satz.",
     )
 with button_cols[1]:
     do_simplification = st.button(
-        "Text vereinfachen",
+        "Vereinfachen",
         use_container_width=True,
         help="Vereinfacht deinen Ausgangstext.",
     )
@@ -343,11 +335,12 @@ with button_cols[3]:
         label="Sprachmodell",
         options=(
             "Gemini 1.5 Flash",
+            "Gemini 2.0 Flash",
             "Gemini 1.5 Pro",
         ),
         index=0,
         horizontal=True,
-        help="Google Gemini 1.5 Flash ist schneller und weniger genau. Google Gemini 1.5 Pro ist langsamer und genauer.",
+        help="Google Gemini Flash ist schneller und liefert sehr gute Qualität. Google Gemini 1.5 Pro ist langsamer bei bester Qualität.",
     )
 
 
@@ -380,12 +373,10 @@ with placeholder_analysis:
         label="Verständlichkeit -10 bis 10",
         value=None,
         delta=None,
-        help="Texte in Einfacher Sprache haben meist einen Wert von 0 bis 4 oder höher, Texte in Leichter Sprache 2 bis 6 oder höher",
+        help="Verständlichkeit auf einer Skala von -10 bis 10 Punkten (von -10 = extrem schwer verständlich bis 10 = sehr gut verständlich). Texte in Einfacher Sprache haben meist einen Wert von 0 bis 4 oder höher, Texte in Leichter Sprache 2 bis 6 oder höher.",
     )
 
-model_id = GEM_1_5_FLASH
-if model_choice == "Gemini 1.5 Pro":
-    model_id = GEM_1_5_PRO
+model_id = MODEL_IDS[model_choice]
 
 
 # Start processing if one of the processing buttons is clicked.

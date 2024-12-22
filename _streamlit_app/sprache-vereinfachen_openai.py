@@ -23,7 +23,6 @@ logging.basicConfig(
     level=logging.WARNING,
 )
 
-import pandas as pd
 import numpy as np
 from utils_understandability import get_zix, get_cefr
 
@@ -150,16 +149,9 @@ def create_prompt(text, prompt_es, prompt_ls, analysis_es, analysis_ls, analysis
 
 def get_result_from_response(response):
     """Extract text between tags from response."""
-    if leichte_sprache:
-        result = re.findall(
-            r"<leichtesprache>(.*?)</leichtesprache>", response, re.DOTALL
-        )
-    else:
-        result = re.findall(
-            r"<einfachesprache>(.*?)</einfachesprache>", response, re.DOTALL
-        )
-    result = "\n".join(result)
-    return result.strip()
+    tag = "leichtesprache" if leichte_sprache else "einfachesprache"
+    result = re.findall(rf"<{tag}>(.*?)</{tag}>", response, re.DOTALL)
+    return "\n".join(result).strip()
 
 
 def strip_markdown(text):
@@ -297,9 +289,7 @@ def create_download_link(text_input, response, analysis=False):
 
 def clean_log(text):
     """Remove linebreaks and tabs from log messages that otherwise would yield problems when parsing the logs."""
-    text = text.replace("\n", " ")
-    text = text.replace("\t", " ")
-    return text
+    return text.replace("\n", " ").replace("\t", " ")
 
 
 def log_event(
