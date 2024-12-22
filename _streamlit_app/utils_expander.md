@@ -31,7 +31,7 @@ Momentan kannst du eins von 11 Sprachmodellen wählen:
 - **Mistral Large**: sehr gute Qualität, 2.2 CHF
 - **Claude V3.5 Haiku**: sehr gute Qualität, 1.4 CHF
 - **Claude V3.5 Sonnet**: beste Qualität, 5.1 CHF
-- **GPT-4o-mini**: gute Qualität, 0.2 CHF
+- **GPT-4o mini**: gute Qualität, 0.2 CHF
 - **GPT-4o**: sehr gute Qualität, 3.5 CHF
 - **o1 mini**: [«Reasoning-Modell»](https://openai.com/o1/), beste Qualität, 5 CHF
 - **o1**: [«Reasoning-Modell»](https://openai.com/o1/), beste Qualität, 25 CHF
