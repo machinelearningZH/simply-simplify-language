@@ -60,14 +60,19 @@ OPENAI_TEMPLATES = [
 # Constants
 
 load_dotenv()
-
+load_dotenv("/Volumes/1TB Home SSD/GitHub/.env_stat")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
-MODEL_CHOICE = "gpt-4o"
-MODEL_NAME = "GPT-4o"
+MODEL_IDS = {
+    "GPT-4o mini": "gpt-4o-mini",
+    "GPT-4o": "gpt-4o",
+    "o1 mini": "o1-mini",
+    "o1": "o1-preview",
+}
 
 # From our testing we derive a sensible temperature of 0.5 as a good trade-off between creativity and coherence. Adjust this to your needs.
 TEMPERATURE = 0.5
+MAX_TOKENS = 8192
 
 # Height of the text areas for input and output.
 TEXT_AREA_HEIGHT = 600
@@ -78,7 +83,7 @@ TEXT_AREA_HEIGHT = 600
 MAX_CHARS_INPUT = 10_000
 
 
-USER_WARNING = """<sub>⚠️ Achtung: Diese App ist ein Prototyp. Nutze die App :red[**nur für öffentliche, nicht sensible Daten**]. Die App liefert lediglich einen Textentwurf. Überprüfe das Ergebnis immer und passe es an, wenn nötig. Die aktuelle App-Version ist v0.3 Die letzte Aktualisierung war am 30.8.2024."""
+USER_WARNING = """<sub>⚠️ Achtung: Diese App ist ein Prototyp. Nutze die App :red[**nur für öffentliche, nicht sensible Daten**]. Die App liefert lediglich einen Textentwurf. Überprüfe das Ergebnis immer und passe es an, wenn nötig. Die aktuelle App-Version ist v0.5 Die letzte Aktualisierung war am 22.12.2024."""
 
 
 # Constants for the formatting of the Word document that can be downloaded.
@@ -86,6 +91,8 @@ FONT_WORDDOC = "Arial"
 FONT_SIZE_HEADING = 12
 FONT_SIZE_PARAGRAPH = 9
 FONT_SIZE_FOOTER = 7
+DEFAULT_OUTPUT_FILENAME = "Ergebnis.docx"
+ANALYSIS_FILENAME = "Analyse.docx"
 
 
 # Limits for the understandability score to determine if the text is easy, medium or hard to understand.
@@ -110,7 +117,7 @@ def create_project_info(project_info):
     with st.expander("Detaillierte Informationen zum Projekt"):
         project_info = project_info.split("### Image ###")
         st.markdown(project_info[0], unsafe_allow_html=True)
-        st.image("zix_scores.jpg", use_column_width=True)
+        st.image("zix_scores.jpg", use_container_width=True)
         st.markdown(project_info[1], unsafe_allow_html=True)
 
 
@@ -156,16 +163,23 @@ def get_result_from_response(response):
     return result.strip()
 
 
+def strip_markdown(text):
+    """Strip markdown from text."""
+    # Remove markdown headers.
+    text = re.sub(r"#+\s", "", text)
+    # Remove markdown italic and bold.
+    text = re.sub(r"\*\*|\*|__|_", "", text)
+    return text
+
+
 @st.cache_resource
 def get_openai_client():
-    return OpenAI()
+    return OpenAI(api_key=OPENAI_API_KEY)
 
 
 def invoke_openai_model(
     text,
-    model_id=MODEL_CHOICE,
-    temperature=TEMPERATURE,
-    max_tokens=4096,
+    model_id=MODEL_IDS["GPT-4o mini"],
     analysis=False,
 ):
     """Invoke OpenAI model."""
@@ -173,15 +187,40 @@ def invoke_openai_model(
     try:
         message = openai_client.chat.completions.create(
             model=model_id,
-            temperature=temperature,
-            max_tokens=max_tokens,
+            temperature=TEMPERATURE,
+            max_tokens=MAX_TOKENS,
             messages=[
                 {"role": "system", "content": system},
                 {"role": "user", "content": final_prompt},
             ],
         )
         message = message.choices[0].message.content.strip()
-        return True, get_result_from_response(message)
+        message = get_result_from_response(message)
+        message = strip_markdown(message)
+        return True, message
+    except Exception as e:
+        print(f"Error: {e}")
+        return False, e
+
+
+def invoke_openai_reasoning_model(
+    text,
+    model_id=MODEL_IDS["o1 mini"],
+    analysis=False,
+):
+    """Invoke OpenAI model."""
+    final_prompt, _ = create_prompt(text, *OPENAI_TEMPLATES, analysis)
+    try:
+        message = openai_client.chat.completions.create(
+            model=model_id,
+            messages=[
+                {"role": "user", "content": final_prompt},
+            ],
+        )
+        message = message.choices[0].message.content.strip()
+        message = get_result_from_response(message)
+        message = strip_markdown(message)
+        return True, message
     except Exception as e:
         print(f"Error: {e}")
         return False, e
@@ -200,10 +239,10 @@ def create_download_link(text_input, response, analysis=False):
     p1 = document.add_paragraph("\n" + text_input)
 
     if analysis:
-        h2 = document.add_heading(f"Analyse von Sprachmodell {MODEL_NAME} von OpenAI")
+        h2 = document.add_heading(f"Analyse von Sprachmodell {model_choice} von OpenAI")
     else:
         h2 = document.add_heading(
-            f"Vereinfachter Text von Sprachmodell {MODEL_NAME} von OpenAI"
+            f"Vereinfachter Text von Sprachmodell {model_choice} von OpenAI"
         )
 
     p2 = document.add_paragraph(response)
@@ -212,7 +251,7 @@ def create_download_link(text_input, response, analysis=False):
     footer = document.sections[0].footer
     footer.paragraphs[
         0
-    ].text = f"Erstellt am {timestamp} mit der Prototyp-App «Einfache Sprache», Statistisches Amt, Kanton Zürich.\nSprachmodell: {MODEL_NAME}\nVerarbeitungszeit: {time_processed:.1f} Sekunden"
+    ].text = f"Erstellt am {timestamp} mit der Prototyp-App «Einfache Sprache», Statistisches Amt, Kanton Zürich.\nSprachmodell: {model_choice}\nVerarbeitungszeit: {time_processed:.1f} Sekunden"
 
     # Set font for all paragraphs.
     for paragraph in document.paragraphs:
@@ -246,12 +285,12 @@ def create_download_link(text_input, response, analysis=False):
     # https://discuss.streamlit.io/t/creating-a-pdf-file-generator/7613?u=volodymyr_holomb
 
     b64 = base64.b64encode(io_stream.getvalue())
-    file_name = "Ergebnis.docx"
+    file_name = DEFAULT_OUTPUT_FILENAME
 
     caption = "Vereinfachten Text herunterladen"
 
     if analysis:
-        file_name = "Analyse.docx"
+        file_name = ANALYSIS_FILENAME
         caption = "Analyse herunterladen"
     download_url = f'<a href="data:application/octet-stream;base64,{b64.decode()}" download="{file_name}">{caption}</a>'
     st.markdown(download_url, unsafe_allow_html=True)
@@ -297,7 +336,7 @@ project_info = get_project_info()
 if "key_textinput" not in st.session_state:
     st.session_state.key_textinput = ""
 
-st.markdown("## 🙋‍♀️ Sprache einfach vereinfachen (Version GPT-4o only)")
+st.markdown("## 🙋‍♀️ Sprache einfach vereinfachen (Version «OpenAI only»)")
 create_project_info(project_info)
 st.caption(USER_WARNING, unsafe_allow_html=True)
 st.markdown("---")
@@ -312,19 +351,18 @@ with button_cols[0]:
         type="secondary",
         help="Fügt einen Beispieltext ein.",
     )
-with button_cols[1]:
     do_analysis = st.button(
-        "Text analysieren",
+        "Analysieren",
         use_container_width=True,
         help="Analysiert deinen Ausgangstext Satz für Satz.",
     )
-with button_cols[2]:
+with button_cols[1]:
     do_simplification = st.button(
-        "Text vereinfachen",
+        "Vereinfachen",
         use_container_width=True,
         help="Vereinfacht deinen Ausgangstext.",
     )
-with button_cols[3]:
+with button_cols[2]:
     leichte_sprache = st.toggle(
         "Leichte Sprache",
         value=False,
@@ -336,6 +374,19 @@ with button_cols[3]:
             value=True,
             help="**Schalter aktiviert**: Modell konzentriert sich auf essentielle Informationen und versucht, Unwichtiges wegzulassen. **Schalter nicht aktiviert**: Modell versucht, alle Informationen zu übernehmen.",
         )
+
+with button_cols[3]:
+    model_choice = st.radio(
+        label="Sprachmodell",
+        options=(
+            "GPT-4o mini",
+            "GPT-4o",
+            "o1 mini",
+            "o1",
+        ),
+        index=0,
+        horizontal=True,
+    )
 
 
 # Instantiate empty containers for the text areas.
@@ -367,9 +418,11 @@ with placeholder_analysis:
         label="Verständlichkeit -10 bis 10",
         value=None,
         delta=None,
-        help="Texte in Einfacher Sprache haben meist einen Wert von 0 bis 4 oder höher, Texte in Leichter Sprache 2 bis 6 oder höher",
+        help="Verständlichkeit auf einer Skala von -10 bis 10 Punkten (von -10 = extrem schwer verständlich bis 10 = sehr gut verständlich). Texte in Einfacher Sprache haben meist einen Wert von 0 bis 4 oder höher, Texte in Leichter Sprache 2 bis 6 oder höher.",
     )
 
+# Derive model_id from explicit model_choice.
+model_id = MODEL_IDS[model_choice]
 
 # Start processing if one of the processing buttons is clicked.
 if do_simplification or do_analysis:
@@ -408,11 +461,18 @@ if do_simplification or do_analysis:
         with placeholder_analysis.container():
             with st.spinner("Ich arbeite..."):
                 # Regular text simplification or analysis.
-                success, response = invoke_openai_model(
-                    st.session_state.key_textinput,
-                    model_id=MODEL_CHOICE,
-                    analysis=do_analysis,
-                )
+                if model_choice in ["GPT-4o mini", "GPT-4o"]:
+                        success, response = invoke_openai_model(
+                            st.session_state.key_textinput,
+                            model_id=model_id,
+                            analysis=do_analysis,
+                        )
+                elif model_choice in ["o1 mini", "o1"]:
+                        success, response = invoke_openai_reasoning_model(
+                            st.session_state.key_textinput,
+                            model_id=model_id,
+                            analysis=do_analysis,
+                        )
 
     if success is False:
         st.error(
@@ -478,7 +538,9 @@ if do_simplification or do_analysis:
                     value=score_source_rounded,
                     help="Verständlichkeit auf einer Skala von -10 bis 10 (von -10 = extrem schwer verständlich bis 10 = sehr gut verständlich). Texte in Einfacher Sprache haben meist einen Wert von 0 bis 4 oder höher.",
                 )
-                create_download_link(st.session_state.key_textinput, response, analysis=True)
+                create_download_link(
+                    st.session_state.key_textinput, response, analysis=True
+                )
                 st.caption(f"Verarbeitet in {time_processed:.1f} Sekunden.")
 
         log_event(

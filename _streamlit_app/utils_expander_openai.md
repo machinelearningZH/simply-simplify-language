@@ -18,8 +18,12 @@ Mit dem Schalter «Leichte Sprache» kannst du das Modell anweisen, einen ***Ent
 
 
 ### Welches Sprachmodell wird verwendet?
-In dieser App-Variante wird das Sprachmodell GPT-4o von [OpenAI](https://openai.com/) verwendet.
-GPT-4o arbeitet schnell und gut. 100 einzelne [Normseiten](https://de.wikipedia.org/wiki/Normseite) kosten grob gerechnet 5.5 CHF an Tokenkosten (Stand Juni 2024, ohne Gewähr).
+In dieser App-Variante können wir die Sprachmodelle von [OpenAI](https://openai.com/) nutzen. 100 einzelne [Normseiten](https://de.wikipedia.org/wiki/Normseite) kosten grob gerechnet folgendes (Stand Dezember 2024, ohne Gewähr):
+
+- **GPT-4o-mini**: gute Qualität, 0.2 CHF
+- **GPT-4o**: beste Qualität, 3.5 CHF
+- **o1 mini**: [«Reasoning-Modell»](https://openai.com/o1/), sehr gute Qualität, 5 CHF
+- **o1**: [«Reasoning-Modell»](https://openai.com/o1/), beste Qualität, 25 CHF
 
 
 ### Wie funktioniert die Bewertung der Verständlichkeit?
@@ -42,7 +46,8 @@ Wir sind für Rückmeldungen und Anregungen jeglicher Art dankbar und nehmen die
 
 
 ## Versionsverlauf
-- **v0.3** - 30.08.2024 - *Fehler behoben.*
-- **v0.2** - 18.08.2024 - *Neuen ZIX-Index integriert. Diverse Fehler behoben.*
-- **v0.1.1** - 14.06.2024 - *App-Variante, die nur GPT-4o verwendet.*
-- **v0.1** - 1.06.2024 - *Erste Open Source-Version der App auf Basis des bisherigen Pilotprojekts.*
+- **v0.5** – 22.12.2024 – *Modelle aktualisiert und ergänzt: o1 und o1 mini. Code vereinfacht.*
+- **v0.4** – 30.08.2024 – *Fehler behoben.*
+- **v0.3** – 18.08.2024 – *Neuer ZIX-Index integriert. Diverse Fehler behoben.*
+- **v0.2** – 14.06.2024 – *App-Variante, die nur GPT-4o verwendet.*
+- **v0.1** – 01.06.2024 – *Erste Open Source-Version der App auf Basis des bisherigen Pilotprojekts.*

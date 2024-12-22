@@ -186,7 +186,7 @@ Beachte dabei folgende Regeln für Einfache Sprache (B1 bis A2):
 {completeness}
 {rules}
 
-Schreibe den vereinfachten Text innerhalb von <einfachesprache> Tags.
+Schreibe den vereinfachten Text innerhalb von <einfachesprache> Tags. Gib nur Text aus, keine Markdown-Formatierung, kein HTML
 
 Hier ist der schwer verständliche Text:
 
@@ -202,7 +202,7 @@ Beachte dabei folgende Regeln für Leichte Sprache (A2):
 {completeness}
 {rules}
 
-Schreibe den vereinfachten Text innerhalb von <leichtesprache> Tags.
+Schreibe den vereinfachten Text innerhalb von <leichtesprache> Tags. Gib nur Text aus, keine Markdown-Formatierung, kein HTML.
 
 Hier ist der schwer verständliche Text:
 
@@ -225,7 +225,7 @@ Die Regeln für Einfache Sprache, Sprachniveau B1 bis A2, sind diese hier:
 
 {rules}
 
-Schreibe deine Analyse innerhalb von <einfachesprache> Tags.
+Schreibe deine Analyse innerhalb von <einfachesprache> Tags. Gib nur Text aus, keine Markdown-Formatierung, kein HTML
 
 Hier ist der schwer verständliche Text:
 
@@ -248,7 +248,7 @@ Die Regeln für Leichte Sprache, Sprachniveau A2, sind diese hier:
 
 {rules}
 
-Schreibe deine Analyse innerhalb von <leichtesprache> Tags.
+Schreibe deine Analyse innerhalb von <leichtesprache> Tags. Gib nur Text aus, keine Markdown-Formatierung, kein HTML.
 
 Hier ist der schwer verständliche Text:
 
