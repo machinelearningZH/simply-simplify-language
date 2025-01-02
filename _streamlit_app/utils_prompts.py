@@ -14,15 +14,15 @@
 SYSTEM_MESSAGE_ES = """Du bist ein hilfreicher Assistent, der Texte in Einfache Sprache, Sprachniveau B1 bis A2, umschreibt. Sei immer wahrheitsgemäß und objektiv. Schreibe nur das, was du sicher aus dem Text des Benutzers weisst. Arbeite die Texte immer vollständig durch und kürze nicht. Mache keine Annahmen. Schreibe einfach und klar und immer in deutscher Sprache. Gib dein Ergebnis innerhalb von <einfachesprache> Tags aus."""
 
 
-SYSTEM_MESSAGE_LS = """Du bist ein hilfreicher Assistent, der Texte in Leichte Sprache, Sprachniveau A2, umschreibt. Sei immer wahrheitsgemäß und objektiv. Schreibe nur das, was du sicher aus dem Text des Benutzers weisst. Arbeite die Texte immer vollständig durch und kürze nicht. Mache keine Annahmen. Schreibe einfach und klar und immer in deutscher Sprache. Gib dein Ergebnis innerhalb von <leichtesprache> Tags aus."""
+SYSTEM_MESSAGE_LS = """Du bist ein hilfreicher Assistent, der Texte in Leichte Sprache, Sprachniveau A2 bis A1, umschreibt. Sei immer wahrheitsgemäß und objektiv. Schreibe nur das, was du sicher aus dem Text des Benutzers weisst. Arbeite die Texte immer vollständig durch und kürze nicht. Mache keine Annahmen. Schreibe einfach und klar und immer in deutscher Sprache. Gib dein Ergebnis innerhalb von <leichtesprache> Tags aus."""
 
 
 RULES_ES = """- Schreibe kurze Sätze mit höchstens 12 Wörtern.
 - Beschränke dich auf eine Aussage, einen Gedanken pro Satz.
-- Verwende aktive Sprache anstelle von Passiv. 
+- Verwende aktive Sprache anstelle von Passiv.
 - Formuliere grundsätzlich positiv und bejahend.
 - Strukturiere den Text übersichtlich mit kurzen Absätzen.
-- Verwende einfache, kurze, häufig gebräuchliche Wörter. 
+- Verwende einfache, kurze, häufig gebräuchliche Wörter.
 - Wenn zwei Wörter dasselbe bedeuten, verwende das kürzere und einfachere Wort.
 - Vermeide Füllwörter und unnötige Wiederholungen.
 - Erkläre Fachbegriffe und Fremdwörter.
@@ -51,7 +51,8 @@ RULES_ES = """- Schreibe kurze Sätze mit höchstens 12 Wörtern.
 
 RULES_LS = """- Wichtiges zuerst: Beginne den Text mit den wichtigsten Informationen, so dass diese sofort klar werden.
 - Verwende einfache, kurze, häufig gebräuchliche Wörter. 
-- Löse zusammengesetzte Wörter auf und formuliere sie neu. Wenn es wichtige Gründe gibt, das Wort nicht aufzulösen, trenne das zusammengesetzte Wort mit einem Bindestrich.
+- Löse zusammengesetzte Wörter auf und formuliere sie neu. 
+- Wenn es wichtige Gründe gibt, ein zusammengesetztes Wort nicht aufzulösen, trenne das zusammengesetzte Wort mit einem Bindestrich. Beginne dann jedes Wort mit einem Grossbuchstaben. Beispiele: «Auto-Service», «Gegen-Argument», «Kinder-Betreuung», «Volks-Abstimmung».
 - Vermeide Fremdwörter. Wähle stattdessen einfache, allgemein bekannte Wörter. Erkläre Fremdwörter, wenn sie unvermeidbar sind. 
 - Vermeide Fachbegriffe. Wähle stattdessen einfache, allgemein bekannte Wörter. Erkläre Fachbegriffe, wenn sie unvermeidbar sind.
 - Vermeide bildliche Sprache. Verwende keine Metaphern oder Redewendungen. Schreibe stattdessen klar und direkt.
@@ -121,20 +122,20 @@ Beachte dabei folgende Regeln für Einfache Sprache (B1 bis A2):
 Formuliere den Text jetzt in Einfache Sprache, Sprachniveau B1 bis A2, um. Schreibe den vereinfachten Text innerhalb von <einfachesprache> Tags."""
 
 
-CLAUDE_TEMPLATE_LS = """Hier ist ein schwer verständlicher Text, den du vollständig in Leichte Sprache, Sprachniveau A2, umschreiben sollst:
+CLAUDE_TEMPLATE_LS = """Hier ist ein schwer verständlicher Text, den du vollständig in Leichte Sprache, Sprachniveau A2 bis A1, umschreiben sollst:
 
 <schwer-verständlicher-text>
 {prompt}
 </schwer-verständlicher-text>
 
-Bitte lies den Text sorgfältig durch und schreibe ihn vollständig in Leichte Sprache, Sprachniveau A2 um. 
+Bitte lies den Text sorgfältig durch und schreibe ihn vollständig in Leichte Sprache, Sprachniveau A2 bis A1 um. 
 
-Beachte dabei folgende Regeln für Leichte Sprache (A2):
+Beachte dabei folgende Regeln für Leichte Sprache (A2, A1):
 
 {completeness}
 {rules}
 
-Formuliere den Text jetzt in Leichte Sprache, Sprachniveau A2, um. Schreibe den vereinfachten Text innerhalb von <leichtesprache> Tags."""
+Formuliere den Text jetzt in Leichte Sprache, Sprachniveau A2 bis A1, um. Schreibe den vereinfachten Text innerhalb von <leichtesprache> Tags."""
 
 
 CLAUDE_TEMPLATE_ANALYSIS_ES = """Hier ist ein schwer verständlicher Text, den du genau analysieren sollst:
@@ -164,7 +165,7 @@ CLAUDE_TEMPLATE_ANALYSIS_LS = """Hier ist ein schwer verständlicher Text, den d
 {prompt}
 </schwer-verständlicher-text>
 
-Analysiere den schwer verständlichen Text Satz für Satz. Beschreibe genau und detailliert, was sprachlich nicht gut bei jedem Satz ist. Analysiere was ich tun müsste, damit der Text zu Leichter Sprache (A2) wird. Gib klare Hinweise, wie ich den Text besser verständlich machen kann. Gehe bei deiner Analyse Schritt für Schritt vor. 
+Analysiere den schwer verständlichen Text Satz für Satz. Beschreibe genau und detailliert, was sprachlich nicht gut bei jedem Satz ist. Analysiere was ich tun müsste, damit der Text zu Leichter Sprache (A2, A1) wird. Gib klare Hinweise, wie ich den Text besser verständlich machen kann. Gehe bei deiner Analyse Schritt für Schritt vor. 
 
 1. Wiederhole den Satz. 
 2. Analysiere den Satz auf seine Verständlichkeit. Was muss ich tun, damit der Satz verständlicher wird? Wie kann ich den Satz in Leichter Sprache, Sprachniveau A2 besser formulieren?
@@ -172,7 +173,7 @@ Analysiere den schwer verständlichen Text Satz für Satz. Beschreibe genau und 
 
 Befolge diesen Ablauf von Anfang bis Ende auch wenn der schwer verständliche Text sehr lang ist. 
 
-Die Regeln für Leichte Sprache, Sprachniveau A2, sind diese hier:  
+Die Regeln für Leichte Sprache, Sprachniveau A2 bis A1, sind diese hier:
 
 {rules}
 
@@ -186,7 +187,7 @@ Beachte dabei folgende Regeln für Einfache Sprache (B1 bis A2):
 {completeness}
 {rules}
 
-Schreibe den vereinfachten Text innerhalb von <einfachesprache> Tags. Gib nur Text aus, keine Markdown-Formatierung, kein HTML
+Schreibe den vereinfachten Text innerhalb von <einfachesprache> Tags. Gib nur Text aus, keine Markdown-Formatierung, kein HTML.
 
 Hier ist der schwer verständliche Text:
 
@@ -195,9 +196,9 @@ Hier ist der schwer verständliche Text:
 {prompt}
 """
 
-OPENAI_TEMPLATE_LS = """Bitte schreibe den folgenden schwer verständlichen Text vollständig in Leichte Sprache, Sprachniveau A2, um. 
+OPENAI_TEMPLATE_LS = """Bitte schreibe den folgenden schwer verständlichen Text vollständig in Leichte Sprache, Sprachniveau A2 bis A1, um. 
 
-Beachte dabei folgende Regeln für Leichte Sprache (A2):
+Beachte dabei folgende Regeln für Leichte Sprache (A2, A1):
 
 {completeness}
 {rules}
@@ -225,7 +226,7 @@ Die Regeln für Einfache Sprache, Sprachniveau B1 bis A2, sind diese hier:
 
 {rules}
 
-Schreibe deine Analyse innerhalb von <einfachesprache> Tags. Gib nur Text aus, keine Markdown-Formatierung, kein HTML
+Schreibe deine Analyse innerhalb von <einfachesprache> Tags. Gib nur Text aus, keine Markdown-Formatierung, kein HTML.
 
 Hier ist der schwer verständliche Text:
 
@@ -236,7 +237,7 @@ Hier ist der schwer verständliche Text:
 
 OPENAI_TEMPLATE_ANALYSIS_LS = """Du bekommst einen schwer verständlichen Text, den du genau analysieren sollst.
 
-Analysiere den schwer verständlichen Text Satz für Satz. Beschreibe genau und detailliert, was sprachlich nicht gut bei jedem Satz ist. Analysiere was ich tun müsste, damit der Text zu Leichter Sprache (A2) wird. Gib klare Hinweise, wie ich den Text besser verständlich machen kann. Gehe bei deiner Analyse Schritt für Schritt vor. 
+Analysiere den schwer verständlichen Text Satz für Satz. Beschreibe genau und detailliert, was sprachlich nicht gut bei jedem Satz ist. Analysiere was ich tun müsste, damit der Text zu Leichter Sprache (A2, A1) wird. Gib klare Hinweise, wie ich den Text besser verständlich machen kann. Gehe bei deiner Analyse Schritt für Schritt vor. 
 
 1. Wiederhole den Satz. 
 2. Analysiere den Satz auf seine Verständlichkeit. Was muss ich tun, damit der Satz verständlicher wird? Wie kann ich den Satz in Leichter Sprache, Sprachniveau A2 besser formulieren?
@@ -244,7 +245,7 @@ Analysiere den schwer verständlichen Text Satz für Satz. Beschreibe genau und 
 
 Befolge diesen Ablauf von Anfang bis Ende auch wenn der schwer verständliche Text sehr lang ist. 
 
-Die Regeln für Leichte Sprache, Sprachniveau A2, sind diese hier:  
+Die Regeln für Leichte Sprache, Sprachniveau A2 bis A1, sind diese hier:
 
 {rules}
 
