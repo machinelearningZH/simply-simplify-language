@@ -17,7 +17,8 @@ SYSTEM_MESSAGE_ES = """Du bist ein hilfreicher Assistent, der Texte in Einfache 
 SYSTEM_MESSAGE_LS = """Du bist ein hilfreicher Assistent, der Texte in Leichte Sprache, Sprachniveau A2 bis A1, umschreibt. Sei immer wahrheitsgemäß und objektiv. Schreibe nur das, was du sicher aus dem Text des Benutzers weisst. Arbeite die Texte immer vollständig durch und kürze nicht. Mache keine Annahmen. Schreibe einfach und klar und immer in deutscher Sprache. Gib dein Ergebnis innerhalb von <leichtesprache> Tags aus."""
 
 
-RULES_ES = """- Schreibe kurze Sätze mit höchstens 12 Wörtern.
+RULES_ES = """
+- Schreibe kurze Sätze mit höchstens 12 Wörtern.
 - Beschränke dich auf eine Aussage, einen Gedanken pro Satz.
 - Verwende aktive Sprache anstelle von Passiv.
 - Formuliere grundsätzlich positiv und bejahend.
@@ -46,10 +47,12 @@ RULES_ES = """- Schreibe kurze Sätze mit höchstens 12 Wörtern.
 - Achtung: Identifikationszahlen übernimmst du 1:1. Beispiel: Stammnummer 123.456.789, AHV-Nummer 756.1234.5678.90, Konto 01-100101-9.
 - Verwende das Komma, dass das deutsche Dezimalzeichen ist. Überflüssige Nullen nach dem Komma schreibst du nicht. Beispiel: 5,5 Millionen, 3,75 Prozent, 1,5 Kilometer, 2,25 Stunden.
 - Vor Franken-Rappen-Beträgen schreibst du immer «CHF». Nur nach ganzen Franken-Beträgen darfst du «Franken» schreiben. Bei Franken- Rappen-Beträgen setzt du einen Punkt als Dezimalzeichen. Anstatt des Null-Rappen-Strichs verwendest du «.00» oder lässt die Dezimalstellen weg. Z.B. 20 Franken, CHF 20, CHF 2.00, CHF 12.50, aber CHF 45,2 Millionen, EUR 14,90.
-- Die Anrede mit «Sie» schreibst du immer gross. Beispiel: «Sie haben»."""
+- Die Anrede mit «Sie» schreibst du immer gross. Beispiel: «Sie haben».
+""".strip()
 
 
-RULES_LS = """- Wichtiges zuerst: Beginne den Text mit den wichtigsten Informationen, so dass diese sofort klar werden.
+RULES_LS = """
+- Wichtiges zuerst: Beginne den Text mit den wichtigsten Informationen, so dass diese sofort klar werden.
 - Verwende einfache, kurze, häufig gebräuchliche Wörter. 
 - Löse zusammengesetzte Wörter auf und formuliere sie neu. 
 - Wenn es wichtige Gründe gibt, ein zusammengesetztes Wort nicht aufzulösen, trenne das zusammengesetzte Wort mit einem Bindestrich. Beginne dann jedes Wort mit einem Grossbuchstaben. Beispiele: «Auto-Service», «Gegen-Argument», «Kinder-Betreuung», «Volks-Abstimmung».
@@ -97,16 +100,18 @@ RULES_LS = """- Wichtiges zuerst: Beginne den Text mit den wichtigsten Informati
 - Strukturiere den Text. Gliedere in sinnvolle Abschnitte und Absätze. Verwende Titel und Untertitel grosszügig, um den Text zu gliedern. Es kann hilfreich sein, wenn diese als Frage formuliert sind.
 - Stelle Aufzählungen als Liste dar.
 - Zeilenumbrüche helfen, Sinneinheiten zu bilden und erleichtern das Lesen. Füge deshalb nach Haupt- und Nebensätzen sowie nach sonstigen Sinneinheiten Zeilenumbrüche ein. Eine Sinneinheit soll maximal 8 Zeilen umfassen.
-- Eine Textzeile enthält inklusiv Leerzeichen maximal 85 Zeichen."""
+- Eine Textzeile enthält inklusiv Leerzeichen maximal 85 Zeichen.
+""".strip()
 
 
-REWRITE_COMPLETE = """- Achte immer sehr genau darauf, dass ALLE Informationen aus dem schwer verständlichen Text in dem Text in Leichter Sprache enthalten sind. Kürze niemals Informationen. Wo sinnvoll kannst du zusätzliche Beispiele hinzufügen, um den Text verständlicher zu machen und relevante Inhalte zu konkretisieren."""
+REWRITE_COMPLETE = """- Achte immer sehr genau darauf, dass ALLE Informationen aus dem schwer verständlichen Text in deinem verständlicheren Text enthalten sind. Kürze niemals Informationen. Wo sinnvoll kannst du zusätzliche Beispiele hinzufügen, um den Text verständlicher zu machen und relevante Inhalte zu konkretisieren."""
 
 
 REWRITE_CONDENSED = """- Konzentriere dich auf das Wichtigste. Gib die essenziellen Informationen wieder und lass den Rest weg. Wichtig sind zusätzliche Beispiele. Damit konkretisierst du relevante Inhalte und machst sie dadurch verständlicher."""
 
 
-CLAUDE_TEMPLATE_ES = """Hier ist ein schwer verständlicher Text, den du vollständig in Einfache Sprache, Sprachniveau B1 bis A2, umschreiben sollst:
+CLAUDE_TEMPLATE_ES = """
+Hier ist ein schwer verständlicher Text, den du vollständig in Einfache Sprache, Sprachniveau B1 bis A2, umschreiben sollst:
 
 <schwer-verständlicher-text>
 {prompt}
@@ -119,10 +124,12 @@ Beachte dabei folgende Regeln für Einfache Sprache (B1 bis A2):
 {completeness}
 {rules}
 
-Formuliere den Text jetzt in Einfache Sprache, Sprachniveau B1 bis A2, um. Schreibe den vereinfachten Text innerhalb von <einfachesprache> Tags."""
+Formuliere den Text jetzt in Einfache Sprache, Sprachniveau B1 bis A2, um. Schreibe den vereinfachten Text innerhalb von <einfachesprache> Tags.
+""".strip()
 
 
-CLAUDE_TEMPLATE_LS = """Hier ist ein schwer verständlicher Text, den du vollständig in Leichte Sprache, Sprachniveau A2 bis A1, umschreiben sollst:
+CLAUDE_TEMPLATE_LS = """
+Hier ist ein schwer verständlicher Text, den du vollständig in Leichte Sprache, Sprachniveau A2 bis A1, umschreiben sollst:
 
 <schwer-verständlicher-text>
 {prompt}
@@ -135,10 +142,12 @@ Beachte dabei folgende Regeln für Leichte Sprache (A2, A1):
 {completeness}
 {rules}
 
-Formuliere den Text jetzt in Leichte Sprache, Sprachniveau A2 bis A1, um. Schreibe den vereinfachten Text innerhalb von <leichtesprache> Tags."""
+Formuliere den Text jetzt in Leichte Sprache, Sprachniveau A2 bis A1, um. Schreibe den vereinfachten Text innerhalb von <leichtesprache> Tags.
+""".strip()
 
 
-CLAUDE_TEMPLATE_ANALYSIS_ES = """Hier ist ein schwer verständlicher Text, den du genau analysieren sollst:
+CLAUDE_TEMPLATE_ANALYSIS_ES = """
+Hier ist ein schwer verständlicher Text, den du genau analysieren sollst:
 
 <schwer-verständlicher-text>
 {prompt}
@@ -156,10 +165,12 @@ Die Regeln für Einfache Sprache, Sprachniveau B1 bis A2, sind diese hier:
 
 {rules}
 
-Schreibe jetzt deine Analyse und gib diese innerhalb von <einfachesprache> Tags aus."""
+Schreibe jetzt deine Analyse und gib diese innerhalb von <einfachesprache> Tags aus.
+""".strip()
 
 
-CLAUDE_TEMPLATE_ANALYSIS_LS = """Hier ist ein schwer verständlicher Text, den du genau analysieren sollst:
+CLAUDE_TEMPLATE_ANALYSIS_LS = """
+Hier ist ein schwer verständlicher Text, den du genau analysieren sollst:
 
 <schwer-verständlicher-text>
 {prompt}
@@ -177,10 +188,12 @@ Die Regeln für Leichte Sprache, Sprachniveau A2 bis A1, sind diese hier:
 
 {rules}
 
-Schreibe jetzt deine Analyse und gib diese innerhalb von <leichtesprache> Tags aus."""
+Schreibe jetzt deine Analyse und gib diese innerhalb von <leichtesprache> Tags aus.
+""".strip()
 
 
-OPENAI_TEMPLATE_ES = """Bitte schreibe den folgenden schwer verständlichen Text vollständig in Einfache Sprache, Sprachniveau B1 bis A2, um. 
+OPENAI_TEMPLATE_ES = """
+Bitte schreibe den folgenden schwer verständlichen Text vollständig in Einfache Sprache, Sprachniveau B1 bis A2, um. 
 
 Beachte dabei folgende Regeln für Einfache Sprache (B1 bis A2):
 
@@ -194,9 +207,10 @@ Hier ist der schwer verständliche Text:
 --------------------------------------------------------------------------------
 
 {prompt}
-"""
+""".strip()
 
-OPENAI_TEMPLATE_LS = """Bitte schreibe den folgenden schwer verständlichen Text vollständig in Leichte Sprache, Sprachniveau A2 bis A1, um. 
+OPENAI_TEMPLATE_LS = """
+Bitte schreibe den folgenden schwer verständlichen Text vollständig in Leichte Sprache, Sprachniveau A2 bis A1, um. 
 
 Beachte dabei folgende Regeln für Leichte Sprache (A2, A1):
 
@@ -210,9 +224,10 @@ Hier ist der schwer verständliche Text:
 --------------------------------------------------------------------------------
 
 {prompt}
-"""
+""".strip()
 
-OPENAI_TEMPLATE_ANALYSIS_ES = """Du bekommst einen schwer verständlichen Text, den du genau analysieren sollst. 
+OPENAI_TEMPLATE_ANALYSIS_ES = """
+Du bekommst einen schwer verständlichen Text, den du genau analysieren sollst. 
 
 Analysiere den schwer verständlichen Text Satz für Satz. Beschreibe genau und detailliert, was sprachlich nicht gut bei jedem Satz ist. Analysiere was ich tun müsste, damit der Text zu Einfacher Sprache (B1 bis A2) wird. Gib klare Hinweise, wie ich den Text besser verständlich machen kann. Gehe bei deiner Analyse Schritt für Schritt vor. 
 
@@ -233,9 +248,10 @@ Hier ist der schwer verständliche Text:
 --------------------------------------------------------------------------------
 
 {prompt}
-"""
+""".strip()
 
-OPENAI_TEMPLATE_ANALYSIS_LS = """Du bekommst einen schwer verständlichen Text, den du genau analysieren sollst.
+OPENAI_TEMPLATE_ANALYSIS_LS = """
+Du bekommst einen schwer verständlichen Text, den du genau analysieren sollst.
 
 Analysiere den schwer verständlichen Text Satz für Satz. Beschreibe genau und detailliert, was sprachlich nicht gut bei jedem Satz ist. Analysiere was ich tun müsste, damit der Text zu Leichter Sprache (A2, A1) wird. Gib klare Hinweise, wie ich den Text besser verständlich machen kann. Gehe bei deiner Analyse Schritt für Schritt vor. 
 
@@ -256,4 +272,4 @@ Hier ist der schwer verständliche Text:
 --------------------------------------------------------------------------------
 
 {prompt}
-"""
+""".strip()

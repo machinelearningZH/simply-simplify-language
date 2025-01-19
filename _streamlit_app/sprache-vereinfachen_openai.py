@@ -65,7 +65,7 @@ MODEL_IDS = {
     "GPT-4o mini": "gpt-4o-mini",
     "GPT-4o": "gpt-4o",
     "o1 mini": "o1-mini",
-    "o1": "o1-preview",
+    "o1": "o1",
 }
 
 # From our testing we derive a sensible temperature of 0.5 as a good trade-off between creativity and coherence. Adjust this to your needs.
@@ -81,7 +81,7 @@ TEXT_AREA_HEIGHT = 600
 MAX_CHARS_INPUT = 10_000
 
 
-USER_WARNING = """<sub>⚠️ Achtung: Diese App ist ein Prototyp. Nutze die App :red[**nur für öffentliche, nicht sensible Daten**]. Die App liefert lediglich einen Textentwurf. Überprüfe das Ergebnis immer und passe es an, wenn nötig. Die aktuelle App-Version ist v0.5 Die letzte Aktualisierung war am 22.12.2024."""
+USER_WARNING = """<sub>⚠️ Achtung: Diese App ist ein Prototyp. Nutze die App :red[**nur für öffentliche, nicht sensible Daten**]. Die App liefert lediglich einen Textentwurf. Überprüfe das Ergebnis immer und passe es an, wenn nötig. Die aktuelle App-Version ist v0.6 Die letzte Aktualisierung war am 19.01.2025."""
 
 
 # Constants for the formatting of the Word document that can be downloaded.

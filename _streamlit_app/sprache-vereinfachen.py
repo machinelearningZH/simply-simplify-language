@@ -90,7 +90,7 @@ MODEL_IDS = {
     "GPT-4o mini": "gpt-4o-mini",
     "GPT-4o": "gpt-4o",
     "o1 mini": "o1-mini",
-    "o1": "o1-preview",
+    "o1": "o1",
     "Gemini 1.5 Flash": "gemini-1.5-flash",
     "Gemini 2.0 Flash": "gemini-2.0-flash-exp",
     "Gemini 1.5 Pro": "gemini-1.5-pro",
@@ -109,7 +109,7 @@ TEXT_AREA_HEIGHT = 600
 MAX_CHARS_INPUT = 10_000
 
 
-USER_WARNING = """<sub>⚠️ Achtung: Diese App ist ein Prototyp. Nutze die App :red[**nur für öffentliche, nicht sensible Daten**]. Die App liefert lediglich einen Textentwurf. Überprüfe das Ergebnis immer und passe es an, wenn nötig. Die aktuelle App-Version ist v0.5 Die letzte Aktualisierung war am 22.12.2024."""
+USER_WARNING = """<sub>⚠️ Achtung: Diese App ist ein Prototyp. Nutze die App :red[**nur für öffentliche, nicht sensible Daten**]. Die App liefert lediglich einen Textentwurf. Überprüfe das Ergebnis immer und passe es an, wenn nötig. Die aktuelle App-Version ist v0.6 Die letzte Aktualisierung war am 19.01.2025."""
 
 
 # Constants for the formatting of the Word document that can be downloaded.
@@ -579,9 +579,9 @@ with button_cols[3]:
     model_choice = st.radio(
         label="Sprachmodell",
         options=([model_name for model_name in MODEL_IDS.keys()]),
-        index=3,
+        index=1,
         horizontal=True,
-        help="Alle Modelle liefern je nach Ausgangstext meist gute bis sehr gute Ergebnisse und sind alle einen Versuch wert. Claude Haiku, GPT-4o mini und Gemini Flash sind am schnellsten. Mehr Details siehe Infobox oben auf der Seite.",
+        help="Alle Modelle liefern je nach Ausgangstext meist gute bis sehr gute Ergebnisse und sind alle einen Versuch wert. Claude Sonnet und GPT-4o liefern die beste Qualität. Claude Haiku, GPT-4o mini und Gemini Flash sind am schnellsten. Mehr Details siehe Infobox oben auf der Seite.",
     )
 
 # Instantiate empty containers for the text areas.
