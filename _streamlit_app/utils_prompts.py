@@ -52,7 +52,7 @@ RULES_ES = """
 
 
 RULES_LS = """
-- Wichtiges zuerst: Beginne den Text mit den wichtigsten Informationen, so dass diese sofort klar werden.
+- Schreibe wichtiges zuerst: Beginne den Text mit den wichtigsten Informationen, so dass diese sofort klar werden.
 - Verwende einfache, kurze, häufig gebräuchliche Wörter. 
 - Löse zusammengesetzte Wörter auf und formuliere sie neu. 
 - Wenn es wichtige Gründe gibt, ein zusammengesetztes Wort nicht aufzulösen, trenne das zusammengesetzte Wort mit einem Bindestrich. Beginne dann jedes Wort mit einem Grossbuchstaben. Beispiele: «Auto-Service», «Gegen-Argument», «Kinder-Betreuung», «Volks-Abstimmung».
@@ -107,7 +107,7 @@ RULES_LS = """
 REWRITE_COMPLETE = """- Achte immer sehr genau darauf, dass ALLE Informationen aus dem schwer verständlichen Text in deinem verständlicheren Text enthalten sind. Kürze niemals Informationen. Wo sinnvoll kannst du zusätzliche Beispiele hinzufügen, um den Text verständlicher zu machen und relevante Inhalte zu konkretisieren."""
 
 
-REWRITE_CONDENSED = """- Konzentriere dich auf das Wichtigste. Gib die essenziellen Informationen wieder und lass den Rest weg. Wichtig sind zusätzliche Beispiele. Damit konkretisierst du relevante Inhalte und machst sie dadurch verständlicher."""
+REWRITE_CONDENSED = """- Konzentriere dich auf das Wichtigste. Gib die essenziellen Informationen wieder und lass den Rest weg."""
 
 
 CLAUDE_TEMPLATE_ES = """
@@ -117,9 +117,9 @@ Hier ist ein schwer verständlicher Text, den du vollständig in Einfache Sprach
 {prompt}
 </schwer-verständlicher-text>
 
-Bitte lies den Text sorgfältig durch und schreibe ihn vollständig in Einfache Sprache (B1 bis A2) um. 
+Bitte lies den Text sorgfältig durch und schreibe ihn vollständig in Einfache Sprache um. 
 
-Beachte dabei folgende Regeln für Einfache Sprache (B1 bis A2):
+Beachte dabei folgende Regeln:
 
 {completeness}
 {rules}
@@ -135,9 +135,9 @@ Hier ist ein schwer verständlicher Text, den du vollständig in Leichte Sprache
 {prompt}
 </schwer-verständlicher-text>
 
-Bitte lies den Text sorgfältig durch und schreibe ihn vollständig in Leichte Sprache, Sprachniveau A2 bis A1 um. 
+Bitte lies den Text sorgfältig durch und schreibe ihn vollständig in Leichte Sprache um. 
 
-Beachte dabei folgende Regeln für Leichte Sprache (A2, A1):
+Beachte dabei folgende Regeln:
 
 {completeness}
 {rules}
@@ -153,15 +153,15 @@ Hier ist ein schwer verständlicher Text, den du genau analysieren sollst:
 {prompt}
 </schwer-verständlicher-text>
 
-Analysiere den schwer verständlichen Text Satz für Satz. Beschreibe genau und detailliert, was sprachlich nicht gut bei jedem Satz ist. Analysiere was ich tun müsste, damit der Text zu Einfacher Sprache (B1 bis A2) wird. Gib klare Hinweise, wie ich den Text besser verständlich machen kann. Gehe bei deiner Analyse Schritt für Schritt vor. 
+Analysiere den schwer verständlichen Text Satz für Satz. Beschreibe genau und detailliert, was sprachlich nicht gut bei jedem Satz ist. Analysiere was ich tun müsste, damit der Text zu Einfache Sprache (B1 bis A2) wird. Gib klare Hinweise, wie ich den Text besser verständlich machen kann. Gehe bei deiner Analyse Schritt für Schritt vor. 
 
 1. Wiederhole den Satz. 
-2. Analysiere den Satz auf seine Verständlichkeit. Was muss ich tun, damit der Satz verständlicher wird? Wie kann ich den Satz in Einfacher Sprache, Sprachniveau B1 bis A2 besser formulieren?
+2. Analysiere den Satz auf seine Verständlichkeit. Was muss ich tun, damit der Satz verständlicher wird? Wie kann ich den Satz in Einfacher Sprache besser formulieren?
 3. Mache einen Vorschlag für einen vereinfachten Satz. 
 
 Befolge diesen Ablauf von Anfang bis Ende auch wenn der schwer verständliche Text sehr lang ist. 
 
-Die Regeln für Einfache Sprache, Sprachniveau B1 bis A2, sind diese hier: 
+Die Regeln für Einfache Sprache sind diese hier: 
 
 {rules}
 
@@ -176,15 +176,15 @@ Hier ist ein schwer verständlicher Text, den du genau analysieren sollst:
 {prompt}
 </schwer-verständlicher-text>
 
-Analysiere den schwer verständlichen Text Satz für Satz. Beschreibe genau und detailliert, was sprachlich nicht gut bei jedem Satz ist. Analysiere was ich tun müsste, damit der Text zu Leichter Sprache (A2, A1) wird. Gib klare Hinweise, wie ich den Text besser verständlich machen kann. Gehe bei deiner Analyse Schritt für Schritt vor. 
+Analysiere den schwer verständlichen Text Satz für Satz. Beschreibe genau und detailliert, was sprachlich nicht gut bei jedem Satz ist. Analysiere was ich tun müsste, damit der Text zu Leichte Sprache (A2, A1) wird. Gib klare Hinweise, wie ich den Text besser verständlich machen kann. Gehe bei deiner Analyse Schritt für Schritt vor. 
 
 1. Wiederhole den Satz. 
-2. Analysiere den Satz auf seine Verständlichkeit. Was muss ich tun, damit der Satz verständlicher wird? Wie kann ich den Satz in Leichter Sprache, Sprachniveau A2 besser formulieren?
+2. Analysiere den Satz auf seine Verständlichkeit. Was muss ich tun, damit der Satz verständlicher wird? Wie kann ich den Satz in Leichte Sprache besser formulieren?
 3. Mache einen Vorschlag für einen vereinfachten Satz. 
 
 Befolge diesen Ablauf von Anfang bis Ende auch wenn der schwer verständliche Text sehr lang ist. 
 
-Die Regeln für Leichte Sprache, Sprachniveau A2 bis A1, sind diese hier:
+Die Regeln für Leichte Sprache sind diese hier:
 
 {rules}
 
@@ -193,9 +193,9 @@ Schreibe jetzt deine Analyse und gib diese innerhalb von <leichtesprache> Tags a
 
 
 OPENAI_TEMPLATE_ES = """
-Bitte schreibe den folgenden schwer verständlichen Text vollständig in Einfache Sprache, Sprachniveau B1 bis A2, um. 
+Du bekommst einen schwer verständlichen Text, den du vollständig in Einfache Sprache auf Sprachniveau B1 bis A2 umschreiben sollst. 
 
-Beachte dabei folgende Regeln für Einfache Sprache (B1 bis A2):
+Beachte dabei folgende Regeln:
 
 {completeness}
 {rules}
@@ -210,9 +210,9 @@ Hier ist der schwer verständliche Text:
 """.strip()
 
 OPENAI_TEMPLATE_LS = """
-Bitte schreibe den folgenden schwer verständlichen Text vollständig in Leichte Sprache, Sprachniveau A2 bis A1, um. 
+Du bekommst einen schwer verständlichen Text, den du vollständig in Leichte Sprache auf Sprachniveau A2 bis A1 umschreiben sollst. 
 
-Beachte dabei folgende Regeln für Leichte Sprache (A2, A1):
+Beachte dabei folgende Regeln:
 
 {completeness}
 {rules}
@@ -229,15 +229,15 @@ Hier ist der schwer verständliche Text:
 OPENAI_TEMPLATE_ANALYSIS_ES = """
 Du bekommst einen schwer verständlichen Text, den du genau analysieren sollst. 
 
-Analysiere den schwer verständlichen Text Satz für Satz. Beschreibe genau und detailliert, was sprachlich nicht gut bei jedem Satz ist. Analysiere was ich tun müsste, damit der Text zu Einfacher Sprache (B1 bis A2) wird. Gib klare Hinweise, wie ich den Text besser verständlich machen kann. Gehe bei deiner Analyse Schritt für Schritt vor. 
+Analysiere den schwer verständlichen Text Satz für Satz. Beschreibe genau und detailliert, was sprachlich nicht gut bei jedem Satz ist. Analysiere was ich tun müsste, damit der Text zu Einfache Sprache (B1 bis A2) wird. Gib klare Hinweise, wie ich den Text besser verständlich machen kann. Gehe bei deiner Analyse Schritt für Schritt vor. 
 
 1. Wiederhole den Satz. 
-2. Analysiere den Satz auf seine Verständlichkeit. Was muss ich tun, damit der Satz verständlicher wird? Wie kann ich den Satz in Einfacher Sprache, Sprachniveau B1 bis A2 besser formulieren?
+2. Analysiere den Satz auf seine Verständlichkeit. Was muss ich tun, damit der Satz verständlicher wird? Wie kann ich den Satz in Einfache Sprache formulieren?
 3. Mache einen Vorschlag für einen vereinfachten Satz. 
 
 Befolge diesen Ablauf von Anfang bis Ende auch wenn der schwer verständliche Text sehr lang ist. 
 
-Die Regeln für Einfache Sprache, Sprachniveau B1 bis A2, sind diese hier: 
+Die Regeln für Einfache Sprache sind diese hier: 
 
 {rules}
 
@@ -253,15 +253,15 @@ Hier ist der schwer verständliche Text:
 OPENAI_TEMPLATE_ANALYSIS_LS = """
 Du bekommst einen schwer verständlichen Text, den du genau analysieren sollst.
 
-Analysiere den schwer verständlichen Text Satz für Satz. Beschreibe genau und detailliert, was sprachlich nicht gut bei jedem Satz ist. Analysiere was ich tun müsste, damit der Text zu Leichter Sprache (A2, A1) wird. Gib klare Hinweise, wie ich den Text besser verständlich machen kann. Gehe bei deiner Analyse Schritt für Schritt vor. 
+Analysiere den schwer verständlichen Text Satz für Satz. Beschreibe genau und detailliert, was sprachlich nicht gut bei jedem Satz ist. Analysiere was ich tun müsste, damit der Text zu Leichte Sprache (A2 bis A1) wird. Gib klare Hinweise, wie ich den Text besser verständlich machen kann. Gehe bei deiner Analyse Schritt für Schritt vor. 
 
 1. Wiederhole den Satz. 
-2. Analysiere den Satz auf seine Verständlichkeit. Was muss ich tun, damit der Satz verständlicher wird? Wie kann ich den Satz in Leichter Sprache, Sprachniveau A2 besser formulieren?
+2. Analysiere den Satz auf seine Verständlichkeit. Was muss ich tun, damit der Satz verständlicher wird? Wie kann ich den Satz in Leichte Sprache formulieren?
 3. Mache einen Vorschlag für einen vereinfachten Satz. 
 
 Befolge diesen Ablauf von Anfang bis Ende auch wenn der schwer verständliche Text sehr lang ist. 
 
-Die Regeln für Leichte Sprache, Sprachniveau A2 bis A1, sind diese hier:
+Die Regeln für Leichte Sprache sind diese hier:
 
 {rules}
 
