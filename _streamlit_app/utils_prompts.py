@@ -159,7 +159,7 @@ Analysiere den schwer verständlichen Text Satz für Satz. Beschreibe genau und 
 2. Analysiere den Satz auf seine Verständlichkeit. Was muss ich tun, damit der Satz verständlicher wird? Wie kann ich den Satz in Einfacher Sprache besser formulieren?
 3. Mache einen Vorschlag für einen vereinfachten Satz. 
 
-Befolge diesen Ablauf von Anfang bis Ende auch wenn der schwer verständliche Text sehr lang ist. 
+Befolge diesen Ablauf von Anfang bis Ende, auch wenn der schwer verständliche Text sehr lang ist. 
 
 Die Regeln für Einfache Sprache sind diese hier: 
 
@@ -182,7 +182,7 @@ Analysiere den schwer verständlichen Text Satz für Satz. Beschreibe genau und 
 2. Analysiere den Satz auf seine Verständlichkeit. Was muss ich tun, damit der Satz verständlicher wird? Wie kann ich den Satz in Leichte Sprache besser formulieren?
 3. Mache einen Vorschlag für einen vereinfachten Satz. 
 
-Befolge diesen Ablauf von Anfang bis Ende auch wenn der schwer verständliche Text sehr lang ist. 
+Befolge diesen Ablauf von Anfang bis Ende, auch wenn der schwer verständliche Text sehr lang ist. 
 
 Die Regeln für Leichte Sprache sind diese hier:
 
@@ -235,7 +235,7 @@ Analysiere den schwer verständlichen Text Satz für Satz. Beschreibe genau und 
 2. Analysiere den Satz auf seine Verständlichkeit. Was muss ich tun, damit der Satz verständlicher wird? Wie kann ich den Satz in Einfache Sprache formulieren?
 3. Mache einen Vorschlag für einen vereinfachten Satz. 
 
-Befolge diesen Ablauf von Anfang bis Ende auch wenn der schwer verständliche Text sehr lang ist. 
+Befolge diesen Ablauf von Anfang bis Ende, auch wenn der schwer verständliche Text sehr lang ist. 
 
 Die Regeln für Einfache Sprache sind diese hier: 
 
@@ -259,7 +259,7 @@ Analysiere den schwer verständlichen Text Satz für Satz. Beschreibe genau und 
 2. Analysiere den Satz auf seine Verständlichkeit. Was muss ich tun, damit der Satz verständlicher wird? Wie kann ich den Satz in Leichte Sprache formulieren?
 3. Mache einen Vorschlag für einen vereinfachten Satz. 
 
-Befolge diesen Ablauf von Anfang bis Ende auch wenn der schwer verständliche Text sehr lang ist. 
+Befolge diesen Ablauf von Anfang bis Ende, auch wenn der schwer verständliche Text sehr lang ist. 
 
 Die Regeln für Leichte Sprache sind diese hier:
 
