@@ -36,7 +36,7 @@
 - You can run the app **locally**, **in the cloud** or **in a [GitHub Codespace](https://github.com/features/codespaces)**.
 - If you just have an [OpenAI](https://openai.com/api/) account and do not want to use other LLMs you also can run **a variant of the app that only uses OpenAI models**. However, we recommend to give the [Mistral](https://mistral.ai/) and [Anthropic](https://www.anthropic.com/api) models a spin too. These models are very powerful too and we continuously achieve very good results.
 - We also added an app version that uses the [**Azure OpenAI Service**](https://azure.microsoft.com/en-us/products/ai-services/openai-service).
-- We also added an app version that only leverages the **Google Gemini models** (1.5 / 2.0 Flash and Pro).
+- We also added an app version that only leverages the **Google Gemini models** (2.0 / 2.5 Flash and Pro).
 
 ### Run the app locally
 
@@ -112,7 +112,7 @@ In English «Einfache Sprache» is roughly equivalent to [«Plain English](https
 
 ### What does it cost?
 
-**Usage is inexpensive**. You only pay OpenAI & Co. for the tokens that you use. E.g. for the translation of 100 separate [«Normseiten»](https://de.wikipedia.org/wiki/Normseite) (standard pages of 250 German words each) to Einfache Sprache or Leichte Sprache you pay depending on the model token cost - so roughly between 0.15 CHF for Gemini Flash 1.5/2.0 and around 25 CHF for the o1 model (as of December 2024). The hardware requirements to run the app are modest too. As mentioned above a small VM for a couple of Francs per month will suffice.
+**Usage is inexpensive**. You only pay OpenAI & Co. for the tokens that you use. E.g. for the translation of 100 separate [«Normseiten»](https://de.wikipedia.org/wiki/Normseite) (standard pages of 250 German words each) to Einfache Sprache or Leichte Sprache you pay depending on the model token cost - so roughly between 0.15 CHF for Gemini Flash 2.0 and around 60 CHF for the GPT-4.5 model (as of March 2025). The hardware requirements to run the app are modest too. As mentioned above a small VM for a couple of Francs per month will suffice.
 
 ### Our language guidelines
 
