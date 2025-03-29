@@ -29,17 +29,17 @@ Momentan kannst du eins von 11 Sprachmodellen wählen:
 
 - **Mistral Nemo**: gute Qualität, 0.1 CHF
 - **Mistral Large**: sehr gute Qualität, 2.2 CHF
-- **Claude V3.5 Haiku**: sehr gute Qualität, 1.4 CHF
+- **Claude V3.5 Haiku**: gute Qualität, 1.4 CHF
 - **Claude V3.5 Sonnet**: beste Qualität, 5.1 CHF
-- **GPT-4o mini**: gute Qualität, 0.2 CHF
-- **GPT-4o**: sehr gute Qualität, 3.5 CHF
-- **o1 mini**: [«Reasoning-Modell»](https://openai.com/o1/), beste Qualität, 5 CHF
-- **o1**: [«Reasoning-Modell»](https://openai.com/o1/), beste Qualität, 25 CHF
-- **Gemini 1.5 Flash**: gute Qualität, 0.15 CHF
+- **Claude V3.7 Sonnet**: beste Qualität, 5.1 CHF
+- **GPT-4o**: beste Qualität, 3.5 CHF
+- **GPT-4.5**: beste Qualität, **60 CHF**
+- **o1 mini**: [«Reasoning-Modell»](https://openai.com/o1/), 5 CHF
+- **o1**: [«Reasoning-Modell»](https://openai.com/o1/), 25 CHF
 - **Gemini 2.0 Flash**: sehr gute Qualität, 0.15 CHF
-- **Gemini 1.5 Pro**: beste Qualität, 1.8 CHF
+- **Gemini 2.5 Pro**: beste Qualität, Preis noch nicht bekannt
 
-*(Ungefähre Kostengrössen für 100 [Normseiten](https://de.wikipedia.org/wiki/Normseite) á 250 Worten, Stand Dezember 2024, ohne Gewähr)*
+*(Ungefähre Kostengrössen für 100 [Normseiten](https://de.wikipedia.org/wiki/Normseite) á 250 Worten, Stand März 2025, ohne Gewähr)*
 
 Alle Modelle analysieren und schreiben unterschiedlich und sind alle einen Versuch wert. Die Claude-Modelle werden von [Anthropic](https://www.anthropic.com/) betrieben, die GPT- und o1-Modelle von [OpenAI](https://openai.com/), die Mistral-Modelle von [Mistral](https://mistral.ai/) und die Gemini-Modelle von [Google](https://ai.google.dev/).<br>
 
@@ -65,6 +65,7 @@ Wir sind für Rückmeldungen und Anregungen jeglicher Art dankbar und nehmen die
 
 ## Versionsverlauf
 
+- **v0.6** - 29.03.2025 - *Modelle aktualisiert.*
 - **v0.5** - 22.12.2024 - *Modelle aktualisiert und ergänzt. Code vereinfacht.*
 - **v0.4** - 30.08.2024 - *Fehler behoben.*
 - **v0.3** - 18.08.2024 - *Neuen ZIX-Index integriert. Diverse Fehler behoben.*

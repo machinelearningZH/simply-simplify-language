@@ -87,13 +87,13 @@ MODEL_IDS = {
     "Mistral large": "mistral-large-latest",
     "Claude Haiku 3.5": "claude-3-5-haiku-latest",
     "Claude Sonnet 3.5": "claude-3-5-sonnet-latest",
-    "GPT-4o mini": "gpt-4o-mini",
+    "Claude Sonnet 3.7": "claude-3-7-sonnet-latest",
     "GPT-4o": "gpt-4o",
+    "GPT-4.5": "gpt-4.5-preview",
     "o1 mini": "o1-mini",
     "o1": "o1",
-    "Gemini 1.5 Flash": "gemini-1.5-flash",
-    "Gemini 2.0 Flash": "gemini-2.0-flash-exp",
-    "Gemini 1.5 Pro": "gemini-1.5-pro",
+    "Gemini 2.0 Flash": "gemini-2.0-flash",
+    "Gemini 2.5 Pro": "gemini-2.5-pro-exp-03-25",
 }
 
 # From our testing we derive a sensible temperature of 0.5 as a good trade-off between creativity and coherence. Adjust this to your needs.
@@ -109,7 +109,7 @@ TEXT_AREA_HEIGHT = 600
 MAX_CHARS_INPUT = 10_000
 
 
-USER_WARNING = """<sub>⚠️ Achtung: Diese App ist ein Prototyp. Nutze die App :red[**nur für öffentliche, nicht sensible Daten**]. Die App liefert lediglich einen Textentwurf. Überprüfe das Ergebnis immer und passe es an, wenn nötig. Die aktuelle App-Version ist v0.6 Die letzte Aktualisierung war am 19.01.2025."""
+USER_WARNING = """<sub>⚠️ Achtung: Diese App ist ein Prototyp. Nutze die App :red[**nur für öffentliche, nicht sensible Daten**]. Die App liefert lediglich einen Textentwurf. Überprüfe das Ergebnis immer und passe es an, wenn nötig. Die aktuelle App-Version ist v0.6 Die letzte Aktualisierung war am 29.03.2025."""
 
 
 # Constants for the formatting of the Word document that can be downloaded.
@@ -348,15 +348,15 @@ def get_one_click_results():
                 st.session_state.key_textinput,
                 MODEL_IDS["Mistral Nemo"],
             ),
-            "GPT-4o mini": executor.submit(
-                invoke_openai_model,
-                st.session_state.key_textinput,
-                MODEL_IDS["GPT-4o mini"],
-            ),
             "GPT-4o": executor.submit(
                 invoke_openai_model,
                 st.session_state.key_textinput,
                 MODEL_IDS["GPT-4o"],
+            ),
+            "GPT-4.5": executor.submit(
+                invoke_openai_model,
+                st.session_state.key_textinput,
+                MODEL_IDS["GPT-4.5"],
             ),
             "o1 mini": executor.submit(
                 invoke_openai_reasoning_model,
@@ -378,20 +378,20 @@ def get_one_click_results():
                 st.session_state.key_textinput,
                 MODEL_IDS["Claude Sonnet 3.5"],
             ),
-            "Gemini 1.5 Flash": executor.submit(
-                invoke_google_model,
+            "Claude Sonnet 3.7": executor.submit(
+                invoke_anthropic_model,
                 st.session_state.key_textinput,
-                MODEL_IDS["Gemini 1.5 Flash"],
+                MODEL_IDS["Claude Sonnet 3.7"],
             ),
             "Gemini 2.0 Flash": executor.submit(
                 invoke_google_model,
                 st.session_state.key_textinput,
                 MODEL_IDS["Gemini 2.0 Flash"],
             ),
-            "Gemini 1.5 Pro": executor.submit(
+            "Gemini 2.5 Pro": executor.submit(
                 invoke_google_model,
                 st.session_state.key_textinput,
-                MODEL_IDS["Gemini 1.5 Pro"],
+                MODEL_IDS["Gemini 2.5 Pro"],
             ),
         }
 
@@ -661,7 +661,7 @@ if do_simplification or do_analysis or do_one_click:
                     success, response = get_one_click_results()
                 # Regular text simplification or analysis
                 else:
-                    if model_choice in ["GPT-4o mini", "GPT-4o"]:
+                    if model_choice in ["GPT-4.5", "GPT-4o"]:
                         success, response = invoke_openai_model(
                             st.session_state.key_textinput,
                             model_id=model_id,
@@ -680,7 +680,6 @@ if do_simplification or do_analysis or do_one_click:
                             analysis=do_analysis,
                         )
                     elif model_choice in [
-                        "Gemini 1.5 Flash",
                         "Gemini 2.0 Flash",
                         "Gemini 1.5 Pro",
                     ]:
