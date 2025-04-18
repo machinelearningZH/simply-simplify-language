@@ -34,7 +34,7 @@
 ## Usage
 
 - You can run the app **locally**, **in the cloud** or **in a [GitHub Codespace](https://github.com/features/codespaces)**.
-- If you just have an [OpenAI](https://openai.com/api/) account and do not want to use other LLMs you also can run **a variant of the app that only uses OpenAI models**. However, we recommend to give the [Mistral](https://mistral.ai/) and [Anthropic](https://www.anthropic.com/api) models a spin too. These models are very powerful too and we continuously achieve very good results.
+- If you just have an [OpenAI](https://openai.com/api/) account and do not want to use other LLMs you also can run **a variant of the app that only uses OpenAI models**. However, we recommend to give the [Mistral](https://mistral.ai/), [Anthropic](https://www.anthropic.com/api) and [Google](https://cloud.google.com/docs/generative-ai) models a spin too. These models are very powerful too and we continuously achieve very good results.
 - We also added an app version that uses the [**Azure OpenAI Service**](https://azure.microsoft.com/en-us/products/ai-services/openai-service).
 - We also added an app version that only leverages the **Google Gemini models** (2.0 / 2.5 Flash and Pro).
 
@@ -103,16 +103,16 @@ We developed this app following our communication guidelines. However, we believ
 In English «Einfache Sprache» is roughly equivalent to [«Plain English](https://www.plainlanguage.gov/about/definitions/), while «Leichte Sprache» has similarities to [«Easy English»](https://centreforinclusivedesign.org.au/wp-content/uploads/2020/04/Easy-English-vs-Plain-English_accessible.pdf).
 
 > [!Important]
-> At the risk of stating the obvious: By using the app **you send data to a third-party provider** ([OpenAI](https://platform.openai.com/docs/overview), [Anthropic](https://www.anthropic.com/api), and [Mistral AI](https://docs.mistral.ai/) in case of the current state of the app). **Therefore strictly only use non-sensitive data.** Again, stating the obvious: **LLMs make errors.** They regularly hallucinate, make things up, and get things wrong. They often do so in subtle, non-obvious ways, that may be hard to detect. This app is **meant to be used as an assistive system**. It **only yields a draft, that you always must double- and triple-check.**
+> At the risk of stating the obvious: By using the app **you send data to a third-party provider** ([OpenAI](https://platform.openai.com/docs/overview), [Anthropic](https://www.anthropic.com/api), [Google](https://cloud.google.com/docs/generative-ai) and [Mistral AI](https://docs.mistral.ai/) in case of the current state of the app). **Therefore strictly only use non-sensitive data.** Again, stating the obvious: **LLMs make errors.** They regularly hallucinate, make things up, and get things wrong. They often do so in subtle, non-obvious ways, that may be hard to detect. This app is **meant to be used as an assistive system**. It **only yields a draft, that you always must double- and triple-check.**
 
-**At the time of writing many users in our administration have extensively used the app with thousands of texts over several months. The results are very promising.** With the prototype app, our experts have saved time, improved their output, and made public communication more inclusive.
+**At the time of writing many users in our administration have extensively used the app with thousands of texts over more than a year. The results are very promising.** With the prototype app, our experts have saved time, improved their output, and made public communication more inclusive.
 
 > [!Note]
 > This **app is optimized for Swiss German** («Swiss High German», not dialect). Some rules in the prompts steer the models toward this. Also the app is **setup to use the Swiss `ss` rather than the German `ß`** The understandability index assumes the Swiss `ss` for the common word scoring and we replace `ß` with `ss` in the results.
 
 ### What does it cost?
 
-**Usage is inexpensive**. You only pay OpenAI & Co. for the tokens that you use. E.g. for the translation of 100 separate [«Normseiten»](https://de.wikipedia.org/wiki/Normseite) (standard pages of 250 German words each) to Einfache Sprache or Leichte Sprache you pay depending on the model token cost - so roughly between 0.15 CHF for Gemini Flash 2.0 and around 60 CHF for the GPT-4.5 model (as of March 2025). The hardware requirements to run the app are modest too. As mentioned above a small VM for a couple of Francs per month will suffice.
+**Usage is inexpensive**. You only pay OpenAI & Co. for the tokens that you use. E.g. for the translation of 100 separate [«Normseiten»](https://de.wikipedia.org/wiki/Normseite) (standard pages of 250 German words each) to Einfache Sprache or Leichte Sprache you pay depending on the model token cost - so roughly between 0.5 CHF for GPT-4.1 mini and around 5 CHF for the Claude Sonnet 3.7 (as of April 2025). The hardware requirements to run the app are modest too. As mentioned above a small VM for a couple of Francs per month will suffice.
 
 ### Our language guidelines
 
@@ -166,7 +166,7 @@ This project is a collaborative effort of these people of the cantonal administr
 - **Roger Meier** - [Generalsekretariat, Direktion der Justiz und des Inneren](https://www.zh.ch/de/direktion-der-justiz-und-des-innern/generalsekretariat.html#2092000119)
 - **Matthias Mazenauer** - [Co-Leiter, Statistisches Amt](https://www.zh.ch/de/direktion-der-justiz-und-des-innern/statistisches-amt/amtsleitung.html)
 - **Marisol Keller, Céline Colombo** - [Koordinationsstelle Teilhabe, Statistisches Amt](https://www.zh.ch/de/politik-staat/teilhabe.html)
-- **Patrick Arnecke, Dominik Frefel** - [Team Data, Statistisches Amt](https://www.zh.ch/de/direktion-der-justiz-und-des-innern/statistisches-amt/data.html)
+- **Patrick Arnecke, Chantal Amrhein, Dominik Frefel** - [Team Data, Statistisches Amt](https://www.zh.ch/de/direktion-der-justiz-und-des-innern/statistisches-amt/data.html)
 
 A special thanks goes to **[Government Councillor Jacqueline Fehr](https://www.zh.ch/en/direktion-der-justiz-und-des-innern/regierungsraetin-jacqueline-fehr.html)**, who came up with the idea and initiated and supported the project.
 
