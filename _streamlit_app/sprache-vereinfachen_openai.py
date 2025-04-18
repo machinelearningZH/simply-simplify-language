@@ -64,8 +64,13 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 MODEL_IDS = {
     "GPT-4o mini": "gpt-4o-mini",
     "GPT-4o": "gpt-4o",
+    "GPT-4.1 mini": "gpt-4.1-mini",
+    "GPT-4.1": "gpt-4.1",
     "o1 mini": "o1-mini",
     "o1": "o1",
+    "o3 mini": "o3-mini",
+    "o3": "o3",
+    "o4 mini": "o4-mini",
 }
 
 # From our testing we derive a sensible temperature of 0.5 as a good trade-off between creativity and coherence. Adjust this to your needs.
@@ -81,7 +86,7 @@ TEXT_AREA_HEIGHT = 600
 MAX_CHARS_INPUT = 10_000
 
 
-USER_WARNING = """<sub>⚠️ Achtung: Diese App ist ein Prototyp. Nutze die App :red[**nur für öffentliche, nicht sensible Daten**]. Die App liefert lediglich einen Textentwurf. Überprüfe das Ergebnis immer und passe es an, wenn nötig. Die aktuelle App-Version ist v0.6 Die letzte Aktualisierung war am 19.01.2025."""
+USER_WARNING = """<sub>⚠️ Achtung: Diese App ist ein Prototyp. Nutze die App :red[**nur für öffentliche, nicht sensible Daten**]. Die App liefert lediglich einen Textentwurf. Überprüfe das Ergebnis immer und passe es an, wenn nötig. Die aktuelle App-Version ist v0.7 Die letzte Aktualisierung war am 18.014.2025."""
 
 
 # Constants for the formatting of the Word document that can be downloaded.
@@ -170,7 +175,7 @@ def get_openai_client():
 
 def invoke_openai_model(
     text,
-    model_id=MODEL_IDS["GPT-4o mini"],
+    model_id=MODEL_IDS["GPT-4.1 mini"],
     analysis=False,
 ):
     """Invoke OpenAI model."""
@@ -302,7 +307,7 @@ def log_event(
     success,
 ):
     """Log event."""
-    log_string = f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}'
+    log_string = f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
     log_string += f"\t{clean_log(text)}"
     log_string += f"\t{clean_log(response)}"
     log_string += f"\t{do_analysis}"
@@ -445,18 +450,18 @@ if do_simplification or do_analysis:
         with placeholder_analysis.container():
             with st.spinner("Ich arbeite..."):
                 # Regular text simplification or analysis.
-                if model_choice in ["GPT-4o mini", "GPT-4o"]:
-                        success, response = invoke_openai_model(
-                            st.session_state.key_textinput,
-                            model_id=model_id,
-                            analysis=do_analysis,
-                        )
-                elif model_choice in ["o1 mini", "o1"]:
-                        success, response = invoke_openai_reasoning_model(
-                            st.session_state.key_textinput,
-                            model_id=model_id,
-                            analysis=do_analysis,
-                        )
+                if "GPT" in model_choice:
+                    success, response = invoke_openai_model(
+                        st.session_state.key_textinput,
+                        model_id=model_id,
+                        analysis=do_analysis,
+                    )
+                else:
+                    success, response = invoke_openai_reasoning_model(
+                        st.session_state.key_textinput,
+                        model_id=model_id,
+                        analysis=do_analysis,
+                    )
 
     if success is False:
         st.error(
