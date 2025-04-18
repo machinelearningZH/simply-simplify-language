@@ -86,7 +86,7 @@ TEXT_AREA_HEIGHT = 600
 MAX_CHARS_INPUT = 10_000
 
 
-USER_WARNING = """<sub>⚠️ Achtung: Diese App ist ein Prototyp. Nutze die App :red[**nur für öffentliche, nicht sensible Daten**]. Die App liefert lediglich einen Textentwurf. Überprüfe das Ergebnis immer und passe es an, wenn nötig. Die aktuelle App-Version ist v0.7 Die letzte Aktualisierung war am 18.014.2025."""
+USER_WARNING = """<sub>⚠️ Achtung: Diese App ist ein Prototyp. Nutze die App :red[**nur für öffentliche, nicht sensible Daten**]. Die App liefert lediglich einen Textentwurf. Überprüfe das Ergebnis immer und passe es an, wenn nötig. Die aktuelle App-Version ist v0.7 Die letzte Aktualisierung war am 18.04.2025."""
 
 
 # Constants for the formatting of the Word document that can be downloaded.
@@ -373,7 +373,7 @@ with button_cols[3]:
     model_choice = st.radio(
         label="Sprachmodell",
         options=([model_name for model_name in MODEL_IDS.keys()]),
-        index=0,
+        index=2,
         horizontal=True,
     )
 

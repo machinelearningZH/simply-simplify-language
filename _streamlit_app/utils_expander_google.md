@@ -19,7 +19,7 @@ Mit dem Schalter «Leichte Sprache» kannst du das Modell anweisen, einen ***Ent
 
 ### Welches Sprachmodell wird verwendet?
 
-In dieser App-Variante werden die Sprachmodelle Gemini 2.0 Flash und Gemini 2.5 Pro von [Google](https://deepmind.google/technologies/gemini/) verwendet.
+In dieser App-Variante werden die Sprachmodelle Gemini 2.0 / 2.5 Flash und Gemini 1.5 / 2.5 Pro von [Google](https://ai.google.dev/gemini-api/docs/models) verwendet.
 
 ### Wie funktioniert die Bewertung der Verständlichkeit?
 
@@ -43,6 +43,7 @@ Wir sind für Rückmeldungen und Anregungen jeglicher Art dankbar und nehmen die
 
 ## Versionsverlauf
 
+- **v0.4** – 18.04.2025 – *Modelle aktualisiert. Refactoring zu neuem Gemini SDK.*
 - **v0.3** – 29.03.2025 – *Modelle aktualisiert.*
 - **v0.2** – 22.12.2024 – *Modelle aktualisiert und ergänzt: Gemini Flash 2.0. Code vereinfacht.*
 - **v0.1** - 02.09.2024 - *App-Version für Google Gemini Modelle.*

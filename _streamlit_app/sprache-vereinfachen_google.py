@@ -26,7 +26,8 @@ logging.basicConfig(
 import numpy as np
 from utils_understandability import get_zix, get_cefr
 
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 
 from utils_sample_texts import (
     SAMPLE_TEXT_01,
@@ -60,11 +61,12 @@ OPENAI_TEMPLATES = [
 
 load_dotenv()
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
-genai.configure(api_key=GOOGLE_API_KEY)
 
 MODEL_IDS = {
+    "Gemini 1.5 Pro": "gemini-1.5-pro",
     "Gemini 2.0 Flash": "gemini-2.0-flash",
-    "Gemini 2.5 Pro": "gemini-2.5-pro-exp-03-25",
+    "Gemini 2.5 Flash": "gemini-2.5-flash-preview-04-17",
+    "Gemini 2.5 Pro": "gemini-2.5-pro-preview-03-25",
 }
 
 # From our testing we derive a sensible temperature of 0.5 as a good trade-off between creativity and coherence. Adjust this to your needs.
@@ -79,7 +81,7 @@ TEXT_AREA_HEIGHT = 600
 # Adjust to your needs. However, we found that users can work and validate better when we nudge to work with shorter texts.
 MAX_CHARS_INPUT = 10_000
 
-USER_WARNING = """<sub>⚠️ Achtung: Diese App ist ein Prototyp. Nutze die App :red[**nur für öffentliche, nicht sensible Daten**]. Die App liefert lediglich einen Textentwurf. Überprüfe das Ergebnis immer und passe es an, wenn nötig. Die aktuelle App-Version ist v0.3 Die letzte Aktualisierung war am 29.03.2025."""
+USER_WARNING = """<sub>⚠️ Achtung: Diese App ist ein Prototyp. Nutze die App :red[**nur für öffentliche, nicht sensible Daten**]. Die App liefert lediglich einen Textentwurf. Überprüfe das Ergebnis immer und passe es an, wenn nötig. Die aktuelle App-Version ist v0.4 Die letzte Aktualisierung war am 18.04.2025."""
 
 # Constants for the formatting of the Word document that can be downloaded.
 FONT_WORDDOC = "Arial"
@@ -160,19 +162,32 @@ def strip_markdown(text):
     return text
 
 
+@st.cache_resource
+def get_google_client():
+    return genai.Client(api_key=GOOGLE_API_KEY)
+
+
+google_client = get_google_client()
+
+
 def invoke_google_model(
-    text, model_id=MODEL_IDS["Gemini 2.0 Flash"], temperature=TEMPERATURE, analysis=False
+    text,
+    model_id=MODEL_IDS["Gemini 2.0 Flash"],
+    temperature=TEMPERATURE,
+    analysis=False,
 ):
     """Invoke Google model."""
     final_prompt, system = create_prompt(text, *OPENAI_TEMPLATES, analysis)
-    google_client = genai.GenerativeModel(
-        model_id,
-        generation_config={"temperature": temperature},
-        system_instruction=system,
-    )
+
     try:
-        message = google_client.generate_content(
-            final_prompt,
+        message = google_client.models.generate_content(
+            model=model_id,
+            contents=final_prompt,
+            config=types.GenerateContentConfig(
+                system_instruction=system,
+                max_output_tokens=MAX_TOKENS,
+                temperature=TEMPERATURE,
+            ),
         )
         message = message.text.strip()
         message = get_result_from_response(message)
@@ -267,7 +282,7 @@ def log_event(
     success,
 ):
     """Log event."""
-    log_string = f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}'
+    log_string = f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
     log_string += f"\t{clean_log(text)}"
     log_string += f"\t{clean_log(response)}"
     log_string += f"\t{do_analysis}"
@@ -333,9 +348,9 @@ with button_cols[3]:
     model_choice = st.radio(
         label="Sprachmodell",
         options=([model_name for model_name in MODEL_IDS.keys()]),
-        index=0,
+        index=1,
         horizontal=True,
-        help="Google Gemini Flash ist schneller und liefert sehr gute Qualität. Google Gemini 2.5 Pro ist langsamer bei bester Qualität.",
+        help="Gemini Flash ist schneller und liefert sehr gute Qualität. Gemini 2.5 Pro ist langsamer bei bester Qualität.",
     )
 
 
