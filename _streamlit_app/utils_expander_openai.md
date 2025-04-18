@@ -19,12 +19,17 @@ Mit dem Schalter «Leichte Sprache» kannst du das Modell anweisen, einen ***Ent
 
 ### Welches Sprachmodell wird verwendet?
 
-In dieser App-Variante können wir die Sprachmodelle von [OpenAI](https://openai.com/) nutzen. 100 einzelne [Normseiten](https://de.wikipedia.org/wiki/Normseite) kosten grob gerechnet folgendes (Stand Dezember 2024, ohne Gewähr):
+In dieser App-Variante können wir die Sprachmodelle von [OpenAI](https://openai.com/) nutzen.
 
-- **GPT-4o-mini**: gute Qualität, 0.2 CHF
-- **GPT-4o**: beste Qualität, 3.5 CHF
-- **o1 mini**: [«Reasoning-Modell»](https://openai.com/o1/), sehr gute Qualität, 5 CHF
-- **o1**: [«Reasoning-Modell»](https://openai.com/o1/), beste Qualität, 25 CHF
+- **GPT-4o-mini**: gute Qualität
+- **GPT-4o**: sehr gute Qualität
+- **GPT-4.1-mini**: gute Qualität
+- **GPT-4.1**: sehr gute Qualität
+- **o1 mini**: [«Reasoning-Modell»](https://openai.com/o1/)
+- **o1**: [«Reasoning-Modell»](https://openai.com/o1/)
+- **o3 mini**: [«Reasoning-Modell»](https://openai.com/index/introducing-o3-and-o4-mini/)
+- **o3**: [«Reasoning-Modell»](https://openai.com/index/introducing-o3-and-o4-mini/)
+- **o4 mini**: [«Reasoning-Modell»](https://openai.com/index/introducing-o3-and-o4-mini/)
 
 ### Wie funktioniert die Bewertung der Verständlichkeit?
 
@@ -48,6 +53,7 @@ Wir sind für Rückmeldungen und Anregungen jeglicher Art dankbar und nehmen die
 
 ## Versionsverlauf
 
+- **v0.6** – 18.04.2025 – *Modelle aktualisiert.*
 - **v0.5** – 22.12.2024 – *Modelle aktualisiert und ergänzt: o1 und o1 mini. Code vereinfacht.*
 - **v0.4** – 30.08.2024 – *Fehler behoben.*
 - **v0.3** – 18.08.2024 – *Neuer ZIX-Index integriert. Diverse Fehler behoben.*
