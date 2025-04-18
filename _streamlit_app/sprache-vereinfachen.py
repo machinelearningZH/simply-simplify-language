@@ -29,7 +29,9 @@ import numpy as np
 from openai import OpenAI
 from anthropic import Anthropic
 from mistralai import Mistral
-import google.generativeai as genai
+
+from google import genai
+from google.genai import types
 
 from utils_understandability import get_zix, get_cefr
 
@@ -79,21 +81,17 @@ API_KEYS = {
     "MISTRAL": os.getenv("MISTRAL_API_KEY"),
     "GOOGLE": os.getenv("GOOGLE_API_KEY"),
 }
-genai.configure(api_key=API_KEYS["GOOGLE"])
 
 
 MODEL_IDS = {
-    "Mistral Nemo": "open-mistral-nemo",
     "Mistral large": "mistral-large-latest",
-    "Claude Haiku 3.5": "claude-3-5-haiku-latest",
     "Claude Sonnet 3.5": "claude-3-5-sonnet-latest",
     "Claude Sonnet 3.7": "claude-3-7-sonnet-latest",
     "GPT-4o": "gpt-4o",
-    "GPT-4.5": "gpt-4.5-preview",
-    "o1 mini": "o1-mini",
-    "o1": "o1",
-    "Gemini 2.0 Flash": "gemini-2.0-flash",
-    "Gemini 2.5 Pro": "gemini-2.5-pro-exp-03-25",
+    "GPT-4.1": "gpt-4.1",
+    "GPT-4.1 mini": "gpt-4.1-mini",
+    "Gemini 2.5 Flash": "gemini-2.5-flash-preview-04-17",
+    "Gemini 2.5 Pro": "gemini-2.5-pro-preview-03-25",
 }
 
 # From our testing we derive a sensible temperature of 0.5 as a good trade-off between creativity and coherence. Adjust this to your needs.
@@ -109,7 +107,7 @@ TEXT_AREA_HEIGHT = 600
 MAX_CHARS_INPUT = 10_000
 
 
-USER_WARNING = """<sub>⚠️ Achtung: Diese App ist ein Prototyp. Nutze die App :red[**nur für öffentliche, nicht sensible Daten**]. Die App liefert lediglich einen Textentwurf. Überprüfe das Ergebnis immer und passe es an, wenn nötig. Die aktuelle App-Version ist v0.6 Die letzte Aktualisierung war am 29.03.2025."""
+USER_WARNING = """<sub>⚠️ Achtung: Diese App ist ein Prototyp. Nutze die App :red[**nur für öffentliche, nicht sensible Daten**]. Die App liefert lediglich einen Textentwurf. Überprüfe das Ergebnis immer und passe es an, wenn nötig. Die aktuelle App-Version ist v0.7 Die letzte Aktualisierung war am 18.04.2025."""
 
 
 # Constants for the formatting of the Word document that can be downloaded.
@@ -198,13 +196,18 @@ def get_openai_client():
 
 
 @st.cache_resource
+def get_google_client():
+    return genai.Client(api_key=API_KEYS["GOOGLE"])
+
+
+@st.cache_resource
 def get_mistral_client():
     return Mistral(api_key=API_KEYS["MISTRAL"])
 
 
 def invoke_anthropic_model(
     text,
-    model_id=MODEL_IDS["Claude Haiku 3.5"],
+    model_id=MODEL_IDS["Claude Sonnet 3.5"],
     analysis=False,
 ):
     """Invoke Anthropic model."""
@@ -233,7 +236,7 @@ def invoke_anthropic_model(
 
 def invoke_openai_model(
     text,
-    model_id=MODEL_IDS["GPT-4o mini"],
+    model_id=MODEL_IDS["GPT-4.1 mini"],
     analysis=False,
 ):
     """Invoke OpenAI model."""
@@ -245,29 +248,6 @@ def invoke_openai_model(
             max_tokens=MAX_TOKENS,
             messages=[
                 {"role": "system", "content": system},
-                {"role": "user", "content": final_prompt},
-            ],
-        )
-        message = message.choices[0].message.content.strip()
-        message = get_result_from_response(message)
-        message = strip_markdown(message)
-        return True, message
-    except Exception as e:
-        print(f"Error: {e}")
-        return False, e
-
-
-def invoke_openai_reasoning_model(
-    text,
-    model_id=MODEL_IDS["o1 mini"],
-    analysis=False,
-):
-    """Invoke OpenAI model."""
-    final_prompt, _ = create_prompt(text, *OPENAI_TEMPLATES, analysis)
-    try:
-        message = openai_client.chat.completions.create(
-            model=model_id,
-            messages=[
                 {"role": "user", "content": final_prompt},
             ],
         )
@@ -307,20 +287,22 @@ def invoke_mistral_model(
 
 def invoke_google_model(
     text,
-    model_id=MODEL_IDS["Gemini 2.0 Flash"],
+    model_id=MODEL_IDS["Gemini 2.5 Flash"],
     analysis=False,
 ):
     """Invoke Google model."""
     final_prompt, system = create_prompt(text, *OPENAI_TEMPLATES, analysis)
-    google_client = genai.GenerativeModel(
-        model_id,
-        generation_config={"temperature": TEMPERATURE},
-        system_instruction=system,
-    )
     try:
-        message = google_client.generate_content(
-            final_prompt,
+        message = google_client.models.generate_content(
+            model=model_id,
+            contents=final_prompt,
+            config=types.GenerateContentConfig(
+                system_instruction=system,
+                max_output_tokens=MAX_TOKENS,
+                temperature=TEMPERATURE,
+            ),
         )
+
         message = message.text.strip()
         message = get_result_from_response(message)
         message = strip_markdown(message)
@@ -343,35 +325,20 @@ def get_one_click_results():
                 st.session_state.key_textinput,
                 MODEL_IDS["Mistral large"],
             ),
-            "Mistral Nemo": executor.submit(
-                invoke_mistral_model,
-                st.session_state.key_textinput,
-                MODEL_IDS["Mistral Nemo"],
-            ),
             "GPT-4o": executor.submit(
                 invoke_openai_model,
                 st.session_state.key_textinput,
                 MODEL_IDS["GPT-4o"],
             ),
-            "GPT-4.5": executor.submit(
+            "GPT-4.1": executor.submit(
                 invoke_openai_model,
                 st.session_state.key_textinput,
-                MODEL_IDS["GPT-4.5"],
+                MODEL_IDS["GPT-4.1"],
             ),
-            "o1 mini": executor.submit(
-                invoke_openai_reasoning_model,
+            "GPT-4.1 mini": executor.submit(
+                invoke_openai_model,
                 st.session_state.key_textinput,
-                MODEL_IDS["o1 mini"],
-            ),
-            "o1": executor.submit(
-                invoke_openai_reasoning_model,
-                st.session_state.key_textinput,
-                MODEL_IDS["o1"],
-            ),
-            "Claude Haiku 3.5": executor.submit(
-                invoke_anthropic_model,
-                st.session_state.key_textinput,
-                MODEL_IDS["Claude Haiku 3.5"],
+                MODEL_IDS["GPT-4.1 mini"],
             ),
             "Claude Sonnet 3.5": executor.submit(
                 invoke_anthropic_model,
@@ -383,10 +350,10 @@ def get_one_click_results():
                 st.session_state.key_textinput,
                 MODEL_IDS["Claude Sonnet 3.7"],
             ),
-            "Gemini 2.0 Flash": executor.submit(
+            "Gemini 2.5 Flash": executor.submit(
                 invoke_google_model,
                 st.session_state.key_textinput,
-                MODEL_IDS["Gemini 2.0 Flash"],
+                MODEL_IDS["Gemini 2.5 Flash"],
             ),
             "Gemini 2.5 Pro": executor.submit(
                 invoke_google_model,
@@ -522,6 +489,7 @@ def log_event(
 
 anthropic_client = get_anthropic_client()
 openai_client = get_openai_client()
+google_client = get_google_client()
 mistral_client = get_mistral_client()
 
 project_info = get_project_info()
@@ -581,7 +549,7 @@ with button_cols[3]:
         options=([model_name for model_name in MODEL_IDS.keys()]),
         index=1,
         horizontal=True,
-        help="Alle Modelle liefern je nach Ausgangstext meist gute bis sehr gute Ergebnisse und sind alle einen Versuch wert. Claude Sonnet und GPT-4o liefern die beste Qualität. Claude Haiku, GPT-4o mini und Gemini Flash sind am schnellsten. Mehr Details siehe Infobox oben auf der Seite.",
+        help="Alle Modelle liefern je nach Ausgangstext meist gute bis sehr gute Ergebnisse und sind alle einen Versuch wert. Claude Sonnet und GPT-4.1 und Google Gemini 2.5 Pro liefern sehr gute Qualität. GPT-4.1 mini ist sehr schnell. Mehr Details siehe Infobox oben auf der Seite.",
     )
 
 # Instantiate empty containers for the text areas.
@@ -661,27 +629,25 @@ if do_simplification or do_analysis or do_one_click:
                     success, response = get_one_click_results()
                 # Regular text simplification or analysis
                 else:
-                    if model_choice in ["GPT-4.5", "GPT-4o"]:
+                    if model_choice in [
+                        "GPT-4.1",
+                        "GPT-4.1 mini",
+                        "GPT-4o",
+                    ]:
                         success, response = invoke_openai_model(
                             st.session_state.key_textinput,
                             model_id=model_id,
                             analysis=do_analysis,
                         )
-                    elif model_choice in ["o1 mini", "o1"]:
-                        success, response = invoke_openai_reasoning_model(
-                            st.session_state.key_textinput,
-                            model_id=model_id,
-                            analysis=do_analysis,
-                        )
-                    elif model_choice in ["Mistral large", "Mistral Nemo"]:
+                    elif model_choice in ["Mistral large"]:
                         success, response = invoke_mistral_model(
                             st.session_state.key_textinput,
                             model_id=model_id,
                             analysis=do_analysis,
                         )
                     elif model_choice in [
-                        "Gemini 2.0 Flash",
-                        "Gemini 1.5 Pro",
+                        "Gemini 2.5 Flash",
+                        "Gemini 2.5 Pro",
                     ]:
                         success, response = invoke_google_model(
                             st.session_state.key_textinput,
