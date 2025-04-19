@@ -300,6 +300,7 @@ def invoke_google_model(
                 system_instruction=system,
                 max_output_tokens=MAX_TOKENS,
                 temperature=TEMPERATURE,
+                thinking_config=types.ThinkingConfig(thinking_budget=0),
             ),
         )
 
