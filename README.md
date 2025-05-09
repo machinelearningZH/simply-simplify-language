@@ -97,13 +97,13 @@ We developed this app following our communication guidelines. However, we believ
 
 - This app **simplifies complex texts, rewriting them according to rules for [«Einfache Sprache»](https://de.wikipedia.org/wiki/Einfache_Sprache) or [«Leichte Sprache»](https://de.wikipedia.org/wiki/Leichte_Sprache)**. To simplify your source text, the app applies effective prompting, and uses your chosen LLM.
 - The app also offers **coaching to improve your writing**. Its **analysis function** provides detailed, sentence-by-sentence feedback to enhance your communication.
-- It **measures the understandability of your text** on a scale from 0 (very complex) to 20 (very easy to understand).
-- The **One-Click feature sends your text to six LLMs simultaneously**, delivering six drafts in a formatted Word document within seconds, ready for download.
+- It **measures the understandability of your text** on a scale from -10 (very complex) to +10 (very easy to understand).
+- The **One-Click feature sends your text to eight LLMs simultaneously**, delivering eight drafts in a formatted Word document within seconds, ready for download.
 
 In English «Einfache Sprache» is roughly equivalent to [«Plain English](https://www.plainlanguage.gov/about/definitions/), while «Leichte Sprache» has similarities to [«Easy English»](https://centreforinclusivedesign.org.au/wp-content/uploads/2020/04/Easy-English-vs-Plain-English_accessible.pdf).
 
 > [!Important]
-> At the risk of stating the obvious: By using the app **you send data to a third-party provider** ([OpenAI](https://platform.openai.com/docs/overview), [Anthropic](https://www.anthropic.com/api), [Google](https://cloud.google.com/docs/generative-ai) and [Mistral AI](https://docs.mistral.ai/) in case of the current state of the app). **Therefore strictly only use non-sensitive data.** Again, stating the obvious: **LLMs make errors.** They regularly hallucinate, make things up, and get things wrong. They often do so in subtle, non-obvious ways, that may be hard to detect. This app is **meant to be used as an assistive system**. It **only yields a draft, that you always must double- and triple-check.**
+> At the risk of stating the obvious: By using the app **you send data to a third-party provider** ([OpenAI](https://platform.openai.com/docs/overview), [Anthropic](https://www.anthropic.com/api), [Google](https://cloud.google.com/docs/generative-ai) and [Mistral AI](https://docs.mistral.ai/) in case of the current state of the app). **Therefore strictly only use non-sensitive data.** Again, stating the obvious: **LLMs make errors.** They regularly hallucinate, make things up, and get things wrong. They often do so in subtle, non-obvious ways, that may be hard to detect. This app is **meant to be used as an assistive system**. It **only yields a draft, that you always must check.**
 
 **At the time of writing many users in our administration have extensively used the app with thousands of texts over more than a year. The results are very promising.** With the prototype app, our experts have saved time, improved their output, and made public communication more inclusive.
 
@@ -128,7 +128,7 @@ We derived the current rules in the prompts mainly from these of our language gu
 
 - **Large Language Models (LLMs) already have an understanding of Einfache Sprache, Leichte Sprache, and CEFR levels** ([A1, A2, B1, etc.](https://www.goethe.de/de/spr/kur/stu.html)) from their pretraining. It's impressive how well they can translate text by simply being asked to rewrite it according to these terms or levels. We have also successfully created test data by asking models to e.g. describe a situation at each of the six CEFR levels (A1 to C2).
 - **LLMs produce varied rewrites, which is beneficial**. By offering multiple model options, users receive a range of suggestions, helping them achieve a good result. It's often effective to use the One-Click mode, which consolidates results from all models.
-- **Measuring text understandability is really helpful**. Early in our project, we realized the need for a quantitative metric to evaluate our outputs, such as comparing different prompts, models, and preprocessing steps. We developed and index for this purpose that we call the «Zürcher Verständlichkeits-Index» or «ZIX» 😉. We created the ZIX using a dataset of complex legal and administrative texts, as well as many samples of Einfache and Leichte Sprache. We trained a classification model to differentiate between complex and simple texts. By selecting the most significant model coefficients, we devised a formula to estimate a text's understandability. This pragmatic metric has been useful to us in practice. We plan to publish the code for it in the coming weeks.
+- **Measuring text understandability is really helpful**. Early in our project, we realized the need for a quantitative metric to evaluate our outputs, such as comparing different prompts, models, and preprocessing steps. We developed and index for this purpose that we call the «Zürcher Verständlichkeits-Index» or «ZIX» 😉. We created the ZIX using a dataset of complex legal and administrative texts, as well as many samples of Einfache and Leichte Sprache. We trained a classification model to differentiate between complex and simple texts. The ZIX as a metric has been very useful to us in practice. We have published the code and the Python package [here](https://github.com/machinelearningZH/zix_understandability-index).
 - Finally, **validating your results with your target audience is crucial**, especially for Leichte Sprache, which requires expert and user validation to be effective.
 
 ### How does the understandability score work?
@@ -154,7 +154,7 @@ These are a couple of areas that we are actively working on:
 
 - **Conduct more quantitative tests**: We aim to quantitatively evaluate LLM responses for completeness and accuracy. One approach we are testing is using LLMs as judges to assess these responses.
 - **Enhance our understandability index**: We plan to improve word scoring by detecting issues like passive voice, subjunctives and other linguistic properties that are currently missed.
-- **Establish standard vocabularies for administrative terms**: Consistent output for terms and names is crucial for our clients. We need to create a system that allows clients to manage these vocabularies themselves.
+- **Establish standard vocabularies for administrative terms**: Consistent output for terms and names is crucial for our clients. We want to create a system that allows clients to manage these vocabularies themselves.
 - **Experiment with open-weight models on-premise**: To process sensitive data, we are exploring lightweight models fine-tuned with German data that can be used on-premise.
 
 ## Project team
