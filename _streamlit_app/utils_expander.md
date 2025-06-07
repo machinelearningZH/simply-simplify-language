@@ -60,6 +60,7 @@ Wir sind für Rückmeldungen und Anregungen jeglicher Art dankbar und nehmen die
 
 ## Versionsverlauf
 
+- **v0.8** - 07.06.2025 - *Modelle aktualisiert. Bugfixes.*
 - **v0.7** - 18.04.2025 - *Modelle aktualisiert. GPT-4.1 und GPT-4.1 mini, neue Gemini-Modelle. Refactoring zu aktuellem Google GenAI Python SDK.*
 - **v0.6** - 29.03.2025 - *Modelle aktualisiert.*
 - **v0.5** - 22.12.2024 - *Modelle aktualisiert und ergänzt. Code vereinfacht.*

@@ -79,7 +79,7 @@ TEXT_AREA_HEIGHT = 600
 # Adjust to your needs. However, we found that users can work and validate better when we nudge to work with shorter texts.
 MAX_CHARS_INPUT = 10_000
 
-USER_WARNING = """<sub>⚠️ Achtung: Diese App ist ein Prototyp. Nutze die App :red[**nur für öffentliche, nicht sensible Daten**]. Die App liefert lediglich einen Textentwurf. Überprüfe das Ergebnis immer und passe es an, wenn nötig. Die aktuelle App-Version ist v0.4 Die letzte Aktualisierung war am 18.04.2025."""
+USER_WARNING = """<sub>⚠️ Achtung: Diese App ist ein Prototyp. Nutze die App :red[**nur für öffentliche, nicht sensible Daten**]. Die App liefert lediglich einen Textentwurf. Überprüfe das Ergebnis immer und passe es an, wenn nötig. Die aktuelle App-Version ist v0.5 Die letzte Aktualisierung war am 07.06.2025."""
 
 # Constants for the formatting of the Word document that can be downloaded.
 FONT_WORDDOC = "Arial"
