@@ -61,6 +61,15 @@
 - To **run the Google Gemini only version** use `streamlit run sprache-vereinfachen_google.py`. Get your API key from here: [Google AI Studio](https://ai.google.dev/aistudio).
 - To **run the Azure OpenAI only version** use `streamlit run sprache-vereinfachen_azure.py`. Have a look [here to learn more about how to setup the app with Azure](AZURE_HOWTO.md).
 
+You can also initialize the repo with `uv`:
+
+```bash
+pip3 install uv
+uv venv
+source .venv/bin/activate
+uv sync
+```
+
 ### Run the app in the cloud
 
 - Instantiate a small virtual machine with the cloud provider of your choosing. Suggested size: 2 vCPUs, 2GB RAM, and an SSD with a couple of GBs are sufficient. This will set you back no more than a couple of Francs per month.

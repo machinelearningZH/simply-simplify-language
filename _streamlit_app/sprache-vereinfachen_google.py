@@ -63,10 +63,8 @@ load_dotenv()
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 
 MODEL_IDS = {
-    "Gemini 1.5 Pro": "gemini-1.5-pro",
-    "Gemini 2.0 Flash": "gemini-2.0-flash",
-    "Gemini 2.5 Flash": "gemini-2.5-flash-preview-04-17",
-    "Gemini 2.5 Pro": "gemini-2.5-pro-preview-03-25",
+    "Gemini 2.5 Flash": "gemini-2.5-flash-preview-05-20",
+    "Gemini 2.5 Pro": "gemini-2.5-pro-preview-06-05",
 }
 
 # From our testing we derive a sensible temperature of 0.5 as a good trade-off between creativity and coherence. Adjust this to your needs.
@@ -172,7 +170,7 @@ google_client = get_google_client()
 
 def invoke_google_model(
     text,
-    model_id=MODEL_IDS["Gemini 2.0 Flash"],
+    model_id=MODEL_IDS["Gemini 2.5 Flash"],
     temperature=TEMPERATURE,
     analysis=False,
 ):
@@ -187,7 +185,7 @@ def invoke_google_model(
                 system_instruction=system,
                 max_output_tokens=MAX_TOKENS,
                 temperature=TEMPERATURE,
-                thinking_config=types.ThinkingConfig(thinking_budget=0),
+                thinking_config=types.ThinkingConfig(thinking_budget=128),
             ),
         )
         message = message.text.strip()
@@ -351,7 +349,7 @@ with button_cols[3]:
         options=([model_name for model_name in MODEL_IDS.keys()]),
         index=1,
         horizontal=True,
-        help="Gemini Flash ist schneller und liefert sehr gute Qualität. Gemini 2.5 Pro ist langsamer bei bester Qualität.",
+        help="Gemini Flash ist schneller und liefert sehr gute Qualität. Gemini Pro ist langsamer bei bester Qualität.",
     )
 
 

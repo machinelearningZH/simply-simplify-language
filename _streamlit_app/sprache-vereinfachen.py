@@ -90,8 +90,8 @@ MODEL_IDS = {
     "GPT-4o": "gpt-4o",
     "GPT-4.1": "gpt-4.1",
     "GPT-4.1 mini": "gpt-4.1-mini",
-    "Gemini 2.5 Flash": "gemini-2.5-flash-preview-04-17",
-    "Gemini 2.5 Pro": "gemini-2.5-pro-preview-03-25",
+    "Gemini 2.5 Flash": "gemini-2.5-flash-preview-05-20",
+    "Gemini 2.5 Pro": "gemini-2.5-pro-preview-06-05",
 }
 
 # From our testing we derive a sensible temperature of 0.5 as a good trade-off between creativity and coherence. Adjust this to your needs.
@@ -300,7 +300,7 @@ def invoke_google_model(
                 system_instruction=system,
                 max_output_tokens=MAX_TOKENS,
                 temperature=TEMPERATURE,
-                thinking_config=types.ThinkingConfig(thinking_budget=0),
+                thinking_config=types.ThinkingConfig(thinking_budget=128),
             ),
         )
 

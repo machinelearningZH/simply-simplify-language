@@ -1,0 +1,23 @@
+[project]
+name = "simply-simplify-language"
+version = "0.5.0"
+description = "Use LLMs to simplify your institutional communication."
+authors = [
+  { name = "Statistisches Amt Kanton Zürich, Team Data", email = "datashop@statistik.zh.ch" },
+]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "anthropic>=0.52.2",
+    "google-genai>=1.19.0",
+    "mistralai>=1.8.1",
+    "openai>=1.84.0",
+    "pyarrow>=20.0.0",
+    "python-docx>=1.1.2",
+    "python-dotenv>=1.1.0",
+    "scikit-learn>=1.7.0",
+    "spacy>=3.8.7",
+    "de_core_news_sm @ https://github.com/explosion/spacy-models/releases/download/de_core_news_sm-3.8.0/de_core_news_sm-3.8.0-py3-none-any.whl",
+    "streamlit>=1.45.1",
+    "textdescriptives>=2.8.4",
+]
