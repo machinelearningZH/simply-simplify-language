@@ -87,11 +87,12 @@ MODEL_IDS = {
     "Mistral large": "mistral-large-latest",
     "Claude Sonnet 3.5": "claude-3-5-sonnet-latest",
     "Claude Sonnet 3.7": "claude-3-7-sonnet-latest",
+    "Claude Sonnet 4.0": "claude-sonnet-4-20250514",
     "GPT-4o": "gpt-4o",
     "GPT-4.1": "gpt-4.1",
     "GPT-4.1 mini": "gpt-4.1-mini",
-    "Gemini 2.5 Flash": "gemini-2.5-flash-preview-05-20",
-    "Gemini 2.5 Pro": "gemini-2.5-pro-preview-06-05",
+    "Gemini 2.5 Flash": "gemini-2.5-flash",
+    "Gemini 2.5 Pro": "gemini-2.5-pro",
 }
 
 # From our testing we derive a sensible temperature of 0.5 as a good trade-off between creativity and coherence. Adjust this to your needs.
@@ -107,7 +108,7 @@ TEXT_AREA_HEIGHT = 600
 MAX_CHARS_INPUT = 10_000
 
 
-USER_WARNING = """<sub>⚠️ Achtung: Diese App ist ein Prototyp. Nutze die App :red[**nur für öffentliche, nicht sensible Daten**]. Die App liefert lediglich einen Textentwurf. Überprüfe das Ergebnis immer und passe es an, wenn nötig. Die aktuelle App-Version ist v0.8 Die letzte Aktualisierung war am 07.06.2025."""
+USER_WARNING = """<sub>⚠️ Achtung: Diese App ist ein Prototyp. Nutze die App :red[**nur für öffentliche, nicht sensible Daten**]. Die App liefert lediglich einen Textentwurf. Überprüfe das Ergebnis immer und passe es an, wenn nötig. Die aktuelle App-Version ist v0.8 Die letzte Aktualisierung war am 20.06.2025."""
 
 
 # Constants for the formatting of the Word document that can be downloaded.
@@ -350,6 +351,11 @@ def get_one_click_results():
                 invoke_anthropic_model,
                 st.session_state.key_textinput,
                 MODEL_IDS["Claude Sonnet 3.7"],
+            ),
+            "Claude Sonnet 4.0": executor.submit(
+                invoke_anthropic_model,
+                st.session_state.key_textinput,
+                MODEL_IDS["Claude Sonnet 4.0"],
             ),
             "Gemini 2.5 Flash": executor.submit(
                 invoke_google_model,

@@ -25,11 +25,12 @@ In der Grundeinstellung übersetzt die App in Einfache Spache. Wenn du den Schal
 
 ### Was sind die verschiedenen Sprachmodelle?
 
-Momentan kannst du eins von 8 Sprachmodellen wählen:
+Momentan kannst du eins von diesen Sprachmodellen wählen:
 
 - **Mistral Large**: sehr gute Qualität
 - **Claude V3.5 Sonnet**: sehr gute Qualität
 - **Claude V3.7 Sonnet**: beste Qualität
+- **Claude V4.0 Sonnet**: beste Qualität
 - **GPT-4o**: sehr gute Qualität
 - **GPT-4.1 mini**: sehr gute Qualität
 - **GPT-4.1**: beste Qualität
