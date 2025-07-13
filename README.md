@@ -3,11 +3,11 @@
 **Use LLMs to simplify your institutional communication. Get rid of «Behördendeutsch».**
 
 ![GitHub License](https://img.shields.io/github/license/machinelearningzh/simply-simplify-language)
-[![PyPI - Python](https://img.shields.io/badge/python-v3.12+-blue.svg)](https://github.com/machinelearningZH/simply-simplify-language)
+[![PyPI - Python](https://img.shields.io/badge/python-v3.10+-blue.svg)](https://github.com/machinelearningZH/simply-simplify-language)
 [![GitHub Stars](https://img.shields.io/github/stars/machinelearningZH/simply-simplify-language.svg)](https://github.com/machinelearningZH/simply-simplify-language/stargazers)
 [![GitHub Issues](https://img.shields.io/github/issues/machinelearningZH/simply-simplify-language.svg)](https://github.com/machinelearningZH/simply-simplify-language/issues)
 [![GitHub Issues](https://img.shields.io/github/issues-pr/machinelearningZH/simply-simplify-language.svg)](https://img.shields.io/github/issues-pr/machinelearningZH/simply-simplify-language)
-[![Current Version](https://img.shields.io/badge/version-0.5.0-green.svg)](https://github.com/machinelearningZH/simply-simplify-language)
+[![Current Version](https://img.shields.io/badge/version-1.0.0-green.svg)](https://github.com/machinelearningZH/simply-simplify-language)
 <a href="https://github.com/astral-sh/ruff"><img alt="linting - Ruff" class="off-glb" loading="lazy" src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json"></a>
 
 <details>
@@ -46,7 +46,7 @@
 1. Install [uv](https://docs.astral.sh/uv/):\
    `pip3 install uv`
 2. Clone the repo and enter the directory:\
-   `cd simply-simplify-language_openrouter/`
+   `cd simply-simplify-language/`
 3. Create and activate a virtual environment:\
    `uv sync`\
    `source .venv/bin/activate` (Unix/macOS)\
@@ -72,7 +72,7 @@ OPENAI_API_KEY=sk-...
    `conda create -n simplify python=3.10+`\
    `conda activate simplify`
 2. Clone the repo:\
-   `cd simply-simplify-language_openrouter/`
+   `cd simply-simplify-language/`
 3. Install requirements:\
    `pip install -r requirements.txt`
 4. Install spaCy model:\
@@ -172,7 +172,7 @@ In English «Einfache Sprache» is roughly equivalent to [«Plain English](https
 
 ### What does it cost?
 
-**Usage is inexpensive**. You only pay OpenRouter for the tokens that you use. OpenRouter provides transparent, competitive pricing for all models. E.g. for the simplification of 100 separate [«Normseiten»](https://de.wikipedia.org/wiki/Normseite) (standard pages of 250 German words each) to Einfache Sprache or Leichte Sprache you pay depending on the model - roughly between 0.5 CHF for faster models and around 5-10 CHF for premium models like Claude Opus. Check [OpenRouter pricing](https://openrouter.ai/models) for current rates. The hardware requirements to run the app are modest too. As mentioned above a small VM for a couple of Francs per month will suffice.
+**Usage is inexpensive**. You only pay OpenRouter (or OpenAI) for the tokens that you use. OpenRouter provides transparent, competitive pricing for all models. E.g. for the simplification of 100 separate [«Normseiten»](https://de.wikipedia.org/wiki/Normseite) (standard pages of 250 German words each) to Einfache Sprache or Leichte Sprache you pay depending on the model - roughly between 0.5 CHF for faster models and around 5-10 CHF for premium models like Claude Opus. Check [OpenRouter pricing](https://openrouter.ai/models) for current rates. The hardware requirements to run the app are modest too. As mentioned above a small VM for a couple of Francs per month will suffice.
 
 ### Our language guidelines
 
