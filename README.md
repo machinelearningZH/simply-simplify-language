@@ -79,7 +79,7 @@ uv sync
 ### Run the app in a Github Codespace
 
 - This will enable you to develop and run the app in a cloud-hosted development workspace, using [GitHub Codespaces](https://docs.github.com/en/codespaces/overview).
-- Some benefits: No need for any local installation, you can do anything right from your Web Browser. You get  some free hours with your GitHub account, so this should not be expensive at all. However, **do not forget to delete unused Codespaces to avoid being billed unnecessarily.** It's also a sensible idea, to make sure that `Auto-delete codespace` is activated in the settings.
+- Some benefits: No need for any local installation, you can do anything right from your Web Browser. You get some free hours with your GitHub account, so this should not be expensive at all. However, **do not forget to delete unused Codespaces to avoid being billed unnecessarily.** It's also a sensible idea, to make sure that `Auto-delete codespace` is activated in the settings.
 - Create a GitHub codespace on this repository by clicking `Code > Codespaces > Create codespace on main`
 - Wait until the codespace is started. You'll get a new url like `https://scaling-pancake-jwjjw54r4r7hpqpg.github.dev/`
 - If you run into network connection issues try another browser. In our testing Firefox sometimes threw errors, Chrome worked fine.
@@ -189,3 +189,7 @@ Please note that we use [Ruff](https://docs.astral.sh/ruff/) for linting and cod
 
 - The wonderful people at [LIIP](https://www.liip.ch/en) refactored the understandability index into a separate API ([see this repo here](https://github.com/chregu/simply-understandability-score)). They also made it available [as a webservice](https://u15y.gpt.liip.ch/). How cool is that?! 🚀 Big shoutout to [Christian Stocker](https://www.linkedin.com/in/chregu/) for doing this!
 - Also a big shout out to [Florian Georg](https://www.linkedin.com/in/fgeorg/) of Microsoft Switzerland for his great help to make the app work with [Azure AI](https://azure.microsoft.com/en-us/solutions/ai). Thanks!
+
+## Disclaimer
+
+This software (the Software) incorporates open-source models from [Spacy](https://spacy.io/models) and uses LLMs from various providers (Model(s)). This software has been developed according to and with the intent to be used under Swiss law. Please be aware that the EU Artificial Intelligence Act (EU AI Act) may, under certain circumstances, be applicable to your use of the Software. You are solely responsible for ensuring that your use of the Software as well as of the underlying Models complies with all applicable local, national and international laws and regulations. By using this Software, you acknowledge and agree (a) that it is your responsibility to assess which laws and regulations, in particular regarding the use of AI technologies, are applicable to your intended use and to comply therewith, and (b) that you will hold us harmless from any action, claims, liability or loss in respect of your use of the Software.
