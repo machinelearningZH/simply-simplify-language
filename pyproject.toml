@@ -1,5 +1,5 @@
 [project]
-name = "simply-simplify-language_openrouter"
+name = "simply-simplify-language"
 version = "1.0.0"
 description = "Use LLMs to simplify your institutional communication."
 authors = [
