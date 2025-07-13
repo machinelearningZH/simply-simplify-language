@@ -7,37 +7,18 @@ Dieser Prototyp ist Teil eines Projekts vom Statistischen Amt, Kanton Zürich. M
 
 ## Was macht diese App?
 
-**Diese App versucht, einen von dir eingegebenen Text in Einfache Sprache oder Leichte Sprache zu übersetzen.**
+**Diese App übersetzt einen von dir eingegebenen Text in einen Entwurf für Einfache Sprache oder Leichte Sprache.**
 
 Dein Text wird dazu in der App aufbereitet und an ein sogenanntes grosses Sprachmodell (LLM, Large Language Model) eines kommerziellen Anbieters geschickt. Diese Sprachmodelle sind in der Lage, Texte nach Anweisungen umzuformulieren und dabei zu vereinfachen.
 
 Du kannst die Texte nach den Regeln für Einfache Sprache oder Leichte Sprache übersetzen.
 
-**Leichte Sprache** ist eine vereinfachte Form der deutschen Sprache, die nach bestimmten Regeln gestaltet wird. Leicht Sprache hilft u.a. Menschen mit Lernschwierigkeiten oder geringen Deutschkenntnissen.
+- **Leichte Sprache** ist eine vereinfachte Form der deutschen Sprache, die nach bestimmten Regeln gestaltet wird. Leichte Sprache hilft u.a. Menschen mit Lernschwierigkeiten oder geringen Deutschkenntnissen.
+- **Einfache Sprache** ist eine vereinfachte Version von Alltagssprache. Diese zielt darauf, Texte generell für ein breiteres Publikum verständlicher zu machen.
 
-**Einfache Sprache** ist eine vereinfachte Version von Alltagssprache. Diese zielt darauf, Texte generell für ein breiteres Publikum verständlicher zu machen.
+In der Grundeinstellung übersetzt die App in Einfache Spache. Wenn du den Schalter «Leichte Sprache» klickst, weist du die App an, einen Entwurf in **Leichter Sprache** zu schreiben. Wenn Leichte Sprache aktiviert ist, kannst du zusätzlich wählen, ob das Modell alle Informationen übernehmen oder versuchen soll, sinnvoll zu verdichten.
 
-**Die Texte werden teils in sehr guter Qualität vereinfacht. Sie sind aber nie 100% korrekt. Die App liefert lediglich einen Entwurf. Die Texte müssen immer von dir überprüft und angepasst werden. Insbesondere bei Leichter Sprache ist [die Überprüfung der Ergebnisse durch Prüferinnen und Prüfer aus dem Zielpublikum essentiell](https://www.leichte-sprache.org/leichte-sprache/das-pruefen/).**
-
-### Modus «Leichte Sprache»?
-
-In der Grundeinstellung übersetzt die App in Einfache Spache. Wenn du den Schalter «Leichte Sprache» klickst, weist du das Modell an, einen Entwurf in **Leichter Sprache** zu schreiben. Wenn Leichte Sprache aktiviert ist, kannst du zusätzlich wählen, ob das Modell alle Informationen übernehmen oder versuchen soll, sinnvoll zu verdichten.
-
-### Was sind die verschiedenen Sprachmodelle?
-
-Momentan kannst du eins von diesen Sprachmodellen wählen:
-
-- **Mistral Large**: sehr gute Qualität
-- **Claude V3.5 Sonnet**: sehr gute Qualität
-- **Claude V3.7 Sonnet**: beste Qualität
-- **Claude V4.0 Sonnet**: beste Qualität
-- **GPT-4o**: sehr gute Qualität
-- **GPT-4.1 mini**: sehr gute Qualität
-- **GPT-4.1**: beste Qualität
-- **Gemini 2.5 Flash**: sehr gute Qualität
-- **Gemini 2.5 Pro**: beste Qualität
-
-Alle Modelle analysieren und schreiben unterschiedlich und sind alle einen Versuch wert. Die Claude-Modelle werden von [Anthropic](https://www.anthropic.com/) betrieben, die GPT- und o1-Modelle von [OpenAI](https://openai.com/), die Mistral-Modelle von [Mistral](https://mistral.ai/) und die Gemini-Modelle von [Google](https://ai.google.dev/).<br>
+**Die Texte werden teils in sehr guter Qualität vereinfacht. Sie sind aber nie 100% korrekt. Die App liefert lediglich einen Entwurf. Die Texte müssen immer von dir überprüft und angepasst werden.** Insbesondere bei Leichter Sprache ist die Überprüfung der Ergebnisse durch Prüferinnen und Prüfer aus dem Zielpublikum essentiell.
 
 ### Wie funktioniert die Bewertung der Verständlichkeit?
 
@@ -49,9 +30,9 @@ Die Bewertung kannst du so interpretieren:
 - **Durchschnittlich verständliche Texte** wie Nachrichtentexte, Wikipediaartikel oder Bücher haben meist Werte von **-2 bis 0**.
 - **Gut verständliche Texte im Bereich Einfacher Sprache und Leichter Sprache** haben meist Werte von **0 oder grösser.**.
 
-Wir zeigen dir zusätzlich eine **grobe** Schätzung des Sprachniveaus gemäss [CEFR (Common European Framework of Reference for Languages)](https://www.coe.int/en/web/common-european-framework-reference-languages/level-descriptions) von A1 bis C2 an.  
+Wir zeigen dir zusätzlich eine **grobe** Schätzung des Sprachniveaus gemäss [CEFR (Common European Framework of Reference for Languages)](https://www.coe.int/en/web/common-european-framework-reference-languages/level-descriptions) von A1 bis C2 an.
 
-### Image ###
+ADD_IMAGE_HERE
 
 Die Bewertung ist bei weitem nicht perfekt, aber sie ist ein guter erster Anhaltspunkt und hat sich bei unseren Praxistests bewährt.
 
@@ -61,11 +42,12 @@ Wir sind für Rückmeldungen und Anregungen jeglicher Art dankbar und nehmen die
 
 ## Versionsverlauf
 
-- **v0.8** - 07.06.2025 - *Modelle aktualisiert. Bugfixes.*
-- **v0.7** - 18.04.2025 - *Modelle aktualisiert. GPT-4.1 und GPT-4.1 mini, neue Gemini-Modelle. Refactoring zu aktuellem Google GenAI Python SDK.*
-- **v0.6** - 29.03.2025 - *Modelle aktualisiert.*
-- **v0.5** - 22.12.2024 - *Modelle aktualisiert und ergänzt. Code vereinfacht.*
-- **v0.4** - 30.08.2024 - *Fehler behoben.*
-- **v0.3** - 18.08.2024 - *Neuen ZIX-Index integriert. Diverse Fehler behoben.*
-- **v0.2** - 21.06.2024 - *Update auf Claude Sonnet v3.5.*
-- **v0.1** - 1.06.2024 - *Erste Open Source-Version der App auf Basis des bisherigen Pilotprojekts.*
+- **v1.0** - 13.07.2025 - _App aktualisiert und umgeschrieben auf OpenRouter. Ältere App-Versionen entfernt bis auf Version OpenAI._
+- **v0.8** - 07.06.2025 - _Modelle aktualisiert. Bugfixes._
+- **v0.7** - 18.04.2025 - _Modelle aktualisiert. GPT-4.1 und GPT-4.1 mini, neue Gemini-Modelle. Refactoring zu aktuellem Google GenAI Python SDK._
+- **v0.6** - 29.03.2025 - _Modelle aktualisiert._
+- **v0.5** - 22.12.2024 - _Modelle aktualisiert und ergänzt. Code vereinfacht._
+- **v0.4** - 30.08.2024 - _Fehler behoben._
+- **v0.3** - 18.08.2024 - _Neuen ZIX-Index integriert. Diverse Fehler behoben._
+- **v0.2** - 21.06.2024 - _Update auf Claude Sonnet v3.5._
+- **v0.1** - 1.06.2024 - _Erste Open Source-Version der App auf Basis des bisherigen Pilotprojekts._

@@ -15,6 +15,7 @@ from docx.shared import Pt, Inches
 import io
 from concurrent.futures import ThreadPoolExecutor
 from dotenv import load_dotenv
+import yaml
 
 import logging
 
@@ -25,103 +26,65 @@ logging.basicConfig(
 )
 
 import numpy as np
-
 from openai import OpenAI
-from anthropic import Anthropic
-from mistralai import Mistral
-
-from google import genai
-from google.genai import types
-
-from utils_understandability import get_zix, get_cefr
-
-from utils_sample_texts import (
-    SAMPLE_TEXT_01,
-)
-
+from zix.understandability import get_zix, get_cefr
 from utils_prompts import (
+    SAMPLE_TEXT,
     SYSTEM_MESSAGE_ES,
     SYSTEM_MESSAGE_LS,
     RULES_ES,
     RULES_LS,
     REWRITE_COMPLETE,
     REWRITE_CONDENSED,
-    CLAUDE_TEMPLATE_ES,
-    CLAUDE_TEMPLATE_LS,
-    CLAUDE_TEMPLATE_ANALYSIS_ES,
-    CLAUDE_TEMPLATE_ANALYSIS_LS,
-    OPENAI_TEMPLATE_ES,
-    OPENAI_TEMPLATE_LS,
-    OPENAI_TEMPLATE_ANALYSIS_ES,
-    OPENAI_TEMPLATE_ANALYSIS_LS,
+    TEMPLATE_ES,
+    TEMPLATE_LS,
+    TEMPLATE_ANALYSIS_ES,
+    TEMPLATE_ANALYSIS_LS,
 )
-
-CLAUDE_TEMPLATES = [
-    CLAUDE_TEMPLATE_ES,
-    CLAUDE_TEMPLATE_LS,
-    CLAUDE_TEMPLATE_ANALYSIS_ES,
-    CLAUDE_TEMPLATE_ANALYSIS_LS,
-]
-
-OPENAI_TEMPLATES = [
-    OPENAI_TEMPLATE_ES,
-    OPENAI_TEMPLATE_LS,
-    OPENAI_TEMPLATE_ANALYSIS_ES,
-    OPENAI_TEMPLATE_ANALYSIS_LS,
-]
 
 # ---------------------------------------------------------------
 # Constants
 
-load_dotenv()
+load_dotenv(override=True)
 
 API_KEYS = {
-    "OPENAI": os.getenv("OPENAI_API_KEY"),
-    "ANTHROPIC": os.getenv("ANTHROPIC_API_KEY"),
-    "MISTRAL": os.getenv("MISTRAL_API_KEY"),
-    "GOOGLE": os.getenv("GOOGLE_API_KEY"),
+    "OPENROUTER": os.getenv("OPENROUTER_API_KEY"),
 }
 
 
-MODEL_IDS = {
-    "Mistral large": "mistral-large-latest",
-    "Claude Sonnet 3.5": "claude-3-5-sonnet-latest",
-    "Claude Sonnet 3.7": "claude-3-7-sonnet-latest",
-    "Claude Sonnet 4.0": "claude-sonnet-4-20250514",
-    "GPT-4o": "gpt-4o",
-    "GPT-4.1": "gpt-4.1",
-    "GPT-4.1 mini": "gpt-4.1-mini",
-    "Gemini 2.5 Flash": "gemini-2.5-flash",
-    "Gemini 2.5 Pro": "gemini-2.5-pro",
-}
-
-# From our testing we derive a sensible temperature of 0.5 as a good trade-off between creativity and coherence. Adjust this to your needs.
-TEMPERATURE = 0.5
-MAX_TOKENS = 8192
-
-# Height of the text areas for input and output.
-TEXT_AREA_HEIGHT = 600
-
-# Maximum number of characters for the input text.
-# This is way below the context window sizes of the models.
-# Adjust to your needs. However, we found that users can work and validate better when we nudge to work with shorter texts.
-MAX_CHARS_INPUT = 10_000
+@st.cache_resource
+def load_config():
+    """Load configuration from YAML file."""
+    config_path = os.path.join(os.path.dirname(__file__), "..", "config.yaml")
+    with open(config_path, "r", encoding="utf-8") as file:
+        return yaml.safe_load(file)
 
 
-USER_WARNING = """<sub>⚠️ Achtung: Diese App ist ein Prototyp. Nutze die App :red[**nur für öffentliche, nicht sensible Daten**]. Die App liefert lediglich einen Textentwurf. Überprüfe das Ergebnis immer und passe es an, wenn nötig. Die aktuelle App-Version ist v0.8 Die letzte Aktualisierung war am 20.06.2025."""
+# Load configuration
+config = load_config()
 
+# Create model dictionaries from config
+MODEL_IDS = {model["name"]: model["id"] for model in config["models"]}
+MODEL_NAMES = list(MODEL_IDS.keys())
 
-# Constants for the formatting of the Word document that can be downloaded.
-FONT_WORDDOC = "Arial"
-FONT_SIZE_HEADING = 12
-FONT_SIZE_PARAGRAPH = 9
-FONT_SIZE_FOOTER = 7
-DEFAULT_OUTPUT_FILENAME = "Ergebnis.docx"
-ANALYSIS_FILENAME = "Analyse.docx"
+# Get configuration values from config
+TEMPERATURE = config["api"]["temperature"]
+MAX_TOKENS = config["api"]["max_tokens"]
+TEXT_AREA_HEIGHT = config["ui"]["text_area_height"]
+MAX_CHARS_INPUT = config["ui"]["max_chars_input"]
+USER_WARNING = f"<sub>{config['ui']['user_warning']}</sub>"
 
-# Limits for the understandability score to determine if the text is easy, medium or hard to understand.
-LIMIT_HARD = 0
-LIMIT_MEDIUM = -2
+# Document formatting constants
+FONT_WORDDOC = config["document"]["font_name"]
+FONT_SIZE_HEADING = config["document"]["font_size_heading"]
+FONT_SIZE_PARAGRAPH = config["document"]["font_size_paragraph"]
+FONT_SIZE_FOOTER = config["document"]["font_size_footer"]
+DEFAULT_OUTPUT_FILENAME = config["document"]["default_output_filename"]
+ANALYSIS_FILENAME = config["document"]["analysis_filename"]
+
+# Understandability limits
+LIMIT_HARD = config["understandability"]["limit_hard"]
+LIMIT_MEDIUM = config["understandability"]["limit_medium"]
 
 DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 
@@ -140,30 +103,30 @@ def get_project_info():
 def create_project_info(project_info):
     """Create expander for project info. Add the image in the middle of the content."""
     with st.expander("Detaillierte Informationen zum Projekt"):
-        project_info = project_info.split("### Image ###")
+        project_info = project_info.split("ADD_IMAGE_HERE")
         st.markdown(project_info[0], unsafe_allow_html=True)
         st.image("zix_scores.jpg", use_container_width=True)
         st.markdown(project_info[1], unsafe_allow_html=True)
 
 
-def create_prompt(text, prompt_es, prompt_ls, analysis_es, analysis_ls, analysis):
+def create_prompt(text, analysis):
     """Create prompt and system message according the app settings."""
     if analysis:
         final_prompt = (
-            analysis_ls.format(rules=RULES_LS, prompt=text)
+            TEMPLATE_ANALYSIS_LS.format(rules=RULES_LS, prompt=text)
             if leichte_sprache
-            else analysis_es.format(rules=RULES_ES, prompt=text)
+            else TEMPLATE_ANALYSIS_ES.format(rules=RULES_ES, prompt=text)
         )
         system = SYSTEM_MESSAGE_LS if leichte_sprache else SYSTEM_MESSAGE_ES
     else:
         if leichte_sprache:
             completeness = REWRITE_CONDENSED if condense_text else REWRITE_COMPLETE
-            final_prompt = prompt_ls.format(
+            final_prompt = TEMPLATE_LS.format(
                 rules=RULES_LS, completeness=completeness, prompt=text
             )
             system = SYSTEM_MESSAGE_LS
         else:
-            final_prompt = prompt_es.format(
+            final_prompt = TEMPLATE_ES.format(
                 rules=RULES_ES, completeness=REWRITE_COMPLETE, prompt=text
             )
             system = SYSTEM_MESSAGE_ES
@@ -187,63 +150,23 @@ def strip_markdown(text):
 
 
 @st.cache_resource
-def get_anthropic_client():
-    return Anthropic(api_key=API_KEYS["ANTHROPIC"])
+def get_openrouter_client():
+    return OpenAI(
+        base_url="https://openrouter.ai/api/v1",
+        api_key=API_KEYS["OPENROUTER"],
+    )
 
 
-@st.cache_resource
-def get_openai_client():
-    return OpenAI(api_key=API_KEYS["OPENAI"])
-
-
-@st.cache_resource
-def get_google_client():
-    return genai.Client(api_key=API_KEYS["GOOGLE"])
-
-
-@st.cache_resource
-def get_mistral_client():
-    return Mistral(api_key=API_KEYS["MISTRAL"])
-
-
-def invoke_anthropic_model(
+def invoke_model(
     text,
-    model_id=MODEL_IDS["Claude Sonnet 3.5"],
+    model_id,
     analysis=False,
 ):
-    """Invoke Anthropic model."""
-    final_prompt, system = create_prompt(text, *CLAUDE_TEMPLATES, analysis)
-    try:
-        message = anthropic_client.messages.create(
-            model=model_id,
-            temperature=TEMPERATURE,
-            max_tokens=MAX_TOKENS,
-            system=system,
-            messages=[
-                {
-                    "role": "user",
-                    "content": final_prompt,
-                }
-            ],
-        )
-        message = message.content[0].text.strip()
-        message = get_result_from_response(message)
-        message = strip_markdown(message)
-        return True, message
-    except Exception as e:
-        print(f"Error: {e}")
-        return False, e
+    """Invoke any model through OpenRouter."""
+    final_prompt, system = create_prompt(text, analysis)
 
-
-def invoke_openai_model(
-    text,
-    model_id=MODEL_IDS["GPT-4.1 mini"],
-    analysis=False,
-):
-    """Invoke OpenAI model."""
-    final_prompt, system = create_prompt(text, *OPENAI_TEMPLATES, analysis)
     try:
-        message = openai_client.chat.completions.create(
+        message = openrouter_client.chat.completions.create(
             model=model_id,
             temperature=TEMPERATURE,
             max_tokens=MAX_TOKENS,
@@ -261,112 +184,20 @@ def invoke_openai_model(
         return False, e
 
 
-def invoke_mistral_model(
-    text, model_id=MODEL_IDS["Mistral large"], temperature=TEMPERATURE, analysis=False
-):
-    """Invoke Mistral model."""
-    # Our Claude templates seem to work fine for Mistral as well.
-    final_prompt, system = create_prompt(text, *CLAUDE_TEMPLATES, analysis)
-    messages = [
-        {"role": "system", "content": system},
-        {"role": "user", "content": final_prompt},
-    ]
-    try:
-        message = mistral_client.chat.complete(
-            model=model_id,
-            messages=messages,
-            temperature=TEMPERATURE,
-        )
-        message = message.choices[0].message.content.strip()
-        message = get_result_from_response(message)
-        message = strip_markdown(message)
-        return True, message
-    except Exception as e:
-        print(f"Error: {e}")
-        return False, e
-
-
-def invoke_google_model(
-    text,
-    model_id=MODEL_IDS["Gemini 2.5 Flash"],
-    analysis=False,
-):
-    """Invoke Google model."""
-    final_prompt, system = create_prompt(text, *OPENAI_TEMPLATES, analysis)
-    try:
-        message = google_client.models.generate_content(
-            model=model_id,
-            contents=final_prompt,
-            config=types.GenerateContentConfig(
-                system_instruction=system,
-                max_output_tokens=MAX_TOKENS,
-                temperature=TEMPERATURE,
-                thinking_config=types.ThinkingConfig(thinking_budget=128),
-            ),
-        )
-
-        message = message.text.strip()
-        message = get_result_from_response(message)
-        message = strip_markdown(message)
-        return True, message
-    except Exception as e:
-        print(f"Error: {e}")
-        return False, e
-
-
 def enter_sample_text():
     """Enter sample text into the text input in the left column."""
-    st.session_state.key_textinput = SAMPLE_TEXT_01
+    st.session_state.key_textinput = SAMPLE_TEXT
 
 
 def get_one_click_results():
-    with ThreadPoolExecutor(max_workers=9) as executor:
+    with ThreadPoolExecutor(max_workers=len(MODEL_IDS)) as executor:
         futures = {
-            "Mistral large": executor.submit(
-                invoke_mistral_model,
+            name: executor.submit(
+                invoke_model,
                 st.session_state.key_textinput,
-                MODEL_IDS["Mistral large"],
-            ),
-            "GPT-4o": executor.submit(
-                invoke_openai_model,
-                st.session_state.key_textinput,
-                MODEL_IDS["GPT-4o"],
-            ),
-            "GPT-4.1": executor.submit(
-                invoke_openai_model,
-                st.session_state.key_textinput,
-                MODEL_IDS["GPT-4.1"],
-            ),
-            "GPT-4.1 mini": executor.submit(
-                invoke_openai_model,
-                st.session_state.key_textinput,
-                MODEL_IDS["GPT-4.1 mini"],
-            ),
-            "Claude Sonnet 3.5": executor.submit(
-                invoke_anthropic_model,
-                st.session_state.key_textinput,
-                MODEL_IDS["Claude Sonnet 3.5"],
-            ),
-            "Claude Sonnet 3.7": executor.submit(
-                invoke_anthropic_model,
-                st.session_state.key_textinput,
-                MODEL_IDS["Claude Sonnet 3.7"],
-            ),
-            "Claude Sonnet 4.0": executor.submit(
-                invoke_anthropic_model,
-                st.session_state.key_textinput,
-                MODEL_IDS["Claude Sonnet 4.0"],
-            ),
-            "Gemini 2.5 Flash": executor.submit(
-                invoke_google_model,
-                st.session_state.key_textinput,
-                MODEL_IDS["Gemini 2.5 Flash"],
-            ),
-            "Gemini 2.5 Pro": executor.submit(
-                invoke_google_model,
-                st.session_state.key_textinput,
-                MODEL_IDS["Gemini 2.5 Pro"],
-            ),
+                model_id,
+            )
+            for name, model_id in MODEL_IDS.items()
         }
 
     responses = {name: future.result() for name, future in futures.items()}
@@ -398,7 +229,7 @@ def create_download_link(text_input, response, analysis=False):
     if analysis:
         h2 = document.add_heading(f"Analyse von Sprachmodell {model_choice}")
     elif do_one_click:
-        h2 = document.add_heading(f"Vereinfachte Texte von Sprachmodellen")
+        h2 = document.add_heading("Vereinfachte Texte von Sprachmodellen")
     else:
         h2 = document.add_heading("Vereinfachter Text von Sprachmodell")
 
@@ -407,7 +238,7 @@ def create_download_link(text_input, response, analysis=False):
     timestamp = datetime.now().strftime(DATETIME_FORMAT)
     models_used = model_choice
     if do_one_click:
-        models_used = ", ".join([model for model in MODEL_IDS.keys()])
+        models_used = ", ".join(MODEL_NAMES)
     footer = document.sections[0].footer
     footer.paragraphs[
         0
@@ -439,10 +270,6 @@ def create_download_link(text_input, response, analysis=False):
 
     io_stream = io.BytesIO()
     document.save(io_stream)
-
-    # # A download button unfortunately resets the app. So we use a link instead.
-    # https://github.com/streamlit/streamlit/issues/4382#issuecomment-1223924851
-    # https://discuss.streamlit.io/t/creating-a-pdf-file-generator/7613?u=volodymyr_holomb
 
     b64 = base64.b64encode(io_stream.getvalue())
     file_name = DEFAULT_OUTPUT_FILENAME
@@ -494,13 +321,8 @@ def log_event(
 # ---------------------------------------------------------------
 # Main
 
-anthropic_client = get_anthropic_client()
-openai_client = get_openai_client()
-google_client = get_google_client()
-mistral_client = get_mistral_client()
-
+openrouter_client = get_openrouter_client()
 project_info = get_project_info()
-
 
 # Persist text input across sessions in session state.
 # Otherwise, the text input sometimes gets lost when the user clicks on a button.
@@ -553,7 +375,7 @@ with button_cols[2]:
 with button_cols[3]:
     model_choice = st.radio(
         label="Sprachmodell",
-        options=([model_name for model_name in MODEL_IDS.keys()]),
+        options=MODEL_NAMES,
         index=1,
         horizontal=True,
         help="Alle Modelle liefern je nach Ausgangstext meist gute bis sehr gute Ergebnisse und sind alle einen Versuch wert. Claude Sonnet und GPT-4.1 und Google Gemini 2.5 Pro liefern sehr gute Qualität. GPT-4.1 mini ist sehr schnell. Mehr Details siehe Infobox oben auf der Seite.",
@@ -636,37 +458,12 @@ if do_simplification or do_analysis or do_one_click:
                     success, response = get_one_click_results()
                 # Regular text simplification or analysis
                 else:
-                    if model_choice in [
-                        "GPT-4.1",
-                        "GPT-4.1 mini",
-                        "GPT-4o",
-                    ]:
-                        success, response = invoke_openai_model(
-                            st.session_state.key_textinput,
-                            model_id=model_id,
-                            analysis=do_analysis,
-                        )
-                    elif model_choice in ["Mistral large"]:
-                        success, response = invoke_mistral_model(
-                            st.session_state.key_textinput,
-                            model_id=model_id,
-                            analysis=do_analysis,
-                        )
-                    elif model_choice in [
-                        "Gemini 2.5 Flash",
-                        "Gemini 2.5 Pro",
-                    ]:
-                        success, response = invoke_google_model(
-                            st.session_state.key_textinput,
-                            model_id=model_id,
-                            analysis=do_analysis,
-                        )
-                    else:
-                        success, response = invoke_anthropic_model(
-                            st.session_state.key_textinput,
-                            model_id=model_id,
-                            analysis=do_analysis,
-                        )
+                    success, response = invoke_model(
+                        st.session_state.key_textinput,
+                        model_id=model_id,
+                        analysis=do_analysis,
+                    )
+
     if success is False:
         st.error(
             "Es ist ein Fehler bei der Abfrage der APIs aufgetreten. Bitte versuche es erneut. Alternativ überprüfe Code, API-Keys, Verfügbarkeit der Modelle und ggf. Internetverbindung."

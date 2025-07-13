@@ -1,0 +1,36 @@
+# Language models available for text simplification using OpenAI API directly.
+# Each model has a display name and an OpenAI API identifier.
+# Only OpenAI models are supported in this version.
+models:
+  - name: "GPT-4o"
+    id: "gpt-4o"
+  - name: "GPT-4.1 mini"
+    id: "gpt-4.1-mini"
+  - name: "GPT-4.1"
+    id: "gpt-4.1"
+
+# API configuration for model calls
+api:
+  temperature: 0.5 # From our testing we derive a sensible temperature of 0.5 as a good trade-off between creativity and coherence. Adjust this to your needs.
+  max_tokens: 8192 # Maximum number of tokens in the response
+
+# User interface configuration
+ui:
+  text_area_height: 600 # Height of text input/output areas in pixels
+  max_chars_input: 10000 # Maximum characters allowed in input text. # This is way below the context window sizes of the models. Adjust to your needs. However, we found that users can work and validate better when we nudge to work with shorter texts.
+  user_warning: "⚠️ Achtung: Diese App ist ein Prototyp (OpenAI Version). Nutze die App :red[**nur für öffentliche, nicht sensible Daten**]. Die App liefert lediglich einen Textentwurf. Überprüfe das Ergebnis immer und passe es an, wenn nötig. Die aktuelle App-Version ist v1.0 Die letzte Aktualisierung war am 12.07.2025." # Warning message displayed to users
+
+# Constants for the formatting of the Word document that can be downloaded.
+document:
+  font_name: "Arial"
+  font_size_heading: 12 # Font size for headings
+  font_size_paragraph: 9 # Font size for paragraph text
+  font_size_footer: 7 # Font size for footer text
+  default_output_filename: "Ergebnis_OpenAI.docx"
+  analysis_filename: "Analyse_OpenAI.docx"
+
+# Limits for the understandability score to determine if the text is easy, medium or hard to understand.
+understandability:
+  limit_hard: 0
+  limit_medium: -2
+  # Scale ranges from -10 (extremely hard) to +10 (very easy to understand)

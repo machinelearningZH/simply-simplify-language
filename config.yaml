@@ -1,0 +1,51 @@
+# Language models available for text simplification.
+# Each model has a display name and an OpenRouter API identifier.
+# Select models from here: https://openrouter.ai/models
+# We recommend that you select up to 10 models for the best performance and compatibility in the UI.
+models:
+  - name: "Mistral large" # High-quality model from Mistral AI
+    id: "mistralai/mistral-large"
+  - name: "Claude Sonnet 3.5" # Anthropic's older Claude model, but still very capable
+    id: "anthropic/claude-3-5-sonnet"
+  - name: "Claude Sonnet 3.7" # Newer version of Claude Sonnet
+    id: "anthropic/claude-3-7-sonnet"
+  - name: "Claude Sonnet 4.0" # Latest Claude Sonnet model
+    id: "anthropic/claude-sonnet-4"
+  - name: "Claude Opus 4" # Latest Claude Opus model
+    id: "anthropic/claude-opus-4"
+  - name: "GPT-4o" # OpenAI's standard model
+    id: "openai/gpt-4o"
+  - name: "GPT-4.1 mini" # Faster, more cost-effective version of GPT-4.1
+    id: "openai/gpt-4.1-mini"
+  - name: "GPT-4.1" # More recent GPT-4 version with improved capabilities
+    id: "openai/gpt-4.1"
+  - name: "Gemini 2.5 Flash" # Google's extremely fast and capable Gemini model
+    id: "google/gemini-2.5-flash"
+  - name: "Gemini 2.5 Pro" # Google's high-quality Gemini model
+    id: "google/gemini-2.5-pro"
+
+# API configuration for model calls
+api:
+  temperature: 0.5 # From our testing we derive a sensible temperature of 0.5 as a good trade-off between creativity and coherence. Adjust this to your needs.
+  max_tokens: 8192 # Maximum number of tokens in the response
+
+# User interface configuration
+ui:
+  text_area_height: 600 # Height of text input/output areas in pixels
+  max_chars_input: 10000 # Maximum characters allowed in input text. # This is way below the context window sizes of the models. Adjust to your needs. However, we found that users can work and validate better when we nudge to work with shorter texts.
+  user_warning: "⚠️ Achtung: Diese App ist ein Prototyp. Nutze die App :red[**nur für öffentliche, nicht sensible Daten**]. Die App liefert lediglich einen Textentwurf. Überprüfe das Ergebnis immer und passe es an, wenn nötig. Die aktuelle App-Version ist v1.0 Die letzte Aktualisierung war am 12.07.2025." # Warning message displayed to users
+
+# Constants for the formatting of the Word document that can be downloaded.
+document:
+  font_name: "Arial"
+  font_size_heading: 12 # Font size for headings
+  font_size_paragraph: 9 # Font size for paragraph text
+  font_size_footer: 7 # Font size for footer text
+  default_output_filename: "Ergebnis.docx"
+  analysis_filename: "Analyse.docx"
+
+# Limits for the understandability score to determine if the text is easy, medium or hard to understand.
+understandability:
+  limit_hard: 0
+  limit_medium: -2
+  # Scale ranges from -10 (extremely hard) to +10 (very easy to understand)

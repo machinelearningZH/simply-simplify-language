@@ -1,7 +1,6 @@
-
-_streamlit_app/.DS_Store
-_streamlit_app/.env
 *.pyc
 *.log
 .DS_Store
 .env
+_streamlit_app/.DS_Store
+_streamlit_app/.env

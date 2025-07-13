@@ -10,6 +10,9 @@
 # Note also that Claude models prefer XML tags for structuring whereas OpenAI models prefer Markdown (used here) or JSON.
 # We use the Claude prompt structure for Mistral with good success. Feel free to adjust the structure to your needs.
 
+SAMPLE_TEXT = """Als Vernehmlassungsverfahren wird diejenige Phase innerhalb des Vorverfahrens der Gesetzgebung bezeichnet, in der Vorhaben des Bundes von erheblicher politischer, finanzieller, wirtschaftlicher, ökologischer, sozialer oder kultureller Tragweite auf ihre sachliche Richtigkeit, Vollzugstauglichkeit und Akzeptanz hin geprüft werden. 
+
+Die Vorlage wird zu diesem Zweck den Kantonen, den in der Bundesversammlung vertretenen Parteien, den Dachverbänden der Gemeinden, Städte und der Berggebiete, den Dachverbänden der Wirtschaft sowie weiteren, im Einzelfall interessierten Kreisen unterbreitet."""
 
 SYSTEM_MESSAGE_ES = """Du bist ein hilfreicher Assistent, der Texte in Einfache Sprache, Sprachniveau B1 bis A2, umschreibt. Sei immer wahrheitsgemäß und objektiv. Schreibe nur das, was du sicher aus dem Text des Benutzers weisst. Arbeite die Texte immer vollständig durch und kürze nicht. Mache keine Annahmen. Schreibe einfach und klar und immer in deutscher Sprache. Gib dein Ergebnis innerhalb von <einfachesprache> Tags aus."""
 
@@ -127,72 +130,7 @@ Beachte dabei folgende Regeln:
 Formuliere den Text jetzt in Einfache Sprache, Sprachniveau B1 bis A2, um. Schreibe den vereinfachten Text innerhalb von <einfachesprache> Tags.
 """.strip()
 
-
-CLAUDE_TEMPLATE_LS = """
-Hier ist ein schwer verständlicher Text, den du vollständig in Leichte Sprache, Sprachniveau A2 bis A1, umschreiben sollst:
-
-<schwer-verständlicher-text>
-{prompt}
-</schwer-verständlicher-text>
-
-Bitte lies den Text sorgfältig durch und schreibe ihn vollständig in Leichte Sprache um. 
-
-Beachte dabei folgende Regeln:
-
-{completeness}
-{rules}
-
-Formuliere den Text jetzt in Leichte Sprache, Sprachniveau A2 bis A1, um. Schreibe den vereinfachten Text innerhalb von <leichtesprache> Tags.
-""".strip()
-
-
-CLAUDE_TEMPLATE_ANALYSIS_ES = """
-Hier ist ein schwer verständlicher Text, den du genau analysieren sollst:
-
-<schwer-verständlicher-text>
-{prompt}
-</schwer-verständlicher-text>
-
-Analysiere den schwer verständlichen Text Satz für Satz. Beschreibe genau und detailliert, was sprachlich nicht gut bei jedem Satz ist. Analysiere was ich tun müsste, damit der Text zu Einfache Sprache (B1 bis A2) wird. Gib klare Hinweise, wie ich den Text besser verständlich machen kann. Gehe bei deiner Analyse Schritt für Schritt vor. 
-
-1. Wiederhole den Satz. 
-2. Analysiere den Satz auf seine Verständlichkeit. Was muss ich tun, damit der Satz verständlicher wird? Wie kann ich den Satz in Einfacher Sprache besser formulieren?
-3. Mache einen Vorschlag für einen vereinfachten Satz. 
-
-Befolge diesen Ablauf von Anfang bis Ende, auch wenn der schwer verständliche Text sehr lang ist. 
-
-Die Regeln für Einfache Sprache sind diese hier: 
-
-{rules}
-
-Schreibe jetzt deine Analyse und gib diese innerhalb von <einfachesprache> Tags aus.
-""".strip()
-
-
-CLAUDE_TEMPLATE_ANALYSIS_LS = """
-Hier ist ein schwer verständlicher Text, den du genau analysieren sollst:
-
-<schwer-verständlicher-text>
-{prompt}
-</schwer-verständlicher-text>
-
-Analysiere den schwer verständlichen Text Satz für Satz. Beschreibe genau und detailliert, was sprachlich nicht gut bei jedem Satz ist. Analysiere was ich tun müsste, damit der Text zu Leichte Sprache (A2, A1) wird. Gib klare Hinweise, wie ich den Text besser verständlich machen kann. Gehe bei deiner Analyse Schritt für Schritt vor. 
-
-1. Wiederhole den Satz. 
-2. Analysiere den Satz auf seine Verständlichkeit. Was muss ich tun, damit der Satz verständlicher wird? Wie kann ich den Satz in Leichte Sprache besser formulieren?
-3. Mache einen Vorschlag für einen vereinfachten Satz. 
-
-Befolge diesen Ablauf von Anfang bis Ende, auch wenn der schwer verständliche Text sehr lang ist. 
-
-Die Regeln für Leichte Sprache sind diese hier:
-
-{rules}
-
-Schreibe jetzt deine Analyse und gib diese innerhalb von <leichtesprache> Tags aus.
-""".strip()
-
-
-OPENAI_TEMPLATE_ES = """
+TEMPLATE_ES = """
 Du bekommst einen schwer verständlichen Text, den du vollständig in Einfache Sprache auf Sprachniveau B1 bis A2 umschreiben sollst. 
 
 Beachte dabei folgende Regeln:
@@ -209,7 +147,7 @@ Hier ist der schwer verständliche Text:
 {prompt}
 """.strip()
 
-OPENAI_TEMPLATE_LS = """
+TEMPLATE_LS = """
 Du bekommst einen schwer verständlichen Text, den du vollständig in Leichte Sprache auf Sprachniveau A2 bis A1 umschreiben sollst. 
 
 Beachte dabei folgende Regeln:
@@ -226,7 +164,7 @@ Hier ist der schwer verständliche Text:
 {prompt}
 """.strip()
 
-OPENAI_TEMPLATE_ANALYSIS_ES = """
+TEMPLATE_ANALYSIS_ES = """
 Du bekommst einen schwer verständlichen Text, den du genau analysieren sollst. 
 
 Analysiere den schwer verständlichen Text Satz für Satz. Beschreibe genau und detailliert, was sprachlich nicht gut bei jedem Satz ist. Analysiere was ich tun müsste, damit der Text zu Einfache Sprache (B1 bis A2) wird. Gib klare Hinweise, wie ich den Text besser verständlich machen kann. Gehe bei deiner Analyse Schritt für Schritt vor. 
@@ -250,7 +188,7 @@ Hier ist der schwer verständliche Text:
 {prompt}
 """.strip()
 
-OPENAI_TEMPLATE_ANALYSIS_LS = """
+TEMPLATE_ANALYSIS_LS = """
 Du bekommst einen schwer verständlichen Text, den du genau analysieren sollst.
 
 Analysiere den schwer verständlichen Text Satz für Satz. Beschreibe genau und detailliert, was sprachlich nicht gut bei jedem Satz ist. Analysiere was ich tun müsste, damit der Text zu Leichte Sprache (A2 bis A1) wird. Gib klare Hinweise, wie ich den Text besser verständlich machen kann. Gehe bei deiner Analyse Schritt für Schritt vor. 
