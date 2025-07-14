@@ -1848,7 +1848,7 @@ wheels = [
 ]
 
 [[package]]
-name = "simply-simplify-language-openrouter"
+name = "simply-simplify-language"
 version = "1.0.0"
 source = { virtual = "." }
 dependencies = [
