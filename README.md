@@ -51,7 +51,7 @@
    `uv sync`\
    `source .venv/bin/activate` (Unix/macOS)\
    `.venv\Scripts\activate` (Windows)
-4. Add your OpenRouter (or OpenAI) API key to a `.env` file:
+4. Add your OpenRouter (or OpenAI) API key to a `.env` file in `_streamlit_app/`:
 
 ```
 OPENROUTER_API_KEY=sk-or-v1-...
