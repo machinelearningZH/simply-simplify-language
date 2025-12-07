@@ -213,7 +213,8 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Miscellaneous
 
-- Thanks to [LIIP](https://www.liip.ch/en) for refactoring the understandability index as an [API](https://github.com/chregu/simply-understandability-score) and [webservice](https://u15y.gpt.liip.ch/).- Special shoutout to [Christian Stocker](https://www.linkedin.com/in/chregu/).
+- Thanks to [LIIP](https://www.liip.ch/en) for refactoring the understandability index as an [API](https://github.com/chregu/simply-understandability-score) and [webservice](https://u15y.gpt.liip.ch/).
+- Special shoutout to [Christian Stocker](https://www.linkedin.com/in/chregu/).
 - Thanks to [Florian Georg](https://www.linkedin.com/in/fgeorg/) (Microsoft Switzerland) for help integrating with [Azure AI](https://azure.microsoft.com/en-us/solutions/ai).
 
 ## Disclaimer
