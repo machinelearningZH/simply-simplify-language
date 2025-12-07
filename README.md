@@ -41,8 +41,6 @@
 
 ### Running Locally
 
-#### With `uv` (Recommended)
-
 1. Install [uv](https://docs.astral.sh/uv/):\
    `pip3 install uv`
 2. Clone the repo and enter the directory:\
@@ -63,24 +61,6 @@ OPENAI_API_KEY=sk-...
    `cd _streamlit_app/`
 6. Start the app:\
    `streamlit run sprache-vereinfachen.py`\
-   Or for the OpenAI-only version:\
-   `streamlit run sprache-vereinfachen_openai.py`
-
-#### With conda/pip (Alternative)
-
-1. Create environment:\
-   `conda create -n simplify python=3.10+`\
-   `conda activate simplify`
-2. Clone the repo:\
-   `cd simply-simplify-language/`
-3. Install requirements:\
-   `pip install -r requirements.txt`
-4. Install spaCy model:\
-   `python -m spacy download de_core_news_sm`
-5. Add your OpenRouter / OpenAI API key to `.env` as above.
-6. Enter the app directory and start:\
-    `cd _streamlit_app/`\
-    `streamlit run sprache-vereinfachen.py`
    Or for the OpenAI-only version:\
    `streamlit run sprache-vereinfachen_openai.py`
 
@@ -151,7 +131,7 @@ See the full model list at [OpenAI models](https://platform.openai.com/docs/mode
 
 The cantonal administration of Zurich has long worked to make its communication more inclusive and accessible. As the amount of content continues to grow, we saw an opportunity to use AI to support this goal. In autumn 2023, we launched a pilot project—this app is one of its results. The code in this repository is a snapshot of our ongoing work.
 
-We developed the app according to our communication guidelines, but we know from experience, that it can be easily adapted to other guidelines and by other institutions.
+We developed the app according to our communication guidelines, but we know from experience that it can be easily adapted to other guidelines and by other institutions.
 
 ### What does the app do?
 
@@ -160,19 +140,19 @@ We developed the app according to our communication guidelines, but we know from
 - It **measures the understandability of your text** on a scale from -10 (very complex) to +10 (very easy to understand).
 - The **One-Click feature sends your text to all configured LLMs simultaneously**, delivering multiple drafts in a formatted Word document within seconds, ready for download.
 
-In English «Einfache Sprache» is roughly equivalent to [«Plain English](https://www.plainlanguage.gov/about/definitions/), while «Leichte Sprache» has similarities to [«Easy English»](https://centreforinclusivedesign.org.au/wp-content/uploads/2020/04/Easy-English-vs-Plain-English_accessible.pdf).
+In English, «Einfache Sprache» is roughly equivalent to [«Plain English»](https://www.plainlanguage.gov/about/definitions/), while «Leichte Sprache» has similarities to [«Easy English»](https://centreforinclusivedesign.org.au/wp-content/uploads/2020/04/Easy-English-vs-Plain-English_accessible.pdf).
 
 > [!Important]
-> At the risk of stating the obvious: By using the app **you send data to OpenRouter and their partner model providers** (OpenAI, Anthropic, Google, Meta, Mistral AI, etc.). **Therefore strictly only use non-sensitive data.** Again, stating the obvious: **LLMs make errors.** They regularly hallucinate, make things up, and get things wrong. They often do so in subtle, non-obvious ways, that may be hard to detect. This app is **meant to be used as an assistive system**. It **only yields a draft, that you always must check.**
+> At the risk of stating the obvious: By using the app **you send data to OpenRouter and their partner model providers** (OpenAI, Anthropic, Google, Meta, Mistral AI, etc.). **Therefore, strictly only use non-sensitive data.** Again, stating the obvious: **LLMs make errors.** They regularly hallucinate, make things up, and get things wrong. They often do so in subtle, non-obvious ways that may be hard to detect. This app is **meant to be used as an assistive system**. It **only yields a draft that you always must check.**
 
-**At the time of writing many users in our administration have extensively used the app with many thousands of texts over more than a one and a half year. The results are very promising.** With the prototype app, our experts have saved time, improved their output, and made public communication more inclusive.
+**At the time of writing, many users in our administration have extensively used the app with many thousands of texts over more than a year and a half. The results are very promising.** With the prototype app, our experts have saved time, improved their output, and made public communication more inclusive.
 
 > [!Note]
-> This **app is optimized for Swiss German** («Swiss High German», not dialect). Some rules in the prompts steer the models toward this. Also the app is **setup to use the Swiss `ss` rather than the German `ß`** The understandability index assumes the Swiss `ss` for the common word scoring and we replace `ß` with `ss` in the results.
+> This **app is optimized for Swiss German** («Swiss High German», not dialect). Some rules in the prompts steer the models toward this. Also, the app is **set up to use the Swiss `ss` rather than the German `ß`.** The understandability index assumes the Swiss `ss` for the common word scoring, and we replace `ß` with `ss` in the results.
 
 ### What does it cost?
 
-**Usage is inexpensive**. You only pay OpenRouter (or OpenAI) for the tokens that you use. OpenRouter provides transparent, competitive pricing for all models. E.g. for the simplification of 100 separate [«Normseiten»](https://de.wikipedia.org/wiki/Normseite) (standard pages of 250 German words each) to Einfache Sprache or Leichte Sprache you pay depending on the model - roughly between 0.5 CHF for faster models and around 5-10 CHF for premium models like Claude Opus. Check [OpenRouter pricing](https://openrouter.ai/models) for current rates. The hardware requirements to run the app are modest too. As mentioned above a small VM for a couple of Francs per month will suffice.
+**Usage is inexpensive**. You only pay OpenRouter (or OpenAI) for the tokens that you use. OpenRouter provides transparent, competitive pricing for all models. E.g., for the simplification of 100 separate [«Normseiten»](https://de.wikipedia.org/wiki/Normseite) (standard pages of 250 German words each) to Einfache Sprache or Leichte Sprache, you pay depending on the model—roughly between 0.5 CHF for faster models and around 5-10 CHF for premium models like Claude Opus. Check [OpenRouter pricing](https://openrouter.ai/models) for current rates. The hardware requirements to run the app are modest too. As mentioned above, a small VM for a couple of Francs per month will suffice.
 
 ### Our language guidelines
 
@@ -188,18 +168,18 @@ We derived the current rules in the prompts mainly from these of our language gu
 
 - **Large Language Models (LLMs) already have an understanding of Einfache Sprache, Leichte Sprache, and CEFR levels** ([A1, A2, B1, etc.](https://www.goethe.de/de/spr/kur/stu.html)) from their pretraining. It's impressive how well they can translate text by simply being asked to rewrite it according to these terms or levels. We have also successfully created test data by asking models to e.g. describe a situation at each of the six CEFR levels (A1 to C2).
 - **LLMs produce varied rewrites, which is beneficial**. By offering multiple model options through OpenRouter, users receive a range of suggestions, helping them achieve a good result. It's often effective to use the One-Click mode, which consolidates results from all configured models.
-- **Measuring text understandability is really helpful**. Early in our project, we realized the need for a quantitative metric to evaluate our outputs, such as comparing different prompts, models, and preprocessing steps. We developed and index for this purpose that we call the «Zürcher Verständlichkeits-Index» or «ZIX» 😉. We created the ZIX using a dataset of complex legal and administrative texts, as well as many samples of Einfache and Leichte Sprache. We trained a classification model to differentiate between complex and simple texts. The ZIX as a metric has been very useful to us in practice. We have published the code and the Python package [here](https://github.com/machinelearningZH/zix_understandability-index).
+- **Measuring text understandability is really helpful**. Early in our project, we realized the need for a quantitative metric to evaluate our outputs, such as comparing different prompts, models, and preprocessing steps. We developed an index for this purpose that we call the «Zürcher Verständlichkeits-Index» or «ZIX» 😉. We created the ZIX using a dataset of complex legal and administrative texts, as well as many samples of Einfache and Leichte Sprache. We trained a classification model to differentiate between complex and simple texts. The ZIX as a metric has been very useful to us in practice. We have published the code and the Python package [here](https://github.com/machinelearningZH/zix_understandability-index).
 - Finally, **validating your results with your target audience is crucial**, especially for Leichte Sprache, which requires expert and user validation to be effective.
 
 ### How does the understandability score work?
 
-- The score takes into account sentence lengths, the [readability metric RIX](https://hlasse.github.io/TextDescriptives/readability.html), the occurrence of common words and overlap with the standard CEFR vocabularies A1, A2 and B1.
-- At the moment the score does **not** take into account other language properties that are essential for e.g. [Einfache Sprache](https://de.wikipedia.org/wiki/Einfache_Sprache) (B1 or easier, similar to «Plain English») or [Leichte Sprache](https://de.wikipedia.org/wiki/Leichte_Sprache) (A2, A1, similar to «Easy English») like use of passive voice, subjunctives, negations, etc.
+- The score takes into account sentence lengths, the [readability metric RIX](https://hlasse.github.io/TextDescriptives/readability.html), the occurrence of common words, and overlap with the standard CEFR vocabularies A1, A2, and B1.
+- At the moment, the score does **not** take into account other language properties that are essential for, e.g., [Einfache Sprache](https://de.wikipedia.org/wiki/Einfache_Sprache) (B1 or easier, similar to «Plain English») or [Leichte Sprache](https://de.wikipedia.org/wiki/Leichte_Sprache) (A2, A1, similar to «Easy English»), like use of passive voice, subjunctives, negations, etc.
 
 We have published the ZIX understandability index as a pip installable package. You can find it [here](https://github.com/machinelearningZH/zix_understandability-index).
 
 > [!Note]
-> The index is slightly adjusted to Swiss German. Specifically we use `ss` instead of `ß` in our vocabulary lists. In practice this should not make a big difference. For High German text that actually contains `ß` the index will likely underestimate the understandability slightly with a difference of around 0.1.
+> The index is slightly adjusted to Swiss German. Specifically, we use `ss` instead of `ß` in our vocabulary lists. In practice, this should not make a big difference. For High German text that actually contains `ß`, the index will likely underestimate the understandability slightly with a difference of around 0.1.
 
 ### What does the score mean?
 
@@ -210,7 +190,7 @@ We have published the ZIX understandability index as a pip installable package. 
 
 ## Project Team
 
-This project is a collaborative effort of these people of the cantonal administration of Zurich:
+This project is a collaborative effort by these people from the cantonal administration of Zurich:
 
 - **Simone Luchetta, Roger Zedi** - [Team Informationszugang & Dialog, Staatskanzlei](https://www.zh.ch/de/staatskanzlei/digitale-verwaltung/team.html)
 - **Emek Sahin, Peter Hotz** - [Team Kommunikation & Entwicklung, Strassenverkehrsamt](https://www.zh.ch/de/sicherheitsdirektion/strassenverkehrsamt.html)
@@ -239,8 +219,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Miscellaneous
 
-- Thanks to [LIIP](https://www.liip.ch/en) for refactoring the understandability index as an [API](https://github.com/chregu/simply-understandability-score) and [webservice](https://u15y.gpt.liip.ch/).\
-  Special shoutout to [Christian Stocker](https://www.linkedin.com/in/chregu/).
+- Thanks to [LIIP](https://www.liip.ch/en) for refactoring the understandability index as an [API](https://github.com/chregu/simply-understandability-score) and [webservice](https://u15y.gpt.liip.ch/).- Special shoutout to [Christian Stocker](https://www.linkedin.com/in/chregu/).
 - Thanks to [Florian Georg](https://www.linkedin.com/in/fgeorg/) (Microsoft Switzerland) for help integrating with [Azure AI](https://azure.microsoft.com/en-us/solutions/ai).
 
 ## Disclaimer
