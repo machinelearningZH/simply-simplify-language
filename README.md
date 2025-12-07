@@ -207,12 +207,6 @@ We welcome feedback and contributions! [Email us](mailto:datashop@statistik.zh.c
 
 We use [`ruff`](https://docs.astral.sh/ruff/) for linting and formatting.
 
-Install pre-commit hooks for automatic checks before opening a pull request:
-
-```bash
-pre-commit install
-```
-
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
