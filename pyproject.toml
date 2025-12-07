@@ -1,6 +1,6 @@
 [project]
 name = "simply-simplify-language"
-version = "1.0.0"
+version = "1.1.0"
 description = "Use LLMs to simplify your institutional communication."
 authors = [
   { name = "Statistisches Amt Kanton Zürich, Team Data", email = "datashop@statistik.zh.ch" },

@@ -105,7 +105,7 @@ def create_project_info(project_info):
     with st.expander("Detaillierte Informationen zum Projekt"):
         project_info = project_info.split("ADD_IMAGE_HERE")
         st.markdown(project_info[0], unsafe_allow_html=True)
-        st.image("zix_scores.jpg", use_container_width=True)
+        st.image("zix_scores.jpg", width="content")
         st.markdown(project_info[1], unsafe_allow_html=True)
 
 
@@ -340,24 +340,24 @@ with button_cols[0]:
     st.button(
         "Beispiel einfügen",
         on_click=enter_sample_text,
-        use_container_width=True,
+        width="stretch",
         type="secondary",
         help="Fügt einen Beispieltext ein.",
     )
     do_analysis = st.button(
         "Analysieren",
-        use_container_width=True,
+        width="stretch",
         help="Analysiert deinen Ausgangstext Satz für Satz.",
     )
 with button_cols[1]:
     do_simplification = st.button(
         "Vereinfachen",
-        use_container_width=True,
+        width="stretch",
         help="Vereinfacht deinen Ausgangstext.",
     )
     do_one_click = st.button(
         "🚀 One-Klick",
-        use_container_width=True,
+        width="stretch",
         help="Schickt deinen Ausgangstext gleichzeitig an alle Modelle.",
     )
 with button_cols[2]:
@@ -376,9 +376,8 @@ with button_cols[3]:
     model_choice = st.radio(
         label="Sprachmodell",
         options=MODEL_NAMES,
-        index=1,
+        index=0,
         horizontal=True,
-        help="Alle Modelle liefern je nach Ausgangstext meist gute bis sehr gute Ergebnisse und sind alle einen Versuch wert. Claude Sonnet und GPT-4.1 und Google Gemini 2.5 Pro liefern sehr gute Qualität. GPT-4.1 mini ist sehr schnell. Mehr Details siehe Infobox oben auf der Seite.",
     )
 
 # Instantiate empty containers for the text areas.

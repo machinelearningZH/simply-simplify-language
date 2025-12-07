@@ -2,12 +2,8 @@
 # Each model has a display name and an OpenAI API identifier.
 # Only OpenAI models are supported in this version.
 models:
-  - name: "GPT-4o"
-    id: "gpt-4o"
-  - name: "GPT-4.1 mini"
-    id: "gpt-4.1-mini"
-  - name: "GPT-4.1"
-    id: "gpt-4.1"
+  - name: "GPT-5.1"
+    id: "gpt-5.1"
 
 # API configuration for model calls
 api:
@@ -18,7 +14,7 @@ api:
 ui:
   text_area_height: 600 # Height of text input/output areas in pixels
   max_chars_input: 10000 # Maximum characters allowed in input text. # This is way below the context window sizes of the models. Adjust to your needs. However, we found that users can work and validate better when we nudge to work with shorter texts.
-  user_warning: "⚠️ Achtung: Diese App ist ein Prototyp (OpenAI Version). Nutze die App :red[**nur für öffentliche, nicht sensible Daten**]. Die App liefert lediglich einen Textentwurf. Überprüfe das Ergebnis immer und passe es an, wenn nötig. Die aktuelle App-Version ist v1.0 Die letzte Aktualisierung war am 12.07.2025." # Warning message displayed to users
+  user_warning: "⚠️ Achtung: Diese App ist ein Prototyp (OpenAI Version). Nutze die App :red[**nur für öffentliche, nicht sensible Daten**]. Die App liefert lediglich einen Textentwurf. Überprüfe das Ergebnis immer und passe es an, wenn nötig. Die aktuelle App-Version ist v1.1 Die letzte Aktualisierung war am 07.12.2025." # Warning message displayed to users
 
 # Constants for the formatting of the Word document that can be downloaded.
 document:

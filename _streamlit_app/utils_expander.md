@@ -42,6 +42,7 @@ Wir sind für Rückmeldungen und Anregungen jeglicher Art dankbar und nehmen die
 
 ## Versionsverlauf
 
+- **v1.1** - 07.12.2025 - _App aktualisiert auf neueste Modelle. Kleinere Verbesserungen._
 - **v1.0** - 13.07.2025 - _App aktualisiert und umgeschrieben auf OpenRouter. Ältere App-Versionen entfernt bis auf Version OpenAI._
 - **v0.8** - 07.06.2025 - _Modelle aktualisiert. Bugfixes._
 - **v0.7** - 18.04.2025 - _Modelle aktualisiert. GPT-4.1 und GPT-4.1 mini, neue Gemini-Modelle. Refactoring zu aktuellem Google GenAI Python SDK._
@@ -50,4 +51,4 @@ Wir sind für Rückmeldungen und Anregungen jeglicher Art dankbar und nehmen die
 - **v0.4** - 30.08.2024 - _Fehler behoben._
 - **v0.3** - 18.08.2024 - _Neuen ZIX-Index integriert. Diverse Fehler behoben._
 - **v0.2** - 21.06.2024 - _Update auf Claude Sonnet v3.5._
-- **v0.1** - 1.06.2024 - _Erste Open Source-Version der App auf Basis des bisherigen Pilotprojekts._
+- **v0.1** - 01.06.2024 - _Erste Open Source-Version der App auf Basis des bisherigen Pilotprojekts._

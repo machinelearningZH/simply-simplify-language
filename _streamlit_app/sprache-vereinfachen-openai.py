@@ -102,7 +102,7 @@ def create_project_info(project_info):
     with st.expander("Detaillierte Informationen zum Projekt (OpenAI Version)"):
         project_info = project_info.split("ADD_IMAGE_HERE")
         st.markdown(project_info[0], unsafe_allow_html=True)
-        st.image("zix_scores.jpg", use_container_width=True)
+        st.image("zix_scores.jpg", width="content")
         st.markdown(project_info[1], unsafe_allow_html=True)
 
 
@@ -166,7 +166,7 @@ def invoke_model(
         message = openai_client.chat.completions.create(
             model=model_id,
             temperature=TEMPERATURE,
-            max_tokens=MAX_TOKENS,
+            max_completion_tokens=MAX_TOKENS,
             messages=[
                 {"role": "system", "content": system},
                 {"role": "user", "content": final_prompt},
@@ -341,24 +341,24 @@ with button_cols[0]:
     st.button(
         "Beispiel einfügen",
         on_click=enter_sample_text,
-        use_container_width=True,
+        width="stretch",
         type="secondary",
         help="Fügt einen Beispieltext ein.",
     )
     do_analysis = st.button(
         "Analysieren",
-        use_container_width=True,
+        width="stretch",
         help="Analysiert deinen Ausgangstext Satz für Satz.",
     )
 with button_cols[1]:
     do_simplification = st.button(
         "Vereinfachen",
-        use_container_width=True,
+        width="stretch",
         help="Vereinfacht deinen Ausgangstext.",
     )
     do_one_click = st.button(
         "🚀 One-Klick",
-        use_container_width=True,
+        width="stretch",
         help="Schickt deinen Ausgangstext gleichzeitig an alle verfügbaren OpenAI Modelle.",
     )
 with button_cols[2]:
@@ -379,7 +379,6 @@ with button_cols[3]:
         options=MODEL_NAMES,
         index=0,
         horizontal=True,
-        help="Alle OpenAI Modelle liefern je nach Ausgangstext meist gute bis sehr gute Ergebnisse. GPT-4o und GPT-4 Turbo liefern sehr gute Qualität. GPT-4o mini ist sehr schnell und kostengünstig.",
     )
 
 # Instantiate empty containers for the text areas.
