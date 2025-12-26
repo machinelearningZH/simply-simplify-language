@@ -6,7 +6,7 @@ authors = [
   { name = "Statistisches Amt Kanton Zürich, Team Data", email = "datashop@statistik.zh.ch" },
 ]
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.12"
 dependencies = [
     "zix @ git+https://github.com/machinelearningZH/zix_understandability-index",
     "de-core-news-sm @ https://github.com/explosion/spacy-models/releases/download/de_core_news_sm-3.8.0/de_core_news_sm-3.8.0-py3-none-any.whl",
