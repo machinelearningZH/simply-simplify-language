@@ -18,5 +18,8 @@ dependencies = [
     "openai>=2.29.0",
 ]
 
+[tool.uv]
+exclude-newer = "7 days"
+
 [tool.ruff]
 ignore = ["E402"]
