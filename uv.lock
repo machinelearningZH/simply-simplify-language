@@ -11,7 +11,7 @@ resolution-markers = [
 ]
 
 [options]
-exclude-newer = "2026-04-15T18:39:18.113185Z"
+exclude-newer = "2026-04-15T18:51:39.745749Z"
 exclude-newer-span = "P7D"
 
 [[package]]
@@ -2012,7 +2012,7 @@ wheels = [
 [[package]]
 name = "zix"
 version = "0.2.1"
-source = { git = "https://github.com/machinelearningZH/zix_understandability-index#fc9873cc9690184d6a29509af5d059b0378cc9c4" }
+source = { git = "https://github.com/machinelearningZH/zix_understandability-index#4c7988f829f53cbf9f3bf951d4c1ca1790d7af04" }
 dependencies = [
     { name = "de-core-news-sm" },
     { name = "numpy" },
