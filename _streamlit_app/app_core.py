@@ -19,6 +19,24 @@ class ScoreClassification:
     color: str
 
 
+@dataclass(frozen=True)
+class ResultState:
+    source_text: str
+    response: str
+    analysis: bool
+    simplification: bool
+    one_click: bool
+    model_choice: str
+    model_names: tuple[str, ...]
+    time_processed: float
+
+
+def result_models_used(result: ResultState) -> str:
+    if result.one_click:
+        return ", ".join(result.model_names)
+    return result.model_choice
+
+
 def app_path(*parts: str) -> Path:
     """Resolve a path relative to the Streamlit app directory."""
     return APP_DIR.joinpath(*parts)

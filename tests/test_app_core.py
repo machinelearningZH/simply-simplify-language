@@ -3,10 +3,12 @@ import json
 import pytest
 
 from _streamlit_app.app_core import (
+    ResultState,
     build_log_payload,
     classify_understandability,
     extract_tagged_response,
     format_one_click_results,
+    result_models_used,
 )
 
 
@@ -84,3 +86,35 @@ def test_build_log_payload_omits_raw_text_and_response():
     assert payload["response_chars"] == len("sensitive response")
     assert "sensitive input" not in serialized
     assert "sensitive response" not in serialized
+
+
+def test_result_state_preserves_generated_output_across_reruns():
+    result = ResultState(
+        source_text="original text",
+        response="generated output",
+        analysis=False,
+        simplification=True,
+        one_click=False,
+        model_choice="Model A",
+        model_names=("Model A", "Model B"),
+        time_processed=1.2,
+    )
+
+    assert result.source_text == "original text"
+    assert result.response == "generated output"
+    assert result_models_used(result) == "Model A"
+
+
+def test_result_models_used_lists_all_models_for_one_click():
+    result = ResultState(
+        source_text="original text",
+        response="generated output",
+        analysis=False,
+        simplification=False,
+        one_click=True,
+        model_choice="Model A",
+        model_names=("Model A", "Model B"),
+        time_processed=1.2,
+    )
+
+    assert result_models_used(result) == "Model A, Model B"
