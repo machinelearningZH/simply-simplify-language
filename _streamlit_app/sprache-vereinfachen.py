@@ -5,47 +5,53 @@ import streamlit as st
 
 st.set_page_config(layout="wide")
 
+import io
 import os
 import re
-from datetime import datetime
 import time
-import base64
-from docx import Document
-from docx.shared import Pt, Inches
-import io
 from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime
+
+from docx import Document
+from docx.shared import Inches, Pt
 from dotenv import load_dotenv
-import yaml
 
-import logging
-
-logging.basicConfig(
-    filename="app.log",
-    datefmt="%d-%b-%y %H:%M:%S",
-    level=logging.WARNING,
-)
-
-import numpy as np
 from openai import OpenAI
-from zix.understandability import get_zix, get_cefr
+from zix.understandability import get_cefr, get_zix
+
+from app_core import (
+    APP_DIR,
+    app_path,
+    build_log_payload,
+    classify_understandability,
+    configure_event_logger,
+    extract_tagged_response,
+    format_one_click_results,
+    format_understandability_message,
+    load_project_info,
+    load_yaml_config,
+    repo_path,
+    rounded_score,
+    write_event_log,
+)
 from utils_prompts import (
     SAMPLE_TEXT,
-    SYSTEM_MESSAGE_ES,
-    SYSTEM_MESSAGE_LS,
-    RULES_ES,
-    RULES_LS,
     REWRITE_COMPLETE,
     REWRITE_CONDENSED,
-    TEMPLATE_ES,
-    TEMPLATE_LS,
+    RULES_ES,
+    RULES_LS,
+    SYSTEM_MESSAGE_ES,
+    SYSTEM_MESSAGE_LS,
     TEMPLATE_ANALYSIS_ES,
     TEMPLATE_ANALYSIS_LS,
+    TEMPLATE_ES,
+    TEMPLATE_LS,
 )
 
 # ---------------------------------------------------------------
 # Constants
 
-load_dotenv(override=True)
+load_dotenv(app_path(".env"), override=True)
 
 API_KEYS = {
     "OPENROUTER": os.getenv("OPENROUTER_API_KEY"),
@@ -55,9 +61,7 @@ API_KEYS = {
 @st.cache_resource
 def load_config():
     """Load configuration from YAML file."""
-    config_path = os.path.join(os.path.dirname(__file__), "..", "config.yaml")
-    with open(config_path, "r", encoding="utf-8") as file:
-        return yaml.safe_load(file)
+    return load_yaml_config(repo_path("config.yaml"))
 
 
 # Load configuration
@@ -70,6 +74,9 @@ MODEL_NAMES = list(MODEL_IDS.keys())
 # Get configuration values from config
 TEMPERATURE = config["api"]["temperature"]
 MAX_TOKENS = config["api"]["max_tokens"]
+API_BASE_URL = config["api"]["base_url"]
+API_TIMEOUT_SECONDS = config["api"]["timeout_seconds"]
+API_MAX_RETRIES = config["api"]["max_retries"]
 TEXT_AREA_HEIGHT = config["ui"]["text_area_height"]
 MAX_CHARS_INPUT = config["ui"]["max_chars_input"]
 USER_WARNING = f"<sub>{config['ui']['user_warning']}</sub>"
@@ -81,12 +88,16 @@ FONT_SIZE_PARAGRAPH = config["document"]["font_size_paragraph"]
 FONT_SIZE_FOOTER = config["document"]["font_size_footer"]
 DEFAULT_OUTPUT_FILENAME = config["document"]["default_output_filename"]
 ANALYSIS_FILENAME = config["document"]["analysis_filename"]
+PAGE_WIDTH_INCHES = config["document"]["page_width_inches"]
+PAGE_HEIGHT_INCHES = config["document"]["page_height_inches"]
+DOWNLOAD_MIME_TYPE = config["document"]["download_mime_type"]
 
 # Understandability limits
 LIMIT_HARD = config["understandability"]["limit_hard"]
 LIMIT_MEDIUM = config["understandability"]["limit_medium"]
 
-DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
+DATETIME_FORMAT = config["app"]["datetime_format"]
+EVENT_LOGGER = configure_event_logger(config["logging"], base_dir=APP_DIR)
 
 # ---------------------------------------------------------------
 # Functions
@@ -95,17 +106,15 @@ DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 @st.cache_resource
 def get_project_info():
     """Get markdown for project information that is shown in the expander section at the top of the app."""
-    with open("utils_expander.md") as f:
-        return f.read()
+    return load_project_info()
 
 
-@st.cache_resource
 def create_project_info(project_info):
     """Create expander for project info. Add the image in the middle of the content."""
     with st.expander("Detaillierte Informationen zum Projekt"):
         project_info = project_info.split("ADD_IMAGE_HERE")
         st.markdown(project_info[0], unsafe_allow_html=True)
-        st.image("zix_scores.jpg", width="content")
+        st.image(str(app_path("zix_scores.jpg")), width="content")
         st.markdown(project_info[1], unsafe_allow_html=True)
 
 
@@ -136,8 +145,7 @@ def create_prompt(text, analysis):
 def get_result_from_response(response):
     """Extract text between tags from response."""
     tag = "leichtesprache" if leichte_sprache else "einfachesprache"
-    result = re.findall(rf"<{tag}>(.*?)</{tag}>", response, re.DOTALL)
-    return "\n".join(result).strip()
+    return extract_tagged_response(response, tag)
 
 
 def strip_markdown(text):
@@ -151,9 +159,13 @@ def strip_markdown(text):
 
 @st.cache_resource
 def get_openrouter_client():
+    if not API_KEYS["OPENROUTER"]:
+        raise ValueError("OPENROUTER_API_KEY is not set")
     return OpenAI(
-        base_url="https://openrouter.ai/api/v1",
+        base_url=API_BASE_URL,
         api_key=API_KEYS["OPENROUTER"],
+        timeout=API_TIMEOUT_SECONDS,
+        max_retries=API_MAX_RETRIES,
     )
 
 
@@ -175,13 +187,16 @@ def invoke_model(
                 {"role": "user", "content": final_prompt},
             ],
         )
-        message = message.choices[0].message.content.strip()
+        content = message.choices[0].message.content
+        if content is None:
+            raise ValueError("No content received from API")
+
+        message = content.strip()
         message = get_result_from_response(message)
         message = strip_markdown(message)
         return True, message
-    except Exception as e:
-        print(f"Error: {e}")
-        return False, e
+    except Exception:
+        return False, "Model response could not be created."
 
 
 def enter_sample_text():
@@ -200,23 +215,14 @@ def get_one_click_results():
             for name, model_id in MODEL_IDS.items()
         }
 
-    responses = {name: future.result() for name, future in futures.items()}
-    response_texts = []
+    responses = {}
+    for name, future in futures.items():
+        try:
+            responses[name] = future.result()
+        except Exception:
+            responses[name] = (False, "Model response could not be created.")
 
-    # We add 0 to the rounded ZIX score to avoid -0.
-    # https://stackoverflow.com/a/11010791/7117003
-    for name, (success, response) in responses.items():
-        if success:
-            zix = get_zix(response)
-            zix = int(np.round(zix, 0) + 0)
-            cefr = get_cefr(zix)
-            response_texts.append(
-                f"\n----- Ergebnis von {name} (Verständlichkeit: {zix}, Niveau etwa {cefr}) -----\n\n{response}"
-            )
-
-    if not response_texts:
-        return False, "Es ist ein Fehler aufgetreten."
-    return True, "\n\n\n".join(response_texts)
+    return format_one_click_results(responses, score_fn=get_zix, cefr_fn=get_cefr)
 
 
 def create_download_link(text_input, response, analysis=False):
@@ -261,17 +267,16 @@ def create_download_link(text_input, response, analysis=False):
 
     # Set font and font size for footer.
     for run in footer.paragraphs[0].runs:
-        run.font.name = "Arial"
+        run.font.name = FONT_WORDDOC
         run.font.size = Pt(FONT_SIZE_FOOTER)
 
     section = document.sections[0]
-    section.page_width = Inches(8.27)  # Width of A4 paper in inches
-    section.page_height = Inches(11.69)  # Height of A4 paper in inches
+    section.page_width = Inches(PAGE_WIDTH_INCHES)
+    section.page_height = Inches(PAGE_HEIGHT_INCHES)
 
     io_stream = io.BytesIO()
     document.save(io_stream)
 
-    b64 = base64.b64encode(io_stream.getvalue())
     file_name = DEFAULT_OUTPUT_FILENAME
 
     if do_one_click:
@@ -282,14 +287,12 @@ def create_download_link(text_input, response, analysis=False):
     if analysis:
         file_name = ANALYSIS_FILENAME
         caption = "Analyse herunterladen"
-    download_url = f'<a href="data:application/octet-stream;base64,{b64.decode()}" download="{file_name}">{caption}</a>'
-    st.markdown(download_url, unsafe_allow_html=True)
-
-
-def clean_log(text):
-    """Remove linebreaks and tabs from log messages
-    that otherwise would yield problems when parsing the logs."""
-    return text.replace("\n", " ").replace("\t", " ")
+    st.download_button(
+        label=caption,
+        data=io_stream.getvalue(),
+        file_name=file_name,
+        mime=DOWNLOAD_MIME_TYPE,
+    )
 
 
 def log_event(
@@ -304,24 +307,32 @@ def log_event(
     success,
 ):
     """Log event."""
-    log_string = f"{datetime.now().strftime(DATETIME_FORMAT)}"
-    log_string += f"\t{clean_log(text)}"
-    log_string += f"\t{clean_log(response)}"
-    log_string += f"\t{do_analysis}"
-    log_string += f"\t{do_simplification}"
-    log_string += f"\t{do_one_click}"
-    log_string += f"\t{leichte_sprache}"
-    log_string += f"\t{model_choice}"
-    log_string += f"\t{time_processed:.3f}"
-    log_string += f"\t{success}"
-
-    logging.warning(log_string)
+    payload = build_log_payload(
+        text=text,
+        response=response,
+        do_analysis=do_analysis,
+        do_simplification=do_simplification,
+        do_one_click=do_one_click,
+        leichte_sprache=leichte_sprache,
+        model_choice=model_choice,
+        time_processed=time_processed,
+        success=success,
+        datetime_format=DATETIME_FORMAT,
+    )
+    write_event_log(EVENT_LOGGER, payload)
 
 
 # ---------------------------------------------------------------
 # Main
 
-openrouter_client = get_openrouter_client()
+try:
+    openrouter_client = get_openrouter_client()
+except ValueError:
+    st.error(
+        "OPENROUTER_API_KEY fehlt. Bitte hinterlege den API-Key in _streamlit_app/.env."
+    )
+    st.stop()
+
 project_info = get_project_info()
 
 # Persist text input across sessions in session state.
@@ -424,24 +435,24 @@ if do_simplification or do_analysis or do_one_click:
         st.stop()
 
     score_source = get_zix(st.session_state.key_textinput)
-    # We add 0 to avoid negative zero.
-    score_source_rounded = int(np.round(score_source, 0) + 0)
+    score_source_rounded = rounded_score(score_source)
     cefr_source = get_cefr(score_source)
+    source_classification = classify_understandability(
+        score_source,
+        limit_hard=LIMIT_HARD,
+        limit_medium=LIMIT_MEDIUM,
+    )
 
     # Analyze source text and display results.
     with source_text:
-        if score_source < LIMIT_HARD:
-            st.markdown(
-                f"Dein Ausgangstext ist **:red[schwer verständlich]**. ({score_source_rounded} auf einer Skala von -10 bis 10). Das entspricht etwa dem **:red[Sprachniveau {cefr_source}]**."
+        st.markdown(
+            format_understandability_message(
+                "Ausgangstext",
+                score_source_rounded,
+                cefr_source,
+                source_classification,
             )
-        elif score_source >= LIMIT_HARD and score_source < LIMIT_MEDIUM:
-            st.markdown(
-                f"Dein Ausgangstext ist **:orange[nur mässig verständlich]**. ({score_source_rounded} auf einer Skala von -10 bis 10). Das entspricht etwa dem **:orange[Sprachniveau {cefr_source}]**."
-            )
-        else:
-            st.markdown(
-                f"Dein Ausgangstext ist **:green[gut verständlich]**. ({score_source_rounded} auf einer Skala von -10 bis 10). Das entspricht etwa dem **:green[Sprachniveau {cefr_source}]**."
-            )
+        )
         with placeholder_analysis.container():
             text_analysis = st.metric(
                 label="Verständlichkeit von -10 bis 10",
@@ -498,25 +509,26 @@ if do_simplification or do_analysis or do_one_click:
         )
         if do_simplification or do_one_click:
             score_target = get_zix(response)
-            score_target_rounded = int(np.round(score_target, 0) + 0)
+            score_target_rounded = rounded_score(score_target)
             cefr_target = get_cefr(score_target)
-            if score_target < LIMIT_HARD:
-                st.markdown(
-                    f"Dein vereinfachter Text ist **:red[schwer verständlich]**. ({score_target_rounded}  auf einer Skala von -10 bis 10). Das entspricht etwa dem **:red[Sprachniveau {cefr_target}]**."
+            target_classification = classify_understandability(
+                score_target,
+                limit_hard=LIMIT_HARD,
+                limit_medium=LIMIT_MEDIUM,
+            )
+            st.markdown(
+                format_understandability_message(
+                    "vereinfachter Text",
+                    score_target_rounded,
+                    cefr_target,
+                    target_classification,
                 )
-            elif score_target >= LIMIT_HARD and score_target < LIMIT_MEDIUM:
-                st.markdown(
-                    f"Dein vereinfachter Text ist **:orange[nur mässig verständlich]**. ({score_target_rounded}  auf einer Skala von -10 bis 10). Das entspricht etwa dem **:orange[Sprachniveau {cefr_target}]**."
-                )
-            else:
-                st.markdown(
-                    f"Dein vereinfachter Text ist **:green[gut verständlich]**. ({score_target_rounded}  auf einer Skala von -10 bis 10). Das entspricht etwa dem **:green[Sprachniveau {cefr_target}]**."
-                )
+            )
             with placeholder_analysis.container():
                 text_analysis = st.metric(
                     label="Verständlichkeit -10 bis 10",
                     value=score_target_rounded,
-                    delta=int(np.round(score_target - score_source, 0)),
+                    delta=rounded_score(score_target - score_source),
                     help="Verständlichkeit auf einer Skala von -10 bis 10 (von -10 = extrem schwer verständlich bis 10 = sehr gut verständlich). Texte in Einfacher Sprache haben meist einen Wert von 0 bis 4 oder höher.",
                 )
 

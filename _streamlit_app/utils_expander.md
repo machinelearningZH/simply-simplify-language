@@ -42,9 +42,9 @@ Wir sind für Rückmeldungen und Anregungen jeglicher Art dankbar und nehmen die
 
 ## Versionsverlauf
 
-- **v1.2** - 09.05.2026 - _App aktualisiert auf neueste Modelle. Kleinere Verbesserungen._
+- **v1.2** - 09.05.2026 - _App aktualisiert auf neueste Modelle. Alte Zusatzversion entfernt. Kleinere Verbesserungen._
 - **v1.1** - 07.12.2025 - _App aktualisiert auf neueste Modelle. Kleinere Verbesserungen._
-- **v1.0** - 13.07.2025 - _App aktualisiert und umgeschrieben auf OpenRouter. Ältere App-Versionen entfernt bis auf Version OpenAI._
+- **v1.0** - 13.07.2025 - _App aktualisiert und umgeschrieben auf OpenRouter. Ältere App-Versionen entfernt._
 - **v0.8** - 07.06.2025 - _Modelle aktualisiert. Bugfixes._
 - **v0.7** - 18.04.2025 - _Modelle aktualisiert. GPT-4.1 und GPT-4.1 mini, neue Gemini-Modelle. Refactoring zu aktuellem Google GenAI Python SDK._
 - **v0.6** - 29.03.2025 - _Modelle aktualisiert._

@@ -36,45 +36,31 @@
 
 - You can run the app **locally**, **in the cloud** or **in a [GitHub Codespace](https://github.com/features/codespaces)**.
 - The app uses **[OpenRouter](https://openrouter.ai/)** as a unified API provider to access multiple leading language models.
-- We also provide an app version that only uses the OpenAI API.
 - All available models are configured in `config.yaml` and can be easily customized for your needs.
 
 ### Running Locally
 
-1. Install [uv](https://docs.astral.sh/uv/):\
-   `pip3 install uv`
+1. Install [uv](https://docs.astral.sh/uv/).
 2. Clone the repo and enter the directory:\
    `cd simply-simplify-language/`
-3. Create and activate a virtual environment:\
-   `uv sync`\
-   `source .venv/bin/activate` (Unix/macOS)\
-   `.venv\Scripts\activate` (Windows)
-4. Add your OpenRouter (or OpenAI) API key to a `.env` file in `_streamlit_app/`:
+3. Install dependencies:\
+   `uv sync`
+4. Add your OpenRouter API key to a `.env` file in `_streamlit_app/`:
 
 ```
 OPENROUTER_API_KEY=sk-or-v1-...
-# OR for OpenAI API:
-OPENAI_API_KEY=sk-...
 ```
 
 5. Enter the app directory:\
    `cd _streamlit_app/`
 6. Start the app:\
-   `streamlit run sprache-vereinfachen.py`\
-   Or for the OpenAI-only version:\
-   `streamlit run sprache-vereinfachen_openai.py`
+   `uv run streamlit run sprache-vereinfachen.py`
 
 #### Getting your OpenRouter API key
 
 1. Register at [OpenRouter](https://openrouter.ai/)
 2. Create an API key: [API Keys](https://openrouter.ai/keys)
 3. Add credits: [Credits](https://openrouter.ai/credits)
-
-#### Alternatively: Getting your OpenAI API key
-
-1. Sign up at [OpenAI](https://platform.openai.com/)
-2. Add billing information and credits at [Billing](https://platform.openai.com/account/billing)
-3. Create a new API key [API Keys](https://platform.openai.com/api-keys)
 
 ### Running in the Cloud
 
@@ -96,12 +82,10 @@ You can develop and run the app in a cloud-hosted environment using GitHub Codes
 - Launch a codespace:\
   `Code > Codespaces > Create codespace on main`
 - Install dependencies:\
-  `uv sync` or `pip install -r requirements.txt`
-- Install spaCy model:\
-  `python -m spacy download de_core_news_sm`
+  `uv sync`
 - Add OpenRouter API key via `.env` or GitHub Secrets.
 - Start the app:\
-  `python -m streamlit run _streamlit_app/sprache-vereinfachen.py`
+  `uv run streamlit run _streamlit_app/sprache-vereinfachen.py`
 - Port 8501 is auto-forwarded by Codespaces.
 
 ### Configuring Models
@@ -113,17 +97,8 @@ Edit `config.yaml` to customize available models:
 
 See the full model list at [OpenRouter models](https://openrouter.ai/models).
 
-Alternatively for OpenAI:
-
-Edit `config_openai.yaml`:
-
-- `name`: UI display name
-- `id`: OpenAI model identifier (e.g., `gpt-5.5`, `gpt-5.4-mini`)
-
-See the full model list at [OpenAI models](https://platform.openai.com/docs/models).
-
 > [!Note]
-> The app logs user interactions to your local computer or virtual machine to a file named `app.log`. If you do not want to have analytics, simply comment out the function call in the code.
+> Event logging is disabled by default. To enable local analytics, set `logging.enabled: true` in `config.yaml`. Logs contain metadata such as text length, selected model, runtime, and success status, not the raw input or model output.
 
 ## Project information
 
@@ -135,7 +110,7 @@ We developed the app according to our communication guidelines, but we know from
 
 ### What does the app do?
 
-- This app **simplifies complex texts, rewriting them according to rules for [«Einfache Sprache»](https://de.wikipedia.org/wiki/Einfache_Sprache) or [«Leichte Sprache»](https://de.wikipedia.org/wiki/Leichte_Sprache)**. To simplify your source text, the app applies effective prompting, and uses your chosen LLM via OpenRouter.
+- This app **simplifies complex texts, rewriting them according to rules for [«Einfache Sprache»](https://de.wikipedia.org/wiki/Einfache_Sprache) or [«Leichte Sprache»](https://de.wikipedia.org/wiki/Leichte_Sprache)**. To simplify your source text, the app applies effective prompting and uses your chosen LLM via OpenRouter.
 - The app also offers **coaching to improve your writing**. Its **analysis function** provides detailed, sentence-by-sentence feedback to enhance your communication.
 - It **measures the understandability of your text** on a scale from -10 (very complex) to +10 (very easy to understand).
 - The **One-Click feature sends your text to all configured LLMs simultaneously**, delivering multiple drafts in a formatted Word document within seconds, ready for download.
@@ -152,7 +127,7 @@ In English, «Einfache Sprache» is roughly equivalent to [«Plain English»](ht
 
 ### What does it cost?
 
-**Usage is inexpensive**. You only pay OpenRouter (or OpenAI) for the tokens that you use. OpenRouter provides transparent, competitive pricing for all models. E.g., for the simplification of 100 separate [«Normseiten»](https://de.wikipedia.org/wiki/Normseite) (standard pages of 250 German words each) to Einfache Sprache or Leichte Sprache, you pay depending on the model—roughly between 0.5 CHF for faster models and around 5-10 CHF for premium models like Claude Opus. Check [OpenRouter pricing](https://openrouter.ai/models) for current rates. The hardware requirements to run the app are modest too. As mentioned above, a small VM for a couple of Francs per month will suffice.
+**Usage is inexpensive**. You only pay OpenRouter for the tokens that you use. OpenRouter provides transparent, competitive pricing for all models. E.g., for the simplification of 100 separate [«Normseiten»](https://de.wikipedia.org/wiki/Normseite) (standard pages of 250 German words each) to Einfache Sprache or Leichte Sprache, you pay depending on the model—roughly between 0.5 CHF for faster models and around 5-10 CHF for premium models like Claude Opus. Check [OpenRouter pricing](https://openrouter.ai/models) for current rates. The hardware requirements to run the app are modest too. As mentioned above, a small VM for a couple of Francs per month will suffice.
 
 ### Our language guidelines
 

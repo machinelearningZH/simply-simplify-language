@@ -20,8 +20,11 @@ models:
 
 # API configuration for model calls
 api:
+  base_url: "https://openrouter.ai/api/v1"
   temperature: 0.5 # From our testing we derive a sensible temperature of 0.5 as a good trade-off between creativity and coherence. Adjust this to your needs.
   max_tokens: 8192 # Maximum number of tokens in the response
+  timeout_seconds: 120
+  max_retries: 2
 
 # User interface configuration
 ui:
@@ -35,6 +38,9 @@ document:
   font_size_heading: 12 # Font size for headings
   font_size_paragraph: 9 # Font size for paragraph text
   font_size_footer: 7 # Font size for footer text
+  page_width_inches: 8.27
+  page_height_inches: 11.69
+  download_mime_type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
   default_output_filename: "Ergebnis.docx"
   analysis_filename: "Analyse.docx"
 
@@ -43,3 +49,11 @@ understandability:
   limit_hard: 0
   limit_medium: -2
   # Scale ranges from -10 (extremely hard) to +10 (very easy to understand)
+
+app:
+  datetime_format: "%Y-%m-%d %H:%M:%S"
+
+logging:
+  enabled: false
+  filename: "app.log"
+  level: "INFO"
