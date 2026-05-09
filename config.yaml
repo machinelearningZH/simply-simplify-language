@@ -27,7 +27,7 @@ api:
 ui:
   text_area_height: 600 # Height of text input/output areas in pixels
   max_chars_input: 10000 # Maximum characters allowed in input text. # This is way below the context window sizes of the models. Adjust to your needs. However, we found that users can work and validate better when we nudge to work with shorter texts.
-  user_warning: "⚠️ Achtung: Diese App ist ein Prototyp. Nutze die App :red[**nur für öffentliche, nicht sensible Daten**]. Die App liefert lediglich einen Textentwurf. Überprüfe das Ergebnis immer und passe es an, wenn nötig. Die aktuelle App-Version ist v1.1 Die letzte Aktualisierung war am 07.12.2025." # Warning message displayed to users
+  user_warning: "⚠️ Achtung: Diese App ist ein Prototyp. Nutze die App :red[**nur für öffentliche, nicht sensible Daten**]. Die App liefert lediglich einen Textentwurf. Überprüfe das Ergebnis immer und passe es an, wenn nötig." # Warning message displayed to users
 
 # Constants for the formatting of the Word document that can be downloaded.
 document:
