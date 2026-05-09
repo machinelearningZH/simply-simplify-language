@@ -109,7 +109,7 @@ You can develop and run the app in a cloud-hosted environment using GitHub Codes
 Edit `config.yaml` to customize available models:
 
 - `name`: UI display name
-- `id`: OpenRouter model identifier (e.g., `anthropic/claude-3-5-sonnet`, `openai/gpt-4o`)
+- `id`: OpenRouter model identifier (e.g., `anthropic/claude-4-7-sonnet`, `openai/gpt-5.5`)
 
 See the full model list at [OpenRouter models](https://openrouter.ai/models).
 
@@ -118,7 +118,7 @@ Alternatively for OpenAI:
 Edit `config_openai.yaml`:
 
 - `name`: UI display name
-- `id`: OpenAI model identifier (e.g., `gpt-4o`, `gpt-4o-mini`)
+- `id`: OpenAI model identifier (e.g., `gpt-5.5`, `gpt-5.4-mini`)
 
 See the full model list at [OpenAI models](https://platform.openai.com/docs/models).
 
