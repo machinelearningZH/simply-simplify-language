@@ -21,6 +21,7 @@ from zix.understandability import get_cefr, get_zix
 
 from app_core import (
     APP_DIR,
+    ResultState,
     app_path,
     build_log_payload,
     classify_understandability,
@@ -31,6 +32,7 @@ from app_core import (
     load_project_info,
     load_yaml_config,
     repo_path,
+    result_models_used,
     rounded_score,
     write_event_log,
 )
@@ -225,30 +227,28 @@ def get_one_click_results():
     return format_one_click_results(responses, score_fn=get_zix, cefr_fn=get_cefr)
 
 
-def create_download_link(text_input, response, analysis=False):
+def create_download_link(result):
     """Create a downloadable Word document and download link of the results."""
     document = Document()
 
     h1 = document.add_heading("Ausgangstext")
-    p1 = document.add_paragraph("\n" + text_input)
+    p1 = document.add_paragraph("\n" + result.source_text)
 
-    if analysis:
-        h2 = document.add_heading(f"Analyse von Sprachmodell {model_choice}")
-    elif do_one_click:
+    if result.analysis:
+        h2 = document.add_heading(f"Analyse von Sprachmodell {result.model_choice}")
+    elif result.one_click:
         h2 = document.add_heading("Vereinfachte Texte von Sprachmodellen")
     else:
         h2 = document.add_heading("Vereinfachter Text von Sprachmodell")
 
-    p2 = document.add_paragraph(response)
+    p2 = document.add_paragraph(result.response)
 
     timestamp = datetime.now().strftime(DATETIME_FORMAT)
-    models_used = model_choice
-    if do_one_click:
-        models_used = ", ".join(MODEL_NAMES)
+    models_used = result_models_used(result)
     footer = document.sections[0].footer
     footer.paragraphs[
         0
-    ].text = f"Erstellt am {timestamp} mit der Prototyp-App «Einfache Sprache», Statistisches Amt, Kanton Zürich.\nSprachmodell(e): {models_used}\nVerarbeitungszeit: {time_processed:.1f} Sekunden"
+    ].text = f"Erstellt am {timestamp} mit der Prototyp-App «Einfache Sprache», Statistisches Amt, Kanton Zürich.\nSprachmodell(e): {models_used}\nVerarbeitungszeit: {result.time_processed:.1f} Sekunden"
 
     # Set font for all paragraphs.
     for paragraph in document.paragraphs:
@@ -279,12 +279,12 @@ def create_download_link(text_input, response, analysis=False):
 
     file_name = DEFAULT_OUTPUT_FILENAME
 
-    if do_one_click:
+    if result.one_click:
         caption = "Vereinfachte Texte herunterladen"
     else:
         caption = "Vereinfachten Text herunterladen"
 
-    if analysis:
+    if result.analysis:
         file_name = ANALYSIS_FILENAME
         caption = "Analyse herunterladen"
     st.download_button(
@@ -320,6 +320,58 @@ def log_event(
         datetime_format=DATETIME_FORMAT,
     )
     write_event_log(EVENT_LOGGER, payload)
+
+
+def render_result(result):
+    """Render the latest generated result from session state."""
+    text = "Dein vereinfachter Text"
+    if result.analysis:
+        text = "Deine Analyse"
+
+    with placeholder_result.container():
+        st.text_area(
+            text,
+            height=TEXT_AREA_HEIGHT,
+            value=result.response,
+        )
+        score_source = get_zix(result.source_text)
+        score_source_rounded = rounded_score(score_source)
+
+        if result.simplification or result.one_click:
+            score_target = get_zix(result.response)
+            score_target_rounded = rounded_score(score_target)
+            cefr_target = get_cefr(score_target)
+            target_classification = classify_understandability(
+                score_target,
+                limit_hard=LIMIT_HARD,
+                limit_medium=LIMIT_MEDIUM,
+            )
+            st.markdown(
+                format_understandability_message(
+                    "vereinfachter Text",
+                    score_target_rounded,
+                    cefr_target,
+                    target_classification,
+                )
+            )
+            with placeholder_analysis.container():
+                st.metric(
+                    label="Verständlichkeit -10 bis 10",
+                    value=score_target_rounded,
+                    delta=rounded_score(score_target - score_source),
+                    help="Verständlichkeit auf einer Skala von -10 bis 10 (von -10 = extrem schwer verständlich bis 10 = sehr gut verständlich). Texte in Einfacher Sprache haben meist einen Wert von 0 bis 4 oder höher.",
+                )
+                create_download_link(result)
+                st.caption(f"Verarbeitet in {result.time_processed:.1f} Sekunden.")
+        else:
+            with placeholder_analysis.container():
+                st.metric(
+                    label="Verständlichkeit -10 bis 10",
+                    value=score_source_rounded,
+                    help="Verständlichkeit auf einer Skala von -10 bis 10 (von -10 = extrem schwer verständlich bis 10 = sehr gut verständlich). Texte in Einfacher Sprache haben meist einen Wert von 0 bis 4 oder höher.",
+                )
+                create_download_link(result)
+                st.caption(f"Verarbeitet in {result.time_processed:.1f} Sekunden.")
 
 
 # ---------------------------------------------------------------
@@ -493,68 +545,35 @@ if do_simplification or do_analysis or do_one_click:
 
         st.stop()
 
-    # Display results in UI.
-    text = "Dein vereinfachter Text"
-    if do_analysis:
-        text = "Deine Analyse"
     # Often the models return the German letter «ß». Replace it with the Swiss «ss».
     response = response.replace("ß", "ss")
     time_processed = time.time() - start_time
 
-    with placeholder_result.container():
-        st.text_area(
-            text,
-            height=TEXT_AREA_HEIGHT,
-            value=response,
-        )
-        if do_simplification or do_one_click:
-            score_target = get_zix(response)
-            score_target_rounded = rounded_score(score_target)
-            cefr_target = get_cefr(score_target)
-            target_classification = classify_understandability(
-                score_target,
-                limit_hard=LIMIT_HARD,
-                limit_medium=LIMIT_MEDIUM,
-            )
-            st.markdown(
-                format_understandability_message(
-                    "vereinfachter Text",
-                    score_target_rounded,
-                    cefr_target,
-                    target_classification,
-                )
-            )
-            with placeholder_analysis.container():
-                text_analysis = st.metric(
-                    label="Verständlichkeit -10 bis 10",
-                    value=score_target_rounded,
-                    delta=rounded_score(score_target - score_source),
-                    help="Verständlichkeit auf einer Skala von -10 bis 10 (von -10 = extrem schwer verständlich bis 10 = sehr gut verständlich). Texte in Einfacher Sprache haben meist einen Wert von 0 bis 4 oder höher.",
-                )
+    result = ResultState(
+        source_text=st.session_state.key_textinput,
+        response=response,
+        analysis=do_analysis,
+        simplification=do_simplification,
+        one_click=do_one_click,
+        model_choice=model_choice,
+        model_names=tuple(MODEL_NAMES),
+        time_processed=time_processed,
+    )
+    st.session_state.last_result = result
+    render_result(result)
 
-                create_download_link(st.session_state.key_textinput, response)
-                st.caption(f"Verarbeitet in {time_processed:.1f} Sekunden.")
-        else:
-            with placeholder_analysis.container():
-                text_analysis = st.metric(
-                    label="Verständlichkeit -10 bis 10",
-                    value=score_source_rounded,
-                    help="Verständlichkeit auf einer Skala von -10 bis 10 (von -10 = extrem schwer verständlich bis 10 = sehr gut verständlich). Texte in Einfacher Sprache haben meist einen Wert von 0 bis 4 oder höher.",
-                )
-                create_download_link(
-                    st.session_state.key_textinput, response, analysis=True
-                )
-                st.caption(f"Verarbeitet in {time_processed:.1f} Sekunden.")
+    log_event(
+        st.session_state.key_textinput,
+        response,
+        do_analysis,
+        do_simplification,
+        do_one_click,
+        leichte_sprache,
+        model_choice,
+        time_processed,
+        success,
+    )
+    st.stop()
 
-        log_event(
-            st.session_state.key_textinput,
-            response,
-            do_analysis,
-            do_simplification,
-            do_one_click,
-            leichte_sprache,
-            model_choice,
-            time_processed,
-            success,
-        )
-        st.stop()
+if "last_result" in st.session_state:
+    render_result(st.session_state.last_result)
