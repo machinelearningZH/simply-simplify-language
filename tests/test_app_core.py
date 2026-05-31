@@ -28,12 +28,33 @@ from _streamlit_app.app_core import (
 from _streamlit_app.app_core import (
     ScoreClassification,
 )
+from _streamlit_app.utils_prompts import (
+    REWRITE_COMPLETE,
+    REWRITE_CONDENSED,
+    RULES_ES,
+    RULES_LS,
+    SYSTEM_MESSAGE_ES,
+    SYSTEM_MESSAGE_LS,
+    TEMPLATE_ANALYSIS_ES,
+    TEMPLATE_ES,
+    TEMPLATE_LS,
+)
 
 
-def test_classify_understandability_uses_ordered_thresholds():
-    assert classify_understandability(-3, limit_hard=0, limit_medium=-2).key == "hard"
-    assert classify_understandability(-1, limit_hard=0, limit_medium=-2).key == "medium"
-    assert classify_understandability(0, limit_hard=0, limit_medium=-2).key == "good"
+@pytest.mark.parametrize(
+    ("score", "expected"),
+    [
+        (-3, "hard"),
+        (-2, "medium"),  # On limit_medium: inclusive lower bound, no longer "hard".
+        (-1, "medium"),
+        (0, "good"),  # On limit_hard: inclusive lower bound.
+        (5, "good"),
+    ],
+)
+def test_classify_understandability_maps_score_to_band(score, expected):
+    assert (
+        classify_understandability(score, limit_hard=0, limit_medium=-2).key == expected
+    )
 
 
 def test_classify_understandability_rejects_inverted_thresholds():
@@ -142,7 +163,7 @@ def test_result_models_used_lists_all_models_for_one_click():
     assert result_models_used(result) == "Model A, Model B"
 
 
-def test_create_prompt_einfache_sprache_uses_es_rules_and_keeps_all_information():
+def test_create_prompt_einfache_sprache_assembles_es_template_and_complete_rules():
     prompt, system = create_prompt(
         "Quelltext",
         analysis=False,
@@ -150,15 +171,14 @@ def test_create_prompt_einfache_sprache_uses_es_rules_and_keeps_all_information(
         condense_text=False,
     )
 
-    assert "Quelltext" in prompt
-    assert "<einfachesprache>" in prompt
-    assert "Einfache Sprache" in system
-    # Non-condensed mode must instruct the model to keep all information.
-    assert "Kürze niemals Informationen" in prompt
+    assert prompt == TEMPLATE_ES.format(
+        rules=RULES_ES, completeness=REWRITE_COMPLETE, prompt="Quelltext"
+    )
+    assert system == SYSTEM_MESSAGE_ES
 
 
-def test_create_prompt_leichte_sprache_condensed_switches_completeness_rule():
-    condensed, _ = create_prompt(
+def test_create_prompt_leichte_sprache_condense_flag_selects_completeness_block():
+    condensed, condensed_system = create_prompt(
         "Quelltext",
         analysis=False,
         leichte_sprache=True,
@@ -171,13 +191,16 @@ def test_create_prompt_leichte_sprache_condensed_switches_completeness_rule():
         condense_text=False,
     )
 
-    assert "<leichtesprache>" in condensed
-    assert "Konzentriere dich auf das Wichtigste" in condensed
-    assert "Konzentriere dich auf das Wichtigste" not in complete
-    assert "Kürze niemals Informationen" in complete
+    assert condensed == TEMPLATE_LS.format(
+        rules=RULES_LS, completeness=REWRITE_CONDENSED, prompt="Quelltext"
+    )
+    assert complete == TEMPLATE_LS.format(
+        rules=RULES_LS, completeness=REWRITE_COMPLETE, prompt="Quelltext"
+    )
+    assert condensed_system == SYSTEM_MESSAGE_LS
 
 
-def test_create_prompt_analysis_ignores_condense_and_uses_analysis_template():
+def test_create_prompt_analysis_uses_analysis_template_without_completeness_block():
     prompt, system = create_prompt(
         "Quelltext",
         analysis=True,
@@ -185,11 +208,9 @@ def test_create_prompt_analysis_ignores_condense_and_uses_analysis_template():
         condense_text=True,
     )
 
-    assert "analysier" in prompt.lower()
-    assert "Satz für Satz" in prompt
-    # Completeness rules do not belong in the analysis prompt.
-    assert "Kürze niemals Informationen" not in prompt
-    assert "Einfache Sprache" in system
+    # Analysis has no {completeness} slot, so the condense flag must be ignored.
+    assert prompt == TEMPLATE_ANALYSIS_ES.format(rules=RULES_ES, prompt="Quelltext")
+    assert system == SYSTEM_MESSAGE_ES
 
 
 def test_strip_markdown_removes_headers_and_emphasis():
