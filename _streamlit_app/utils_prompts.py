@@ -113,23 +113,6 @@ REWRITE_COMPLETE = """- Achte immer sehr genau darauf, dass ALLE Informationen a
 REWRITE_CONDENSED = """- Konzentriere dich auf das Wichtigste. Gib die essenziellen Informationen wieder und lass den Rest weg."""
 
 
-CLAUDE_TEMPLATE_ES = """
-Hier ist ein schwer verständlicher Text, den du vollständig in Einfache Sprache, Sprachniveau B1 bis A2, umschreiben sollst:
-
-<schwer-verständlicher-text>
-{prompt}
-</schwer-verständlicher-text>
-
-Bitte lies den Text sorgfältig durch und schreibe ihn vollständig in Einfache Sprache um. 
-
-Beachte dabei folgende Regeln:
-
-{completeness}
-{rules}
-
-Formuliere den Text jetzt in Einfache Sprache, Sprachniveau B1 bis A2, um. Schreibe den vereinfachten Text innerhalb von <einfachesprache> Tags.
-""".strip()
-
 TEMPLATE_ES = """
 Du bekommst einen schwer verständlichen Text, den du vollständig in Einfache Sprache auf Sprachniveau B1 bis A2 umschreiben sollst. 
 

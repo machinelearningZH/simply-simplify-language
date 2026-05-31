@@ -49,6 +49,8 @@ understandability:
   limit_hard: 0
   limit_medium: -2
   # Scale ranges from -10 (extremely hard) to +10 (very easy to understand)
+  metric_label: "Verständlichkeit -10 bis 10"
+  metric_help: "Verständlichkeit auf einer Skala von -10 bis 10 Punkten (von -10 = extrem schwer verständlich bis 10 = sehr gut verständlich). Texte in Einfacher Sprache haben meist einen Wert von 0 bis 4 oder höher, Texte in Leichter Sprache 2 bis 6 oder höher."
 
 app:
   datetime_format: "%Y-%m-%d %H:%M:%S"

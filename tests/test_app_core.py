@@ -6,9 +6,11 @@ from _streamlit_app.app_core import (
     ResultState,
     build_log_payload,
     classify_understandability,
+    create_prompt,
     extract_tagged_response,
     format_one_click_results,
     result_models_used,
+    strip_markdown,
 )
 
 
@@ -79,6 +81,7 @@ def test_build_log_payload_omits_raw_text_and_response():
         model_choice="Model A",
         time_processed=1.23,
         success=True,
+        datetime_format="%Y-%m-%d %H:%M:%S",
     )
 
     serialized = json.dumps(payload)
@@ -98,10 +101,12 @@ def test_result_state_preserves_generated_output_across_reruns():
         model_choice="Model A",
         model_names=("Model A", "Model B"),
         time_processed=1.2,
+        score_source=-1.5,
     )
 
     assert result.source_text == "original text"
     assert result.response == "generated output"
+    assert result.score_source == -1.5
     assert result_models_used(result) == "Model A"
 
 
@@ -115,6 +120,72 @@ def test_result_models_used_lists_all_models_for_one_click():
         model_choice="Model A",
         model_names=("Model A", "Model B"),
         time_processed=1.2,
+        score_source=2.0,
     )
 
     assert result_models_used(result) == "Model A, Model B"
+
+
+def test_create_prompt_einfache_sprache_uses_es_rules_and_keeps_all_information():
+    prompt, system = create_prompt(
+        "Quelltext",
+        analysis=False,
+        leichte_sprache=False,
+        condense_text=False,
+    )
+
+    assert "Quelltext" in prompt
+    assert "<einfachesprache>" in prompt
+    assert "Einfache Sprache" in system
+    # Non-condensed mode must instruct the model to keep all information.
+    assert "Kürze niemals Informationen" in prompt
+
+
+def test_create_prompt_leichte_sprache_condensed_switches_completeness_rule():
+    condensed, _ = create_prompt(
+        "Quelltext",
+        analysis=False,
+        leichte_sprache=True,
+        condense_text=True,
+    )
+    complete, _ = create_prompt(
+        "Quelltext",
+        analysis=False,
+        leichte_sprache=True,
+        condense_text=False,
+    )
+
+    assert "<leichtesprache>" in condensed
+    assert "Konzentriere dich auf das Wichtigste" in condensed
+    assert "Konzentriere dich auf das Wichtigste" not in complete
+    assert "Kürze niemals Informationen" in complete
+
+
+def test_create_prompt_analysis_ignores_condense_and_uses_analysis_template():
+    prompt, system = create_prompt(
+        "Quelltext",
+        analysis=True,
+        leichte_sprache=False,
+        condense_text=True,
+    )
+
+    assert "analysier" in prompt.lower()
+    assert "Satz für Satz" in prompt
+    # Completeness rules do not belong in the analysis prompt.
+    assert "Kürze niemals Informationen" not in prompt
+    assert "Einfache Sprache" in system
+
+
+def test_strip_markdown_removes_headers_and_emphasis():
+    text = (
+        "# Titel\n## Untertitel\nDies ist **fett** und *kursiv* und __auch__ und _so_."
+    )
+
+    result = strip_markdown(text)
+
+    assert "#" not in result
+    assert "*" not in result
+    assert "_" not in result
+    assert "Titel" in result
+    assert "fett" in result
+    assert "kursiv" in result

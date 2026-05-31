@@ -8,6 +8,33 @@ from typing import Callable
 
 import yaml
 
+try:  # Flat import when run by Streamlit (app dir is on sys.path).
+    from utils_prompts import (
+        REWRITE_COMPLETE,
+        REWRITE_CONDENSED,
+        RULES_ES,
+        RULES_LS,
+        SYSTEM_MESSAGE_ES,
+        SYSTEM_MESSAGE_LS,
+        TEMPLATE_ANALYSIS_ES,
+        TEMPLATE_ANALYSIS_LS,
+        TEMPLATE_ES,
+        TEMPLATE_LS,
+    )
+except ImportError:  # Package import (e.g. in tests).
+    from _streamlit_app.utils_prompts import (
+        REWRITE_COMPLETE,
+        REWRITE_CONDENSED,
+        RULES_ES,
+        RULES_LS,
+        SYSTEM_MESSAGE_ES,
+        SYSTEM_MESSAGE_LS,
+        TEMPLATE_ANALYSIS_ES,
+        TEMPLATE_ANALYSIS_LS,
+        TEMPLATE_ES,
+        TEMPLATE_LS,
+    )
+
 APP_DIR = Path(__file__).resolve().parent
 REPO_ROOT = APP_DIR.parent
 
@@ -29,6 +56,7 @@ class ResultState:
     model_choice: str
     model_names: tuple[str, ...]
     time_processed: float
+    score_source: float
 
 
 def result_models_used(result: ResultState) -> str:
@@ -98,6 +126,44 @@ def extract_tagged_response(response: str, tag: str) -> str:
     return extracted
 
 
+def create_prompt(
+    text: str,
+    *,
+    analysis: bool,
+    leichte_sprache: bool,
+    condense_text: bool,
+) -> tuple[str, str]:
+    """Create the user prompt and system message according to the app settings."""
+    if analysis:
+        if leichte_sprache:
+            final_prompt = TEMPLATE_ANALYSIS_LS.format(rules=RULES_LS, prompt=text)
+            system = SYSTEM_MESSAGE_LS
+        else:
+            final_prompt = TEMPLATE_ANALYSIS_ES.format(rules=RULES_ES, prompt=text)
+            system = SYSTEM_MESSAGE_ES
+    elif leichte_sprache:
+        completeness = REWRITE_CONDENSED if condense_text else REWRITE_COMPLETE
+        final_prompt = TEMPLATE_LS.format(
+            rules=RULES_LS, completeness=completeness, prompt=text
+        )
+        system = SYSTEM_MESSAGE_LS
+    else:
+        final_prompt = TEMPLATE_ES.format(
+            rules=RULES_ES, completeness=REWRITE_COMPLETE, prompt=text
+        )
+        system = SYSTEM_MESSAGE_ES
+    return final_prompt, system
+
+
+def strip_markdown(text: str) -> str:
+    """Strip markdown headers and bold/italic markers from text."""
+    # Remove markdown headers.
+    text = re.sub(r"#+\s", "", text)
+    # Remove markdown italic and bold.
+    text = re.sub(r"\*\*|\*|__|_", "", text)
+    return text
+
+
 def rounded_score(score: float) -> int:
     # Adding 0 avoids displaying negative zero after rounding.
     return int(round(score, 0) + 0)
@@ -149,7 +215,7 @@ def build_log_payload(
     model_choice: str,
     time_processed: float,
     success: bool,
-    datetime_format: str = "%Y-%m-%d %H:%M:%S",
+    datetime_format: str,
 ) -> dict[str, object]:
     return {
         "timestamp": datetime.now().strftime(datetime_format),

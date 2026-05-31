@@ -6,8 +6,8 @@ import streamlit as st
 st.set_page_config(layout="wide")
 
 import io
+import logging
 import os
-import re
 import time
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
@@ -26,6 +26,7 @@ from app_core import (
     build_log_payload,
     classify_understandability,
     configure_event_logger,
+    create_prompt,
     extract_tagged_response,
     format_one_click_results,
     format_understandability_message,
@@ -34,26 +35,17 @@ from app_core import (
     repo_path,
     result_models_used,
     rounded_score,
+    strip_markdown,
     write_event_log,
 )
-from utils_prompts import (
-    SAMPLE_TEXT,
-    REWRITE_COMPLETE,
-    REWRITE_CONDENSED,
-    RULES_ES,
-    RULES_LS,
-    SYSTEM_MESSAGE_ES,
-    SYSTEM_MESSAGE_LS,
-    TEMPLATE_ANALYSIS_ES,
-    TEMPLATE_ANALYSIS_LS,
-    TEMPLATE_ES,
-    TEMPLATE_LS,
-)
+from utils_prompts import SAMPLE_TEXT
 
 # ---------------------------------------------------------------
 # Constants
 
-load_dotenv(app_path(".env"), override=True)
+load_dotenv(app_path(".env"))
+
+logger = logging.getLogger(__name__)
 
 API_KEYS = {
     "OPENROUTER": os.getenv("OPENROUTER_API_KEY"),
@@ -97,6 +89,8 @@ DOWNLOAD_MIME_TYPE = config["document"]["download_mime_type"]
 # Understandability limits
 LIMIT_HARD = config["understandability"]["limit_hard"]
 LIMIT_MEDIUM = config["understandability"]["limit_medium"]
+METRIC_LABEL = config["understandability"]["metric_label"]
+METRIC_HELP = config["understandability"]["metric_help"]
 
 DATETIME_FORMAT = config["app"]["datetime_format"]
 EVENT_LOGGER = configure_event_logger(config["logging"], base_dir=APP_DIR)
@@ -120,43 +114,10 @@ def create_project_info(project_info):
         st.markdown(project_info[1], unsafe_allow_html=True)
 
 
-def create_prompt(text, analysis):
-    """Create prompt and system message according the app settings."""
-    if analysis:
-        final_prompt = (
-            TEMPLATE_ANALYSIS_LS.format(rules=RULES_LS, prompt=text)
-            if leichte_sprache
-            else TEMPLATE_ANALYSIS_ES.format(rules=RULES_ES, prompt=text)
-        )
-        system = SYSTEM_MESSAGE_LS if leichte_sprache else SYSTEM_MESSAGE_ES
-    else:
-        if leichte_sprache:
-            completeness = REWRITE_CONDENSED if condense_text else REWRITE_COMPLETE
-            final_prompt = TEMPLATE_LS.format(
-                rules=RULES_LS, completeness=completeness, prompt=text
-            )
-            system = SYSTEM_MESSAGE_LS
-        else:
-            final_prompt = TEMPLATE_ES.format(
-                rules=RULES_ES, completeness=REWRITE_COMPLETE, prompt=text
-            )
-            system = SYSTEM_MESSAGE_ES
-    return final_prompt, system
-
-
 def get_result_from_response(response):
     """Extract text between tags from response."""
     tag = "leichtesprache" if leichte_sprache else "einfachesprache"
     return extract_tagged_response(response, tag)
-
-
-def strip_markdown(text):
-    """Strip markdown from text."""
-    # Remove markdown headers.
-    text = re.sub(r"#+\s", "", text)
-    # Remove markdown italic and bold.
-    text = re.sub(r"\*\*|\*|__|_", "", text)
-    return text
 
 
 @st.cache_resource
@@ -177,7 +138,12 @@ def invoke_model(
     analysis=False,
 ):
     """Invoke any model through OpenRouter."""
-    final_prompt, system = create_prompt(text, analysis)
+    final_prompt, system = create_prompt(
+        text,
+        analysis=analysis,
+        leichte_sprache=leichte_sprache,
+        condense_text=condense_text,
+    )
 
     try:
         message = openrouter_client.chat.completions.create(
@@ -198,6 +164,7 @@ def invoke_model(
         message = strip_markdown(message)
         return True, message
     except Exception:
+        logger.exception("Model invocation failed for model_id=%s", model_id)
         return False, "Model response could not be created."
 
 
@@ -217,12 +184,8 @@ def get_one_click_results():
             for name, model_id in MODEL_IDS.items()
         }
 
-    responses = {}
-    for name, future in futures.items():
-        try:
-            responses[name] = future.result()
-        except Exception:
-            responses[name] = (False, "Model response could not be created.")
+    # invoke_model never raises: it returns (False, message) on failure.
+    responses = {name: future.result() for name, future in futures.items()}
 
     return format_one_click_results(responses, score_fn=get_zix, cefr_fn=get_cefr)
 
@@ -322,6 +285,12 @@ def log_event(
     write_event_log(EVENT_LOGGER, payload)
 
 
+def render_download_and_caption(result):
+    """Render the download button and processing-time caption for a result."""
+    create_download_link(result)
+    st.caption(f"Verarbeitet in {result.time_processed:.1f} Sekunden.")
+
+
 def render_result(result):
     """Render the latest generated result from session state."""
     text = "Dein vereinfachter Text"
@@ -334,10 +303,20 @@ def render_result(result):
             height=TEXT_AREA_HEIGHT,
             value=result.response,
         )
-        score_source = get_zix(result.source_text)
-        score_source_rounded = rounded_score(score_source)
 
-        if result.simplification or result.one_click:
+        # One-click aggregates several models into one text. A single
+        # understandability score for the concatenated output is not meaningful
+        # (per-model scores are shown inline instead), so we show the source
+        # score and offer the download.
+        if result.one_click:
+            with placeholder_analysis.container():
+                st.metric(
+                    label=METRIC_LABEL,
+                    value=rounded_score(result.score_source),
+                    help=METRIC_HELP,
+                )
+                render_download_and_caption(result)
+        elif result.simplification:
             score_target = get_zix(result.response)
             score_target_rounded = rounded_score(score_target)
             cefr_target = get_cefr(score_target)
@@ -356,22 +335,20 @@ def render_result(result):
             )
             with placeholder_analysis.container():
                 st.metric(
-                    label="Verständlichkeit -10 bis 10",
+                    label=METRIC_LABEL,
                     value=score_target_rounded,
-                    delta=rounded_score(score_target - score_source),
-                    help="Verständlichkeit auf einer Skala von -10 bis 10 (von -10 = extrem schwer verständlich bis 10 = sehr gut verständlich). Texte in Einfacher Sprache haben meist einen Wert von 0 bis 4 oder höher.",
+                    delta=rounded_score(score_target - result.score_source),
+                    help=METRIC_HELP,
                 )
-                create_download_link(result)
-                st.caption(f"Verarbeitet in {result.time_processed:.1f} Sekunden.")
+                render_download_and_caption(result)
         else:
             with placeholder_analysis.container():
                 st.metric(
-                    label="Verständlichkeit -10 bis 10",
-                    value=score_source_rounded,
-                    help="Verständlichkeit auf einer Skala von -10 bis 10 (von -10 = extrem schwer verständlich bis 10 = sehr gut verständlich). Texte in Einfacher Sprache haben meist einen Wert von 0 bis 4 oder höher.",
+                    label=METRIC_LABEL,
+                    value=rounded_score(result.score_source),
+                    help=METRIC_HELP,
                 )
-                create_download_link(result)
-                st.caption(f"Verarbeitet in {result.time_processed:.1f} Sekunden.")
+                render_download_and_caption(result)
 
 
 # ---------------------------------------------------------------
@@ -429,6 +406,7 @@ with button_cols[2]:
         value=False,
         help="**Schalter aktiviert**: «Leichte Sprache». **Schalter nicht aktiviert**: «Einfache Sprache».",
     )
+    condense_text = False
     if leichte_sprache:
         condense_text = st.toggle(
             "Text verdichten",
@@ -463,16 +441,16 @@ with source_text:
         key="key_textinput",
     )
 with placeholder_result:
-    text_output = st.text_area(
+    st.text_area(
         "Ergebnis",
         height=TEXT_AREA_HEIGHT,
     )
 with placeholder_analysis:
-    text_analysis = st.metric(
-        label="Verständlichkeit -10 bis 10",
+    st.metric(
+        label=METRIC_LABEL,
         value=None,
         delta=None,
-        help="Verständlichkeit auf einer Skala von -10 bis 10 Punkten (von -10 = extrem schwer verständlich bis 10 = sehr gut verständlich). Texte in Einfacher Sprache haben meist einen Wert von 0 bis 4 oder höher, Texte in Leichter Sprache 2 bis 6 oder höher.",
+        help=METRIC_HELP,
     )
 
 
@@ -506,11 +484,11 @@ if do_simplification or do_analysis or do_one_click:
             )
         )
         with placeholder_analysis.container():
-            text_analysis = st.metric(
-                label="Verständlichkeit von -10 bis 10",
+            st.metric(
+                label=METRIC_LABEL,
                 value=score_source_rounded,
                 delta=None,
-                help="Verständlichkeit auf einer Skala von -10 bis 10 Punkten (von -10 = extrem schwer verständlich bis 10 = sehr gut verständlich). Texte in Einfacher Sprache haben meist einen Wert von 0 bis 4 oder höher, Texte in Leichter Sprache 2 bis 6 oder höher.",
+                help=METRIC_HELP,
             )
 
         with placeholder_analysis.container():
@@ -558,6 +536,7 @@ if do_simplification or do_analysis or do_one_click:
         model_choice=model_choice,
         model_names=tuple(MODEL_NAMES),
         time_processed=time_processed,
+        score_source=score_source,
     )
     st.session_state.last_result = result
     render_result(result)
