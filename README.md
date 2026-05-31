@@ -7,7 +7,7 @@
 [![GitHub Stars](https://img.shields.io/github/stars/machinelearningZH/simply-simplify-language.svg)](https://github.com/machinelearningZH/simply-simplify-language/stargazers)
 [![GitHub Issues](https://img.shields.io/github/issues/machinelearningZH/simply-simplify-language.svg)](https://github.com/machinelearningZH/simply-simplify-language/issues)
 [![GitHub Issues](https://img.shields.io/github/issues-pr/machinelearningZH/simply-simplify-language.svg)](https://img.shields.io/github/issues-pr/machinelearningZH/simply-simplify-language)
-[![Current Version](https://img.shields.io/badge/version-1.2.0-green.svg)](https://github.com/machinelearningZH/simply-simplify-language)
+[![Current Version](https://img.shields.io/badge/version-1.3.0-green.svg)](https://github.com/machinelearningZH/simply-simplify-language)
 <a href="https://github.com/astral-sh/ruff"><img alt="linting - Ruff" class="off-glb" loading="lazy" src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json"></a>
 
 <details>
@@ -93,7 +93,7 @@ You can develop and run the app in a cloud-hosted environment using GitHub Codes
 Edit `config.yaml` to customize available models:
 
 - `name`: UI display name
-- `id`: OpenRouter model identifier (e.g., `anthropic/claude-4-7-sonnet`, `openai/gpt-5.5`)
+- `id`: OpenRouter model identifier (e.g., `anthropic/claude-sonnet-4.6`, `openai/gpt-5.5`)
 
 See the full model list at [OpenRouter models](https://openrouter.ai/models).
 
