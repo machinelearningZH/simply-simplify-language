@@ -170,9 +170,9 @@ This project is a collaborative effort by these people from the cantonal adminis
 - **Simone Luchetta, Roger Zedi** - [Team Informationszugang & Dialog, Staatskanzlei](https://www.zh.ch/de/staatskanzlei/digitale-verwaltung/team.html)
 - **Emek Sahin, Peter Hotz** - [Team Kommunikation & Entwicklung, Strassenverkehrsamt](https://www.zh.ch/de/sicherheitsdirektion/strassenverkehrsamt.html)
 - **Roger Meier** - [Generalsekretariat, Direktion der Justiz und des Inneren](https://www.zh.ch/de/direktion-der-justiz-und-des-innern/generalsekretariat.html#2092000119)
-- **Matthias Mazenauer** - [Co-Leiter, Amt für Statistik und Daten](https://www.zh.ch/de/direktion-der-justiz-und-des-innern/amt-fuer-statistik-und-daten.html)
+- **Matthias Mazenauer** - [Co-Leiter, Amt für Statistik und Daten](https://www.zh.ch/de/direktion-der-justiz-und-des-innern/amt-fuer-statistik-und-daten/amtsleitung.html)
 - **Marisol Keller, Céline Colombo** - [Koordinationsstelle Teilhabe, Amt für Statistik und Daten](https://www.zh.ch/de/politik-staat/teilhabe.html)
-- **Patrick Arnecke, Chantal Amrhein, Dominik Frefel** - [Team Data, Amt für Statistik und Daten](https://www.zh.ch/de/direktion-der-justiz-und-des-innern/amt-fuer-statistik-und-daten.html)
+- **Patrick Arnecke, Chantal Amrhein, Dominik Frefel** - [Team Data, Amt für Statistik und Daten](https://www.zh.ch/de/direktion-der-justiz-und-des-innern/amt-fuer-statistik-und-daten/data.html)
 
 Special thanks to [**Government Councillor Jacqueline Fehr**](https://www.zh.ch/en/direktion-der-justiz-und-des-innern/regierungsraetin-jacqueline-fehr.html) for initiating and supporting the project.
 
