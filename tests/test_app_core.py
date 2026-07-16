@@ -23,6 +23,7 @@ from _streamlit_app.app_core import (
     result_models_used,
     rounded_score,
     strip_markdown,
+    temperature_request_parameters,
     write_event_log,
 )
 from _streamlit_app.app_core import (
@@ -74,6 +75,20 @@ def test_extract_tagged_response_requires_non_empty_matching_tag():
         extract_tagged_response(
             "<einfachesprache>   </einfachesprache>", "einfachesprache"
         )
+
+
+def test_temperature_request_parameters_omits_model_default():
+    assert temperature_request_parameters("default") == {}
+
+
+def test_temperature_request_parameters_includes_float_override():
+    assert temperature_request_parameters(0.5) == {"temperature": 0.5}
+
+
+@pytest.mark.parametrize("temperature", ["0.5", 1, True, None])
+def test_temperature_request_parameters_rejects_invalid_values(temperature):
+    with pytest.raises(ValueError, match="'default' or a float"):
+        temperature_request_parameters(temperature)
 
 
 def test_format_one_click_results_reports_partial_failures_without_error_details():

@@ -21,7 +21,7 @@ models:
 # API configuration for model calls
 api:
   base_url: "https://openrouter.ai/api/v1"
-  temperature: 0.5 # From our testing we derive a sensible temperature of 0.5 as a good trade-off between creativity and coherence. Adjust this to your needs.
+  temperature: "default" # Usually use each model's default temperature; set a float to override it.
   max_tokens: 8192 # Maximum number of tokens in the response
   timeout_seconds: 120
   max_retries: 2

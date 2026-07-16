@@ -85,6 +85,15 @@ def load_project_info(path: Path | None = None) -> str:
     return project_info_path.read_text(encoding="utf-8")
 
 
+def temperature_request_parameters(temperature: str | float) -> dict[str, float]:
+    """Build an optional temperature override for a model request."""
+    if temperature == "default":
+        return {}
+    if isinstance(temperature, float):
+        return {"temperature": temperature}
+    raise ValueError("api.temperature must be 'default' or a float")
+
+
 def classify_understandability(
     score: float,
     *,

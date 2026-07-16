@@ -36,6 +36,7 @@ from app_core import (
     result_models_used,
     rounded_score,
     strip_markdown,
+    temperature_request_parameters,
     write_event_log,
 )
 from utils_prompts import SAMPLE_TEXT
@@ -148,7 +149,7 @@ def invoke_model(
     try:
         message = openrouter_client.chat.completions.create(
             model=model_id,
-            temperature=TEMPERATURE,
+            **temperature_request_parameters(TEMPERATURE),
             max_tokens=MAX_TOKENS,
             messages=[
                 {"role": "system", "content": system},
