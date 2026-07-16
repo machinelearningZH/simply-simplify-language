@@ -74,7 +74,7 @@ OPENROUTER_API_KEY=sk-or-v1-...
 3. Start the container and pass the API key at runtime:
 
    ```bash
-   docker run --rm -p 8080:8501 --env-file _streamlit_app/.env simplify
+   docker run --rm -p 8080:8501 --env-file ./_streamlit_app/.env
    ```
 
 4. Open <http://localhost:8080>.

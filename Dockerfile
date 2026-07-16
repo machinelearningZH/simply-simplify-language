@@ -30,4 +30,4 @@ USER app
 HEALTHCHECK --interval=30s --timeout=3s --start-period=20s --retries=3 \
     CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8501/_stcore/health', timeout=2)"
 
-CMD ["streamlit", "run", "_streamlit_app/sprache-vereinfachen.py", "--server.address=0.0.0.0", "--browser.gatherUsageStats=false"]
+CMD ["streamlit", "run", "_streamlit_app/sprache-vereinfachen.py", "--server.address=0.0.0.0", "--browser.gatherUsageStats=false", "--server.headless=true"]
