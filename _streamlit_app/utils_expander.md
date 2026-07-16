@@ -34,7 +34,7 @@ Wir zeigen dir zusätzlich eine **grobe** Schätzung des Sprachniveaus gemäss [
 
 ADD_IMAGE_HERE
 
-Die Bewertung ist bei weitem nicht perfekt, aber sie ist ein guter erster Anhaltspunkt und hat sich bei unseren Praxistests bewährt.
+Die Bewertung ist nicht perfekt, aber sie ist ein guter erster Anhaltspunkt und hat sich bei unseren Praxistests bewährt.
 
 ### Feedback
 
@@ -42,6 +42,7 @@ Wir sind für Rückmeldungen und Anregungen jeglicher Art dankbar und nehmen die
 
 ## Versionsverlauf
 
+- **v1.4** - 16.07.2026 - _App aktualisiert auf neueste Modelle. Verbesserungen._
 - **v1.3** - 31.05.2026 - _App aktualisiert auf neueste Modelle. Verbesserungen._
 - **v1.2** - 09.05.2026 - _App aktualisiert auf neueste Modelle. Alte Zusatzversion entfernt. Kleinere Verbesserungen._
 - **v1.1** - 07.12.2025 - _App aktualisiert auf neueste Modelle. Kleinere Verbesserungen._
