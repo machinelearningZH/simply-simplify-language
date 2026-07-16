@@ -34,7 +34,7 @@
 
 ## Usage
 
-- You can run the app **locally**, **in the cloud** or **in a [GitHub Codespace](https://github.com/features/codespaces)**.
+- You can run the app **locally**, **with Docker**, **in the cloud** or **in a [GitHub Codespace](https://github.com/features/codespaces)**.
 - The app uses **[OpenRouter](https://openrouter.ai/)** as a unified API provider to access multiple leading language models.
 - All available models are configured in `config.yaml` and can be easily customized for your needs.
 
@@ -61,6 +61,25 @@ OPENROUTER_API_KEY=sk-or-v1-...
 1. Register at [OpenRouter](https://openrouter.ai/)
 2. Create an API key: [API Keys](https://openrouter.ai/keys)
 3. Add credits: [Credits](https://openrouter.ai/credits)
+
+### Running with Docker
+
+1. Add your OpenRouter API key to `_streamlit_app/.env` as described above.
+2. Build the image:
+
+   ```bash
+   docker build -t simplify .
+   ```
+
+3. Start the container and pass the API key at runtime:
+
+   ```bash
+   docker run --rm -p 8080:8501 --env-file _streamlit_app/.env simplify
+   ```
+
+4. Open <http://localhost:8080>.
+
+The `.env` file is excluded from the image by `.dockerignore`. Do not add API keys to the Dockerfile or image.
 
 ### Running in the Cloud
 
