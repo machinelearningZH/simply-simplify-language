@@ -3,6 +3,7 @@ import logging
 import re
 from dataclasses import dataclass
 from datetime import datetime
+from functools import lru_cache
 from pathlib import Path
 from typing import Callable
 
@@ -37,6 +38,26 @@ except ImportError:  # Package import (e.g. in tests).
 
 APP_DIR = Path(__file__).resolve().parent
 REPO_ROOT = APP_DIR.parent
+
+
+@lru_cache(maxsize=1)
+def load_understandability_functions() -> tuple[Callable, Callable]:
+    """Load the expensive ZIX stack only when a score is first requested."""
+    from zix.understandability import get_cefr, get_zix
+
+    return get_zix, get_cefr
+
+
+def get_zix(text: str) -> float | None:
+    """Calculate understandability without slowing down initial app rendering."""
+    score_fn, _ = load_understandability_functions()
+    return score_fn(text)
+
+
+def get_cefr(score: float | None) -> str | None:
+    """Map a ZIX score to CEFR using the lazily loaded ZIX package."""
+    _, cefr_fn = load_understandability_functions()
+    return cefr_fn(score)
 
 
 @dataclass(frozen=True)

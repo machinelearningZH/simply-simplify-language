@@ -17,6 +17,9 @@ from _streamlit_app.app_core import (
     extract_tagged_response,
     format_one_click_results,
     format_understandability_message,
+    get_cefr,
+    get_zix,
+    load_understandability_functions,
     load_project_info,
     load_yaml_config,
     repo_path,
@@ -327,6 +330,34 @@ def test_load_project_info_reads_text_from_given_path(tmp_path):
     info_file.write_text("Projektinfo", encoding="utf-8")
 
     assert load_project_info(info_file) == "Projektinfo"
+
+
+def test_understandability_dependency_is_loaded_only_when_needed(monkeypatch):
+    calls = []
+
+    def score_fn(text):
+        calls.append(("score", text))
+        return 1.5
+
+    def cefr_fn(score):
+        calls.append(("cefr", score))
+        return "B1"
+
+    monkeypatch.setattr(
+        "_streamlit_app.app_core.load_understandability_functions",
+        lambda: (score_fn, cefr_fn),
+    )
+
+    assert get_zix("Ein Text.") == 1.5
+    assert get_cefr(1.5) == "B1"
+    assert calls == [("score", "Ein Text."), ("cefr", 1.5)]
+
+
+def test_understandability_loader_is_cached():
+    assert load_understandability_functions.cache_parameters() == {
+        "maxsize": 1,
+        "typed": False,
+    }
 
 
 def test_json_formatter_emits_structured_payload_with_event_and_exception():

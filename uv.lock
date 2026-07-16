@@ -1616,7 +1616,7 @@ requires-dist = [
     { name = "python-dotenv", specifier = ">=1.2.1" },
     { name = "pyyaml", specifier = ">=6.0.3" },
     { name = "streamlit", specifier = ">=1.55.0" },
-    { name = "zix", git = "https://github.com/machinelearningZH/zix_understandability-index?rev=1d0eaa9692413f6581f7534c7402618b92637dca" },
+    { name = "zix", git = "https://github.com/machinelearningZH/zix_understandability-index?rev=8913ca53d286d8c236dbfd1c2738ac0d40c09ec7" },
 ]
 
 [package.metadata.requires-dev]
@@ -2173,7 +2173,7 @@ wheels = [
 [[package]]
 name = "zix"
 version = "0.2.1"
-source = { git = "https://github.com/machinelearningZH/zix_understandability-index?rev=1d0eaa9692413f6581f7534c7402618b92637dca#1d0eaa9692413f6581f7534c7402618b92637dca" }
+source = { git = "https://github.com/machinelearningZH/zix_understandability-index?rev=8913ca53d286d8c236dbfd1c2738ac0d40c09ec7#8913ca53d286d8c236dbfd1c2738ac0d40c09ec7" }
 dependencies = [
     { name = "de-core-news-sm" },
     { name = "numpy" },

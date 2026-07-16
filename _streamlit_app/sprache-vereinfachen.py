@@ -12,12 +12,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 
-from docx import Document
-from docx.shared import Inches, Pt
 from dotenv import load_dotenv
-
-from openai import OpenAI
-from zix.understandability import get_cefr, get_zix
 
 from app_core import (
     APP_DIR,
@@ -30,6 +25,8 @@ from app_core import (
     extract_tagged_response,
     format_one_click_results,
     format_understandability_message,
+    get_cefr,
+    get_zix,
     load_project_info,
     load_yaml_config,
     repo_path,
@@ -123,8 +120,12 @@ def get_result_from_response(response):
 
 @st.cache_resource
 def get_openrouter_client():
+    """Create the API client only when the user submits a model request."""
     if not API_KEYS["OPENROUTER"]:
         raise ValueError("OPENROUTER_API_KEY is not set")
+
+    from openai import OpenAI
+
     return OpenAI(
         base_url=API_BASE_URL,
         api_key=API_KEYS["OPENROUTER"],
@@ -139,6 +140,7 @@ def invoke_model(
     analysis=False,
 ):
     """Invoke any model through OpenRouter."""
+    openrouter_client = get_openrouter_client()
     final_prompt, system = create_prompt(
         text,
         analysis=analysis,
@@ -193,6 +195,9 @@ def get_one_click_results():
 
 def create_download_link(result):
     """Create a downloadable Word document and download link of the results."""
+    from docx import Document
+    from docx.shared import Inches, Pt
+
     document = Document()
 
     h1 = document.add_heading("Ausgangstext")
@@ -355,9 +360,7 @@ def render_result(result):
 # ---------------------------------------------------------------
 # Main
 
-try:
-    openrouter_client = get_openrouter_client()
-except ValueError:
+if not API_KEYS["OPENROUTER"]:
     st.error(
         "OPENROUTER_API_KEY fehlt. Bitte hinterlege den API-Key in _streamlit_app/.env."
     )
