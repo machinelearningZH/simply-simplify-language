@@ -1,10 +1,11 @@
 import json
 import logging
 import re
+from concurrent.futures import Future
 from dataclasses import dataclass
 from datetime import datetime
-from functools import lru_cache
 from pathlib import Path
+from threading import Lock, Thread
 from typing import Callable
 
 import yaml
@@ -38,14 +39,45 @@ except ImportError:  # Package import (e.g. in tests).
 
 APP_DIR = Path(__file__).resolve().parent
 REPO_ROOT = APP_DIR.parent
+UnderstandabilityFunctions = tuple[Callable, Callable]
+_understandability_future: Future[UnderstandabilityFunctions] | None = None
+_understandability_lock = Lock()
 
 
-@lru_cache(maxsize=1)
-def load_understandability_functions() -> tuple[Callable, Callable]:
-    """Load the expensive ZIX stack only when a score is first requested."""
+def _import_understandability_functions() -> UnderstandabilityFunctions:
     from zix.understandability import get_cefr, get_zix
 
     return get_zix, get_cefr
+
+
+def _complete_understandability_load(
+    future: Future[UnderstandabilityFunctions],
+) -> None:
+    try:
+        future.set_result(_import_understandability_functions())
+    except Exception as error:
+        future.set_exception(error)
+
+
+def start_understandability_loading() -> Future[UnderstandabilityFunctions]:
+    """Start one shared background load of the expensive ZIX stack."""
+    global _understandability_future
+
+    with _understandability_lock:
+        if _understandability_future is None:
+            _understandability_future = Future()
+            Thread(
+                target=_complete_understandability_load,
+                args=(_understandability_future,),
+                name="zix-loader",
+                daemon=True,
+            ).start()
+        return _understandability_future
+
+
+def load_understandability_functions() -> UnderstandabilityFunctions:
+    """Return the shared ZIX functions, waiting for background loading if needed."""
+    return start_understandability_loading().result()
 
 
 def get_zix(text: str) -> float | None:

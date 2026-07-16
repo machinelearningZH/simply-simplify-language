@@ -32,6 +32,7 @@ from app_core import (
     repo_path,
     result_models_used,
     rounded_score,
+    start_understandability_loading,
     strip_markdown,
     temperature_request_parameters,
     write_event_log,
@@ -456,6 +457,10 @@ with placeholder_analysis:
         delta=None,
         help=METRIC_HELP,
     )
+
+# The static UI is now available, so warm the expensive language model while the
+# user reads or enters text. A quick first click waits on this same shared load.
+start_understandability_loading()
 
 
 # Derive model_id from explicit model_choice.

@@ -1,6 +1,7 @@
 import json
 import logging
 import sys
+from threading import Event
 
 import pytest
 
@@ -19,12 +20,12 @@ from _streamlit_app.app_core import (
     format_understandability_message,
     get_cefr,
     get_zix,
-    load_understandability_functions,
     load_project_info,
     load_yaml_config,
     repo_path,
     result_models_used,
     rounded_score,
+    start_understandability_loading,
     strip_markdown,
     temperature_request_parameters,
     write_event_log,
@@ -353,11 +354,30 @@ def test_understandability_dependency_is_loaded_only_when_needed(monkeypatch):
     assert calls == [("score", "Ein Text."), ("cefr", 1.5)]
 
 
-def test_understandability_loader_is_cached():
-    assert load_understandability_functions.cache_parameters() == {
-        "maxsize": 1,
-        "typed": False,
-    }
+def test_understandability_background_load_is_shared(monkeypatch):
+    import_started = Event()
+    allow_import_to_finish = Event()
+    functions = (lambda text: 1.0, lambda score: "B1")
+
+    def slow_import():
+        import_started.set()
+        allow_import_to_finish.wait(timeout=1)
+        return functions
+
+    monkeypatch.setattr("_streamlit_app.app_core._understandability_future", None)
+    monkeypatch.setattr(
+        "_streamlit_app.app_core._import_understandability_functions", slow_import
+    )
+
+    first_future = start_understandability_loading()
+    assert import_started.wait(timeout=1)
+    second_future = start_understandability_loading()
+
+    assert first_future is second_future
+    assert first_future.done() is False
+
+    allow_import_to_finish.set()
+    assert first_future.result(timeout=1) is functions
 
 
 def test_json_formatter_emits_structured_payload_with_event_and_exception():
