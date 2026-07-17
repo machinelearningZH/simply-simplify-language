@@ -44,17 +44,18 @@
 2. Clone the repo and enter the directory:\
    `cd simply-simplify-language/`
 3. Install dependencies:\
-   `uv sync`
+   `make sync`
 4. Add your OpenRouter API key to a `.env` file in `_streamlit_app/`:
 
 ```
 OPENROUTER_API_KEY=sk-or-v1-...
 ```
 
-5. Enter the app directory:\
-   `cd _streamlit_app/`
-6. Start the app:\
-   `uv run streamlit run sprache-vereinfachen.py`
+5. Start the app:\
+   `make run`
+
+The Make targets are thin wrappers around `uv`; you can also run the underlying
+`uv` commands directly.
 
 #### Getting your OpenRouter API key
 
@@ -199,7 +200,14 @@ Special thanks to [**Government Councillor Jacqueline Fehr**](https://www.zh.ch/
 
 We welcome feedback and contributions! [Email us](mailto:datashop@statistik.zh.ch) or open an issue or pull request.
 
-We use [`ruff`](https://docs.astral.sh/ruff/) for linting and formatting.
+We use [`ruff`](https://docs.astral.sh/ruff/) for linting and formatting. Before
+submitting a change, run the complete local quality suite:
+
+```bash
+make check
+```
+
+Run `make help` to see the available development and Docker commands.
 
 ## License
 
