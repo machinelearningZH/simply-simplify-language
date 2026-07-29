@@ -52,11 +52,11 @@ from _streamlit_app.utils_prompts import (
 @pytest.mark.parametrize(
     ("score", "expected"),
     [
-        (-3, ScoreClassification("hard", "schwer verständlich", "red")),
-        (-2, ScoreClassification("medium", "nur mässig verständlich", "orange")),
-        (-1, ScoreClassification("medium", "nur mässig verständlich", "orange")),
-        (0, ScoreClassification("good", "gut verständlich", "green")),
-        (5, ScoreClassification("good", "gut verständlich", "green")),
+        (-3, ScoreClassification("schwer verständlich", "red")),
+        (-2, ScoreClassification("nur mässig verständlich", "orange")),
+        (-1, ScoreClassification("nur mässig verständlich", "orange")),
+        (0, ScoreClassification("gut verständlich", "green")),
+        (5, ScoreClassification("gut verständlich", "green")),
     ],
 )
 def test_classify_understandability_maps_score_to_band(score, expected):
@@ -274,7 +274,7 @@ def test_extract_tagged_response_joins_multiple_matches_with_newline():
 
 
 def test_format_understandability_message_embeds_label_score_and_cefr():
-    classification = ScoreClassification("good", "gut verständlich", "green")
+    classification = ScoreClassification("gut verständlich", "green")
 
     message = format_understandability_message(
         subject="Originaltext",

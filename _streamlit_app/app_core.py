@@ -94,7 +94,6 @@ def get_cefr(score: float | None) -> str | None:
 
 @dataclass(frozen=True)
 class ScoreClassification:
-    key: str
     label: str
     color: str
 
@@ -157,10 +156,10 @@ def classify_understandability(
         raise ValueError("limit_medium must be lower than limit_hard")
 
     if score < limit_medium:
-        return ScoreClassification("hard", "schwer verständlich", "red")
+        return ScoreClassification("schwer verständlich", "red")
     if score < limit_hard:
-        return ScoreClassification("medium", "nur mässig verständlich", "orange")
-    return ScoreClassification("good", "gut verständlich", "green")
+        return ScoreClassification("nur mässig verständlich", "orange")
+    return ScoreClassification("gut verständlich", "green")
 
 
 def format_understandability_message(
