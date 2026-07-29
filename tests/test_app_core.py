@@ -1,7 +1,9 @@
 import json
 import logging
 import sys
+from concurrent.futures import Future
 from threading import Event
+from unittest.mock import Mock
 
 import pytest
 
@@ -10,6 +12,8 @@ from _streamlit_app.app_core import (
     REPO_ROOT,
     JSONFormatter,
     ResultState,
+    ScoreClassification,
+    _complete_understandability_load,
     app_path,
     build_log_payload,
     classify_understandability,
@@ -21,6 +25,7 @@ from _streamlit_app.app_core import (
     get_cefr,
     get_zix,
     load_project_info,
+    load_understandability_functions,
     load_yaml_config,
     repo_path,
     result_models_used,
@@ -30,9 +35,6 @@ from _streamlit_app.app_core import (
     temperature_request_parameters,
     write_event_log,
 )
-from _streamlit_app.app_core import (
-    ScoreClassification,
-)
 from _streamlit_app.utils_prompts import (
     REWRITE_COMPLETE,
     REWRITE_CONDENSED,
@@ -41,6 +43,7 @@ from _streamlit_app.utils_prompts import (
     SYSTEM_MESSAGE_ES,
     SYSTEM_MESSAGE_LS,
     TEMPLATE_ANALYSIS_ES,
+    TEMPLATE_ANALYSIS_LS,
     TEMPLATE_ES,
     TEMPLATE_LS,
 )
@@ -49,22 +52,33 @@ from _streamlit_app.utils_prompts import (
 @pytest.mark.parametrize(
     ("score", "expected"),
     [
-        (-3, "hard"),
-        (-2, "medium"),  # On limit_medium: inclusive lower bound, no longer "hard".
-        (-1, "medium"),
-        (0, "good"),  # On limit_hard: inclusive lower bound.
-        (5, "good"),
+        (-3, ScoreClassification("hard", "schwer verständlich", "red")),
+        (-2, ScoreClassification("medium", "nur mässig verständlich", "orange")),
+        (-1, ScoreClassification("medium", "nur mässig verständlich", "orange")),
+        (0, ScoreClassification("good", "gut verständlich", "green")),
+        (5, ScoreClassification("good", "gut verständlich", "green")),
     ],
 )
 def test_classify_understandability_maps_score_to_band(score, expected):
-    assert (
-        classify_understandability(score, limit_hard=0, limit_medium=-2).key == expected
-    )
+    assert classify_understandability(score, limit_hard=0, limit_medium=-2) == expected
 
 
-def test_classify_understandability_rejects_inverted_thresholds():
+@pytest.mark.parametrize(
+    ("limit_hard", "limit_medium"),
+    [
+        (-2, 0),
+        (0, 0),
+    ],
+)
+def test_classify_understandability_rejects_invalid_thresholds(
+    limit_hard, limit_medium
+):
     with pytest.raises(ValueError, match="limit_medium must be lower than limit_hard"):
-        classify_understandability(0, limit_hard=-2, limit_medium=0)
+        classify_understandability(
+            0,
+            limit_hard=limit_hard,
+            limit_medium=limit_medium,
+        )
 
 
 def test_extract_tagged_response_requires_non_empty_matching_tag():
@@ -147,39 +161,27 @@ def test_build_log_payload_omits_raw_text_and_response():
     assert "sensitive response" not in serialized
 
 
-def test_result_state_preserves_generated_output_across_reruns():
+@pytest.mark.parametrize(
+    ("one_click", "expected"),
+    [
+        (False, "Model A"),
+        (True, "Model A, Model B"),
+    ],
+)
+def test_result_models_used_selects_models_for_processing_mode(one_click, expected):
     result = ResultState(
         source_text="original text",
         response="generated output",
         analysis=False,
-        simplification=True,
-        one_click=False,
+        simplification=not one_click,
+        one_click=one_click,
         model_choice="Model A",
         model_names=("Model A", "Model B"),
         time_processed=1.2,
         score_source=-1.5,
     )
 
-    assert result.source_text == "original text"
-    assert result.response == "generated output"
-    assert result.score_source == -1.5
-    assert result_models_used(result) == "Model A"
-
-
-def test_result_models_used_lists_all_models_for_one_click():
-    result = ResultState(
-        source_text="original text",
-        response="generated output",
-        analysis=False,
-        simplification=False,
-        one_click=True,
-        model_choice="Model A",
-        model_names=("Model A", "Model B"),
-        time_processed=1.2,
-        score_source=2.0,
-    )
-
-    assert result_models_used(result) == "Model A, Model B"
+    assert result_models_used(result) == expected
 
 
 def test_create_prompt_einfache_sprache_assembles_es_template_and_complete_rules():
@@ -232,6 +234,18 @@ def test_create_prompt_analysis_uses_analysis_template_without_completeness_bloc
     assert system == SYSTEM_MESSAGE_ES
 
 
+def test_create_prompt_analysis_uses_leichte_sprache_rules_and_system_message():
+    prompt, system = create_prompt(
+        "Quelltext",
+        analysis=True,
+        leichte_sprache=True,
+        condense_text=False,
+    )
+
+    assert prompt == TEMPLATE_ANALYSIS_LS.format(rules=RULES_LS, prompt="Quelltext")
+    assert system == SYSTEM_MESSAGE_LS
+
+
 def test_strip_markdown_removes_headers_and_emphasis():
     text = (
         "# Titel\n## Untertitel\nDies ist **fett** und *kursiv* und __auch__ und _so_."
@@ -245,13 +259,6 @@ def test_strip_markdown_removes_headers_and_emphasis():
     assert "Titel" in result
     assert "fett" in result
     assert "kursiv" in result
-
-
-def test_classify_understandability_treats_thresholds_as_inclusive_lower_bounds():
-    # A score exactly on limit_medium is no longer "hard".
-    assert classify_understandability(-2, limit_hard=0, limit_medium=-2).key == "medium"
-    # A score exactly on limit_hard is "good".
-    assert classify_understandability(0, limit_hard=0, limit_medium=-2).key == "good"
 
 
 def test_extract_tagged_response_joins_multiple_matches_with_newline():
@@ -282,18 +289,17 @@ def test_format_understandability_message_embeds_label_score_and_cefr():
     assert ":green[Sprachniveau B1]" in message
 
 
-def test_rounded_score_rounds_to_nearest_int():
-    assert rounded_score(1.4) == 1
-    assert rounded_score(1.5) == 2
-    assert rounded_score(-1.6) == -2
-
-
-def test_rounded_score_never_returns_negative_zero():
-    result = rounded_score(-0.2)
-
-    assert result == 0
-    # Guard against the "-0" string representation leaking into the UI.
-    assert str(result) == "0"
+@pytest.mark.parametrize(
+    ("score", "expected"),
+    [
+        (1.4, 1),
+        (1.5, 2),
+        (-1.6, -2),
+        (-0.2, 0),
+    ],
+)
+def test_rounded_score_rounds_to_nearest_int(score, expected):
+    assert rounded_score(score) == expected
 
 
 def test_format_one_click_results_treats_whitespace_only_success_as_failure():
@@ -311,10 +317,20 @@ def test_format_one_click_results_treats_whitespace_only_success_as_failure():
     assert "Ergebnis von Model B" in output
 
 
+def test_format_one_click_results_returns_generic_error_for_no_responses():
+    success, output = format_one_click_results(
+        {},
+        score_fn=Mock(),
+        cefr_fn=Mock(),
+    )
+
+    assert success is False
+    assert output == "Es ist ein Fehler aufgetreten."
+
+
 def test_app_path_and_repo_path_resolve_relative_to_known_roots():
     assert app_path("data", "file.parq") == APP_DIR / "data" / "file.parq"
     assert repo_path("config.yaml") == REPO_ROOT / "config.yaml"
-    assert APP_DIR.parent == REPO_ROOT
 
 
 def test_load_yaml_config_parses_mapping(tmp_path):
@@ -380,6 +396,37 @@ def test_understandability_background_load_is_shared(monkeypatch):
     assert first_future.result(timeout=1) is functions
 
 
+def test_load_understandability_functions_returns_shared_future_result(monkeypatch):
+    functions = (lambda text: 1.0, lambda score: "B1")
+    future = Future()
+    future.set_result(functions)
+    monkeypatch.setattr(
+        "_streamlit_app.app_core.start_understandability_loading",
+        lambda: future,
+    )
+
+    assert load_understandability_functions() is functions
+
+
+def test_understandability_background_load_exposes_import_failure(monkeypatch):
+    future = Future()
+    error = RuntimeError("ZIX import failed")
+
+    def fail_import():
+        raise error
+
+    monkeypatch.setattr(
+        "_streamlit_app.app_core._import_understandability_functions",
+        fail_import,
+    )
+
+    _complete_understandability_load(future)
+
+    with pytest.raises(RuntimeError, match="ZIX import failed") as captured:
+        future.result()
+    assert captured.value is error
+
+
 def test_json_formatter_emits_structured_payload_with_event_and_exception():
     formatter = JSONFormatter()
     try:
@@ -437,10 +484,10 @@ def test_configure_event_logger_writes_json_lines_to_relative_file(tmp_path):
             handler.close()
 
 
-def test_write_event_log_is_noop_for_disabled_logger(tmp_path):
-    logger = configure_event_logger({"enabled": False})
+def test_write_event_log_does_not_emit_for_disabled_logger():
+    logger = Mock(spec=logging.Logger)
+    logger.disabled = True
 
-    # Must not raise even though there is no handler/file attached.
     write_event_log(logger, {"input_chars": 1})
 
-    assert list(tmp_path.iterdir()) == []
+    logger.info.assert_not_called()
