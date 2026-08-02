@@ -2192,7 +2192,7 @@ wheels = [
 [[package]]
 name = "zix"
 version = "0.2.1"
-source = { git = "https://github.com/machinelearningZH/zix_understandability-index#e9c74b20c8562aee0952e86cacf74e5df80c0c1d" }
+source = { git = "https://github.com/machinelearningZH/zix_understandability-index#dd8cf94328be61679d4d6c4470591afb624651ed" }
 dependencies = [
     { name = "de-core-news-sm" },
     { name = "numpy" },
