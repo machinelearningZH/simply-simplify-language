@@ -10,7 +10,7 @@
 # Note also that Claude models prefer XML tags for structuring whereas OpenAI models prefer Markdown (used here) or JSON.
 # We use the Claude prompt structure for Mistral with good success. Feel free to adjust the structure to your needs.
 
-SAMPLE_TEXT = """Als Vernehmlassungsverfahren wird diejenige Phase innerhalb des Vorverfahrens der Gesetzgebung bezeichnet, in der Vorhaben des Bundes von erheblicher politischer, finanzieller, wirtschaftlicher, ökologischer, sozialer oder kultureller Tragweite auf ihre sachliche Richtigkeit, Vollzugstauglichkeit und Akzeptanz hin geprüft werden. 
+SAMPLE_TEXT = """Als Vernehmlassungsverfahren wird diejenige Phase innerhalb des Vorverfahrens der Gesetzgebung bezeichnet, in der Vorhaben des Bundes von erheblicher politischer, finanzieller, wirtschaftlicher, ökologischer, sozialer oder kultureller Tragweite auf ihre sachliche Richtigkeit, Vollzugstauglichkeit und Akzeptanz hin geprüft werden.
 
 Die Vorlage wird zu diesem Zweck den Kantonen, den in der Bundesversammlung vertretenen Parteien, den Dachverbänden der Gemeinden, Städte und der Berggebiete, den Dachverbänden der Wirtschaft sowie weiteren, im Einzelfall interessierten Kreisen unterbreitet."""
 
@@ -30,13 +30,13 @@ RULES_ES = """
 - Wenn zwei Wörter dasselbe bedeuten, verwende das kürzere und einfachere Wort.
 - Vermeide Füllwörter und unnötige Wiederholungen.
 - Erkläre Fachbegriffe und Fremdwörter.
-- Schreibe immer einfach, direkt und klar. Vermeide komplizierte Konstruktionen und veraltete Begriffe. Vermeide «Behördendeutsch». 
+- Schreibe immer einfach, direkt und klar. Vermeide komplizierte Konstruktionen und veraltete Begriffe. Vermeide «Behördendeutsch».
 - Benenne Gleiches immer gleich. Verwende für denselben Begriff, Gegenstand oder Sachverhalt immer dieselbe Bezeichnung. Wiederholungen von Begriffen sind in Texten in Einfacher Sprache normal.
 - Vermeide Substantivierungen. Verwende stattdessen Verben und Adjektive.
 - Vermeide Adjektive und Adverbien, wenn sie nicht unbedingt notwendig sind.
 - Wenn du vier oder mehr Wörter zusammensetzt, setzt du Bindestriche. Beispiel: «Motorfahrzeug-Ausweispflicht».
 - Achte auf die sprachliche Gleichbehandlung von Mann und Frau. Verwende immer beide Geschlechter oder schreibe geschlechtsneutral.
-- Vermeide Abkürzungen grundsätzlich. Schreibe stattdessen die Wörter aus. Z.B. «10 Millionen» statt «10 Mio.», «200 Kilometer pro Stunde» statt «200 km/h», «zum Beispiel» statt «z.B.», «30 Prozent» statt «30 %», «2 Meter» statt «2 m», «das heisst» statt «d.h.». 
+- Vermeide Abkürzungen grundsätzlich. Schreibe stattdessen die Wörter aus. Z.B. «10 Millionen» statt «10 Mio.», «200 Kilometer pro Stunde» statt «200 km/h», «zum Beispiel» statt «z.B.», «30 Prozent» statt «30 %», «2 Meter» statt «2 m», «das heisst» statt «d.h.».
 - Vermeide das stumme «e» am Wortende, wenn es nicht unbedingt notwendig ist. Zum Beispiel: «des Fahrzeugs» statt «des Fahrzeuges».
 - Verwende immer französische Anführungszeichen (« ») anstelle von deutschen Anführungszeichen („ “).
 - Gliedere Telefonnummern mit vier Leerzeichen. Z.B. 044 123 45 67. Den alten Stil mit Schrägstrich (044/123 45 67) und die Vorwahl-Null in Klammern verwendest du NIE.
@@ -56,26 +56,26 @@ RULES_ES = """
 
 RULES_LS = """
 - Schreibe wichtiges zuerst: Beginne den Text mit den wichtigsten Informationen, so dass diese sofort klar werden.
-- Verwende einfache, kurze, häufig gebräuchliche Wörter. 
-- Löse zusammengesetzte Wörter auf und formuliere sie neu. 
+- Verwende einfache, kurze, häufig gebräuchliche Wörter.
+- Löse zusammengesetzte Wörter auf und formuliere sie neu.
 - Wenn es wichtige Gründe gibt, ein zusammengesetztes Wort nicht aufzulösen, trenne das zusammengesetzte Wort mit einem Bindestrich. Beginne dann jedes Wort mit einem Grossbuchstaben. Beispiele: «Auto-Service», «Gegen-Argument», «Kinder-Betreuung», «Volks-Abstimmung».
-- Vermeide Fremdwörter. Wähle stattdessen einfache, allgemein bekannte Wörter. Erkläre Fremdwörter, wenn sie unvermeidbar sind. 
+- Vermeide Fremdwörter. Wähle stattdessen einfache, allgemein bekannte Wörter. Erkläre Fremdwörter, wenn sie unvermeidbar sind.
 - Vermeide Fachbegriffe. Wähle stattdessen einfache, allgemein bekannte Wörter. Erkläre Fachbegriffe, wenn sie unvermeidbar sind.
 - Vermeide bildliche Sprache. Verwende keine Metaphern oder Redewendungen. Schreibe stattdessen klar und direkt.
 - Schreibe kurze Sätze mit optimal 8 und höchstens 12 Wörtern.
-- Du darfst Relativsätze mit «der», «die», «das» verwenden. 
-- Löse Nebensätze nach folgenden Regeln auf: 
+- Du darfst Relativsätze mit «der», «die», «das» verwenden.
+- Löse Nebensätze nach folgenden Regeln auf:
     - Kausalsätze (weil, da): Löse Kausalsätze als zwei Hauptsätze mit «deshalb» auf.
     - Konditionalsätze (wenn, falls): Löse Konditionalsätze als zwei Hauptsätze mit «vielleicht» auf.
     - Finalsätze (damit, dass): Löse Finalsätze als zwei Hauptsätze mit «deshalb» auf.
     - Konzessivsätze (obwohl, obgleich, wenngleich, auch wenn): Löse Konzessivsätze als zwei Hauptsätze mit «trotzdem» auf.
-    - Temporalsätze (als, während, bevor, nachdem, sobald, seit): Löse Temporalsätze als einzelne chronologische Sätze auf. Wenn es passt, verknüpfe diese mit «dann». 
+    - Temporalsätze (als, während, bevor, nachdem, sobald, seit): Löse Temporalsätze als einzelne chronologische Sätze auf. Wenn es passt, verknüpfe diese mit «dann».
     - Adversativsätze (aber, doch, jedoch, allerdings, sondern, allein): Löse Adversativsätze als zwei Hauptsätze mit «aber» auf.
     - Modalsätze (indem, dadurch dass): Löse Modalsätze als zwei Hauptsätze auf. Z.B. Alltagssprache: Er lernt besser, indem er regelmässig übt. Leichte Sprache: Er lernt besser. Er übt regelmässig.
     - Konsekutivsätze (so dass, sodass): Löse Konsekutivsätze als zwei Hauptsätze auf. Z.B. Alltagssprache: Er ist krank, sodass er nicht arbeiten konnte. Leichte Sprache: Er ist krank. Er konnte nicht arbeiten.
     - Relativsätze mit «welcher», «welche», «welches»: Löse solche Relativsätze als zwei Hauptsätze auf. Z.B. Alltagssprache: Das Auto, welches rot ist, steht vor dem Haus. Leichte Sprache: Das Auto ist rot. Das Auto steht vor dem Haus.
     - Ob-Sätze: Schreibe Ob-Sätze als zwei Hauptsätze. Z.B. Alltagssprache: Er fragt, ob es schönes Wetter wird. Leichte Sprache: Er fragt: Wird es schönes Wetter?
-- Verwende aktive Sprache anstelle von Passiv. 
+- Verwende aktive Sprache anstelle von Passiv.
 - Benutze den Genitiv nur in einfachen Fällen. Verwende stattdessen die Präposition "von" und den Dativ.
 - Vermeide das stumme «e» am Wortende, wenn es nicht unbedingt notwendig ist. Zum Beispiel: «des Fahrzeugs» statt «des Fahrzeuges».
 - Bevorzuge die Vorgegenwart (Perfekt). Vermeide die Vergangenheitsform (Präteritum), wenn möglich. Verwende das Präteritum nur bei den Hilfsverben (sein, haben, werden) und bei Modalverben (können, müssen, sollen, wollen, mögen, dürfen).
@@ -114,7 +114,7 @@ REWRITE_CONDENSED = """- Konzentriere dich auf das Wichtigste. Gib die essenziel
 
 
 TEMPLATE_ES = """
-Du bekommst einen schwer verständlichen Text, den du vollständig in Einfache Sprache auf Sprachniveau B1 bis A2 umschreiben sollst. 
+Du bekommst einen schwer verständlichen Text, den du vollständig in Einfache Sprache auf Sprachniveau B1 bis A2 umschreiben sollst.
 
 Beachte dabei folgende Regeln:
 
@@ -131,7 +131,7 @@ Hier ist der schwer verständliche Text:
 """.strip()
 
 TEMPLATE_LS = """
-Du bekommst einen schwer verständlichen Text, den du vollständig in Leichte Sprache auf Sprachniveau A2 bis A1 umschreiben sollst. 
+Du bekommst einen schwer verständlichen Text, den du vollständig in Leichte Sprache auf Sprachniveau A2 bis A1 umschreiben sollst.
 
 Beachte dabei folgende Regeln:
 
@@ -148,17 +148,17 @@ Hier ist der schwer verständliche Text:
 """.strip()
 
 TEMPLATE_ANALYSIS_ES = """
-Du bekommst einen schwer verständlichen Text, den du genau analysieren sollst. 
+Du bekommst einen schwer verständlichen Text, den du genau analysieren sollst.
 
-Analysiere den schwer verständlichen Text Satz für Satz. Beschreibe genau und detailliert, was sprachlich nicht gut bei jedem Satz ist. Analysiere was ich tun müsste, damit der Text zu Einfache Sprache (B1 bis A2) wird. Gib klare Hinweise, wie ich den Text besser verständlich machen kann. Gehe bei deiner Analyse Schritt für Schritt vor. 
+Analysiere den schwer verständlichen Text Satz für Satz. Beschreibe genau und detailliert, was sprachlich nicht gut bei jedem Satz ist. Analysiere was ich tun müsste, damit der Text zu Einfache Sprache (B1 bis A2) wird. Gib klare Hinweise, wie ich den Text besser verständlich machen kann. Gehe bei deiner Analyse Schritt für Schritt vor.
 
-1. Wiederhole den Satz. 
+1. Wiederhole den Satz.
 2. Analysiere den Satz auf seine Verständlichkeit. Was muss ich tun, damit der Satz verständlicher wird? Wie kann ich den Satz in Einfache Sprache formulieren?
-3. Mache einen Vorschlag für einen vereinfachten Satz. 
+3. Mache einen Vorschlag für einen vereinfachten Satz.
 
-Befolge diesen Ablauf von Anfang bis Ende, auch wenn der schwer verständliche Text sehr lang ist. 
+Befolge diesen Ablauf von Anfang bis Ende, auch wenn der schwer verständliche Text sehr lang ist.
 
-Die Regeln für Einfache Sprache sind diese hier: 
+Die Regeln für Einfache Sprache sind diese hier:
 
 {rules}
 
@@ -174,13 +174,13 @@ Hier ist der schwer verständliche Text:
 TEMPLATE_ANALYSIS_LS = """
 Du bekommst einen schwer verständlichen Text, den du genau analysieren sollst.
 
-Analysiere den schwer verständlichen Text Satz für Satz. Beschreibe genau und detailliert, was sprachlich nicht gut bei jedem Satz ist. Analysiere was ich tun müsste, damit der Text zu Leichte Sprache (A2 bis A1) wird. Gib klare Hinweise, wie ich den Text besser verständlich machen kann. Gehe bei deiner Analyse Schritt für Schritt vor. 
+Analysiere den schwer verständlichen Text Satz für Satz. Beschreibe genau und detailliert, was sprachlich nicht gut bei jedem Satz ist. Analysiere was ich tun müsste, damit der Text zu Leichte Sprache (A2 bis A1) wird. Gib klare Hinweise, wie ich den Text besser verständlich machen kann. Gehe bei deiner Analyse Schritt für Schritt vor.
 
-1. Wiederhole den Satz. 
+1. Wiederhole den Satz.
 2. Analysiere den Satz auf seine Verständlichkeit. Was muss ich tun, damit der Satz verständlicher wird? Wie kann ich den Satz in Leichte Sprache formulieren?
-3. Mache einen Vorschlag für einen vereinfachten Satz. 
+3. Mache einen Vorschlag für einen vereinfachten Satz.
 
-Befolge diesen Ablauf von Anfang bis Ende, auch wenn der schwer verständliche Text sehr lang ist. 
+Befolge diesen Ablauf von Anfang bis Ende, auch wenn der schwer verständliche Text sehr lang ist.
 
 Die Regeln für Leichte Sprache sind diese hier:
 

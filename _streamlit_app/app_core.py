@@ -1,12 +1,12 @@
 import json
 import logging
 import re
+from collections.abc import Callable
 from concurrent.futures import Future
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from threading import Lock, Thread
-from typing import Callable
 
 import yaml
 

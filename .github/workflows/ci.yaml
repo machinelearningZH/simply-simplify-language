@@ -1,60 +1,116 @@
 name: CI
 
 on:
-  pull_request:
   push:
-    branches:
-      - main
+    branches: [main]
+  pull_request:
 
 permissions:
   contents: read
 
 concurrency:
-  group: ci-${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
-  quality:
-    name: Quality and container smoke test
+  pre-commit:
+    name: Pre-commit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: "0.12.1"
+          python-version: "3.12"
+          enable-cache: true
+
+      - name: Install project
+        run: uv sync --locked --all-groups
+
+      - name: Run pre-commit
+        run: uv run pre-commit run --all-files
+
+  tests:
+    name: Tests (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.14"]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: "0.12.1"
+          python-version: ${{ matrix.python-version }}
+          enable-cache: true
+
+      - name: Install project
+        run: uv sync --locked --all-groups
+
+      - name: Run tests
+        run: uv run pytest -q
+
+  secret-history:
+    name: Secret history
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout complete history
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: "0.12.1"
+          python-version: "3.12"
+          enable-cache: true
+
+      - name: Install project
+        run: uv sync --locked --all-groups
+
+      - name: Scan Git history
+        run: uv run pre-commit run gitleaks-history --hook-stage manual --all-files
+
+  container:
+    name: Container
     runs-on: ubuntu-24.04
     timeout-minutes: 30
 
     steps:
-      - name: Check out repository
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Install uv
-        uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990 # v8.3.2
-        with:
-          version: "0.11.23"
-          enable-cache: false
-
-      - name: Install Python
-        run: uv python install 3.12
-
-      - name: Install locked dependencies
-        run: uv sync --locked
-
-      - name: Run quality checks
-        run: make check
-
-      - name: Build image
-        run: docker build --tag simply-simplify-language:ci .
+      - name: Validate and build container
+        run: bash scripts/validate-container.sh
+        env:
+          REQUIRE_CONTAINER_BUILD: "1"
 
       - name: Start container
-        run: |
-          docker run --detach \
-            --name simply-simplify-language-ci \
-            simply-simplify-language:ci
+        run: docker run --detach --name simply-simplify-language-ci local/simply-simplify-language:validation
 
       - name: Wait for healthy container
+        shell: bash
         run: |
           for attempt in {1..24}; do
             health="$(docker inspect --format '{{.State.Health.Status}}' simply-simplify-language-ci)"
-            if [ "$health" = "healthy" ]; then
+            if [[ "${health}" == "healthy" ]]; then
               exit 0
             fi
-            if [ "$health" = "unhealthy" ]; then
+            if [[ "${health}" == "unhealthy" ]]; then
               docker logs simply-simplify-language-ci
               exit 1
             fi
@@ -64,6 +120,14 @@ jobs:
           docker logs simply-simplify-language-ci
           echo "Container did not become healthy in time" >&2
           exit 1
+
+      - name: Scan container image
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: local/simply-simplify-language:validation
+          format: table
+          exit-code: "1"
+          severity: HIGH,CRITICAL
 
       - name: Clean up container
         if: always()

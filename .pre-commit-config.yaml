@@ -1,0 +1,82 @@
+default_language_version:
+  python: python3.12
+
+default_install_hook_types:
+  - pre-commit
+  - pre-push
+
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: 39d9ac5938dadb73df0564a45f163e25ff9fa6e2  # v0.16.1
+    hooks:
+      - id: ruff
+        name: ruff-lint
+        args: [--fix, --exit-non-zero-on-fix]
+      - id: ruff-format
+        name: ruff-format
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c  # v6.0.0
+    hooks:
+      - id: check-yaml
+      - id: check-json
+      - id: check-added-large-files
+        args: ["--maxkb=1000"]
+      - id: detect-private-key
+      - id: end-of-file-fixer
+        exclude: ^\.agents/
+      - id: trailing-whitespace
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: mixed-line-ending
+
+  - repo: https://github.com/abravalheri/validate-pyproject
+    rev: 78f5e0f104cfa803d0597eaa924b4de3becd3e3e  # v0.24.1
+    hooks:
+      - id: validate-pyproject
+
+  - repo: https://github.com/codespell-project/codespell
+    rev: 63c8f8312b7559622c0d82815639671ae42132ac  # v2.4.1
+    hooks:
+      - id: codespell
+        additional_dependencies: []
+        args: ["-L", "nd,ist"]
+        exclude: ^(_streamlit_app/(sprache-vereinfachen\.py|utils_expander\.md|utils_prompts\.py)|config\.yaml|tests/test_app_core\.py)$
+
+  - repo: https://github.com/PyCQA/bandit
+    rev: 2d0b675b04c80ae42277e10500db06a0a37bae17  # 1.8.6
+    hooks:
+      - id: bandit
+        args: ["-q"]
+        exclude: ^tests/
+
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: 83d9cd684c87d95d656c1458ef04895a7f1cbd8e  # v8.30.1
+    hooks:
+      - id: gitleaks
+      - id: gitleaks
+        alias: gitleaks-history
+        name: Detect secrets in Git history
+        entry: gitleaks git --redact --verbose
+        stages: [manual]
+
+  - repo: local
+    hooks:
+      - id: uv-lock-check
+        name: uv-lock-check
+        entry: bash -c 'uv lock --locked >/dev/null'
+        language: system
+        pass_filenames: false
+        files: ^pyproject\.toml$
+      - id: pytest
+        name: pytest
+        entry: uv run pytest -q
+        language: system
+        pass_filenames: false
+        stages: [pre-push]
+      - id: container-validation
+        name: container-validation
+        entry: bash scripts/validate-container.sh
+        language: system
+        pass_filenames: false
+        stages: [pre-push]

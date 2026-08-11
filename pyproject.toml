@@ -22,13 +22,15 @@ dependencies = [
 exclude-newer = "7 days"
 
 [tool.ruff.lint]
-ignore = ["E402"]
+select = ["B", "E", "F", "I", "RUF", "UP"]
+ignore = ["E402", "E501"]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
 
 [dependency-groups]
 dev = [
+    "pre-commit>=4.2.0",
     "pytest>=9.0.3",
     "ruff>=0.15.12",
 ]

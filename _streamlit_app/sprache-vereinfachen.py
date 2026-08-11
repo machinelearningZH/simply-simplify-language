@@ -12,8 +12,6 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 
-from dotenv import load_dotenv
-
 from app_core import (
     APP_DIR,
     ResultState,
@@ -37,6 +35,7 @@ from app_core import (
     temperature_request_parameters,
     write_event_log,
 )
+from dotenv import load_dotenv
 from utils_prompts import SAMPLE_TEXT
 
 # ---------------------------------------------------------------
