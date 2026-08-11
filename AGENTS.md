@@ -1,6 +1,6 @@
 # AGENTS Guidelines (Python)
 
-Defaults for agent-assisted Python projects managed with `uv`. Required rules apply throughout; Preferred Stack entries apply only when that capability is needed.
+Instructions for AI agents working on Python projects managed with `uv`. Apply only sections relevant to the task; preserve established project choices unless a migration is requested.
 
 ## Priority
 
@@ -9,132 +9,112 @@ When instructions conflict, follow:
 1. Safety and security constraints
 2. User request
 3. This file
-4. Existing repo patterns
+4. Existing repository patterns
 
-Briefly flag contradictions to the user, naming the conflicting instructions, the priority applied, and any effect on the task.
+Briefly report any conflict, the rule applied, and its effect.
 
-## Required Process
+## Working Process
 
-- **Scope**: Work only inside this repo and change only task-relevant files. Do not alter unrelated code, comments, or logic; report unrelated issues separately.
-- **Approvals**: Ask before adding dependencies, installing packages, fetching external resources, or calling external services. `uv sync` is pre-approved only for dependencies already declared here.
-- **Assumptions**: Surface inconsistencies, ambiguity, and risky trade-offs; ask when clarification is necessary. Challenge unsafe or unsound requests with concrete alternatives.
-- **Simplicity**: Prefer small, explicit, maintainable changes that satisfy the request without over-engineering.
-- **Cleanup**: Remove dead code, temporary files, and development artifacts created by the work. Release resources with context managers or appropriate cleanup handlers.
-- **Artifacts**: Keep large datasets, generated outputs, and caches out of git unless intentionally versioned.
-- **Before finishing**: Confirm assumptions, simplicity, scope, validation, and any trade-offs worth reporting.
-- **Durable memory**: Record non-obvious root causes, failed approaches, confirmed constraints, refactoring risks, and decisions in `NOTES.md`. Track open tasks, questions, deferred ideas, and follow-ups in `PLAN.md`. Update either file only when the information is durable and useful; avoid step logs.
+- **Scope:** Work only in this repository and change only task-relevant files. Preserve unrelated code and user changes; report unrelated issues separately.
+- **Approval:** Ask before adding or installing dependencies, fetching external resources, or calling external services. `uv sync` is pre-approved only for already-declared dependencies.
+- **Judgment:** Surface inconsistencies, ambiguity, and material risks. Ask only when a safe, reasonable assumption cannot resolve them; challenge unsafe requests with a concrete alternative.
+- **Implementation:** Prefer the smallest explicit, maintainable solution. Avoid speculative features, shallow abstractions, and unrelated cleanup.
+- **Cleanup:** Remove temporary files, caches, dead code, and development artifacts created by the task. Release resources with context managers or cleanup handlers. Keep large data and generated outputs out of Git unless intentionally versioned.
+- **Memory:** Put durable findings (non-obvious root causes, failed approaches, confirmed constraints, refactoring risks, decisions) in `NOTES.md`; put open tasks, questions, and deferred work in `PLAN.md`. Do not write step logs or update either file without lasting value.
+- **Completion:** Inspect the final diff, confirm scope and assumptions, run proportionate validation, and report results and trade-offs. Do not claim success without evidence.
 
-## Security
+## Security and Data Protection
 
-- Treat security as a design constraint. Minimize data, network, permission, and dependency exposure.
-- Never hardcode or commit secrets, tokens, credentials, private keys, personal data, or sensitive operational data. Store secrets in `.env`, load them with `python-dotenv`, and redact sensitive values from logs, errors, fixtures, documentation, and examples.
-- Validate and constrain untrusted inputs at boundaries: CLI args, config files, uploaded files, HTTP responses, model outputs, scraped content, and user-provided paths.
+- Treat security and data protection as design constraints. Minimize data, network, permission, and dependency access; default application privacy settings to the most restrictive option and require explicit opt-in for broader access.
+- Never hardcode or commit secrets, tokens, credentials, private keys, personal data, or sensitive operational data. Put secrets in `.env`, load them with `python-dotenv`, keep `.env` ignored, and redact sensitive values from logs, errors, fixtures, examples, and documentation.
+- Validate and constrain all untrusted inputs at boundaries, including CLI/config values, paths, uploads, HTTP responses, model output, and scraped content.
 - Do not use `eval`, `exec`, unsafe deserialization, unchecked downloads, or dynamic imports on untrusted input. Prevent shell injection and path traversal.
-- Before adding dependencies or external services, consider supply-chain risk, maintenance status, license fit, and whether the standard library or an existing dependency is enough.
-- If you find a security issue, stop broad changes, document the risk, and propose the smallest focused fix. Keep security changes separate from unrelated refactors.
+- Before proposing a dependency or service, assess supply-chain risk, maintenance, license fit, and whether the standard library or an existing dependency suffices.
+- Pin every GitHub Action `uses:` reference to a full commit SHA; a version comment may document the corresponding release.
+- Keep automated dependency monitoring enabled for every project and container scanning enabled for containerized projects.
+- If a security issue is found, stop broad work, document the risk, and propose the smallest focused fix. Keep security changes visible and separate from unrelated refactors.
 
-## Python and Dependency Management
+## Python and Dependencies
 
-- Prefer Python 3.13 for new projects when dependencies permit. Preserve the supported range declared in `pyproject.toml` unless the task explicitly changes it.
-- Use `uv` exclusively for Python environments, dependencies, and commands. Do not run `python`, `pip`, `pytest`, or `ruff` directly or create environments with other tools.
-- Use `uv sync`, `uv add [--dev] <package>`, `uv sync --upgrade-package <package>`, and `uv run <command>`. Run `uv sync` after dependency or lockfile changes.
-- Import only packages declared in `pyproject.toml`. Put runtime dependencies in
-  `[project].dependencies` and development tools in `[dependency-groups].dev`.
-- Keep `[tool.uv] exclude-newer = "7 days"` so dependency resolution uses packages at least seven days old.
-- Preferred-stack packages below are recommendations, not available code, until declared.
-- For new projects, prefer a `src/<project_name>/` layout with tests under `tests/`; preserve an established layout unless migration is in scope. Separate unit and integration tests where useful, and define operational scripts in `[project.scripts]`.
-- Install repository pre-commit hooks with `uv run pre-commit install` before the first commit.
+- Target Python 3.13 for new projects when dependencies permit. Preserve the supported range in `pyproject.toml` unless the task changes it.
+- Use `uv` exclusively for environments, dependencies, and Python commands. Use `uv sync`, `uv add [--dev] <package>`, `uv sync --upgrade-package <package>`, and `uv run <command>`; never run `python`, `pip`, `pytest`, or `ruff` directly. Run `uv sync` after dependency or lockfile changes.
+- Import only declared packages. Put runtime dependencies in `[project].dependencies`, development tools in `[dependency-groups].dev`, and operational commands in `[project.scripts]`.
+- Preserve `[tool.uv] exclude-newer = "7 days"` so newly published packages observe the supply-chain cooldown.
+- For new projects, use `src/<project_name>/` with mirrored tests under `tests/`; preserve existing layouts unless migration is in scope. Separate unit and integration tests when useful.
+- Preferred packages are not available until declared. Obtain approval before `uv add`.
+- Install repository hooks with `uv run pre-commit install` before the first commit.
 
-## Python Standards and Style
+## Python Design and Style
 
-- **Types**: Use modern syntax: `list[str]`, `X | None`, `Self`; no `typing.List`.
-- **Data**: Use `dataclasses` or `TypedDict`.
-- **Paths**: Use `pathlib.Path`.
-- **Errors**: Raise/catch specific exceptions with clear messages; no bare `except:`.
-- **Formatting**: Use f-strings, including `f"{var=}"` when useful.
-- **Public/non-trivial APIs**: Add type hints.
+- Follow PEP 8 and repository Ruff settings (default maximum line length: 100). Use four-space indentation and conventional `snake_case`, `PascalCase`, `UPPER_CASE`, and lowercase module names.
+- Add type hints, including return types, to all new functions and methods. Use modern syntax (`list[str]`, `X | None`, `Self`), never legacy `typing.List` forms.
+- Use Pydantic models for validated API/config/external data, dataclasses for internal data containers, and `TypedDict` for typed mappings that do not need runtime validation. Prefer `frozen=True` and `slots=True` for immutable dataclasses; use `kw_only=True` when many fields make positional construction unclear.
+- Prefer functions for stateless behavior and classes for state or interfaces. Use `Protocol` for structural contracts and `ABC` only for shared implementation or enforced inheritance.
+- Use receive-an-object/return-an-object when parameters or results are numerous, optional, evolving, or form a meaningful domain concept; do not add wrapper types to simple APIs.
+- Keep functions focused and side effects explicit. Prefer `pathlib.Path`, f-strings, guard clauses, comprehensions for simple transformations, `enumerate`, `zip`, unpacking, and context managers when they improve clarity. Avoid wildcard imports and mutable defaults.
+- Redesign interfaces to eliminate avoidable failure states. Otherwise raise/catch specific exceptions with clear messages, chain translated exceptions with `raise ... from error`, and never silently suppress errors or log an exception merely to re-raise it.
+- Use async I/O when concurrency is beneficial; do not block inside `async def`. Keep CPU-bound work synchronous or move it to an appropriate executor. Run independent async operations concurrently rather than awaiting them serially.
+- Use internal constants for invariants, `Enum`/`StrEnum` for related typed constants, and configuration for operator choices.
 
-## Configuration
+## Architecture and APIs
 
-- Put operator-tunable runtime settings in `config.yaml`, loaded with `pyyaml` when needed: model names, temperatures, token limits, timeouts, retries, endpoints, paths, feature flags, and thresholds. Keep implementation constants and invariants in code.
-- Keep package, lint, format, and test configuration in `pyproject.toml` or the tool's native config file, not `config.yaml`.
+- Favor deep modules and high locality: keep related validation, transformation, persistence, errors, and domain rules behind small stable interfaces. Avoid pass-through layers, scattered concepts, metaclasses, dynamic attribute generation, and hidden registration.
+- Decouple at real boundaries: external services, storage, UI, configuration, and independently testable domain behavior. Configuration controls deployment choices, not business logic.
+- For platform applications, preserve the component boundary: model services (level 1) and shared processing (level 2) are called through orchestration workflows (level 3); application stacks (level 4) must not bypass orchestration to call lower levels directly.
+- Separate frontend interaction from backend application logic. When an HTTP API is needed, prefer FastAPI; expose only interfaces appropriate to the use case (web, API, MCP, or CLI).
+- In FastAPI, validate boundaries with Pydantic; keep request and response models distinct; group small domain routers; inject services/resources; use consistent error bodies and appropriate HTTP status codes.
+- Applications that handle persistent data use a database/object store rather than ad hoc local-file persistence. Ingest files as controlled application-owned copies instead of reading live upstream files on every request.
 
-## Logging
+## Configuration, Logging, and Operations
 
-Use `logging` with JSON output containing timestamp, level, message, logger/module, and exception details when present.
+- Put operator-tunable runtime values in `config.yaml` (models, temperatures, token limits, timeouts, retries, endpoints, paths, flags, thresholds), loaded with `pyyaml` when needed. Keep implementation invariants in code and tool configuration in `pyproject.toml` or the tool's native file.
+- Use `logging` with JSON output to stdout/stderr containing timestamp, level, message, logger/module, and exception details when present. Match log severity to impact and never emit sensitive values.
+- Add observability proportionate to maturity: at minimum behavioral health checks and error logging; for pilots/production also cover relevant uptime, latency, error rate, resource use, usage, traces, and anomalies.
+- Applications must be runnable in Docker. Use multi-stage builds, small version-pinned images, reproducible installs, and `.dockerignore`; exclude secrets, caches, data, and dev tools from runtime images.
+- Run production Docker rootlessly and containers as dedicated non-root users. Prefer read-only filesystems, drop unnecessary capabilities, avoid privileged mode, constrain resources and networks, and use NVIDIA Container Toolkit only when GPU access is required.
+- Keep containers stateless and disposable; persist state in managed volumes or services, handle termination signals, and define explicit commands. Add behavioral health checks and distinguish startup/readiness/liveness when supported.
+- Use pinned images in Docker Compose for multi-container stacks. In CI, scan dependencies and containers and fail on relevant high-severity findings. Generate provenance and SBOMs for published artifacts where supported.
 
-## Architecture
+## Testing and Validation
 
-Prefer high locality and deep modules: keep related rules, invariants, formatting, errors, and domain knowledge behind small stable interfaces. Avoid pass-through layers, scattered concepts, and abstractions that hide simple control flow.
-
-- **Explicit flow**: Favor direct readable control flow. No metaclasses, `exec`, dynamic attribute generation, or hidden registration unless already used by the project.
-- **Deep modules**: Modules should own meaningful behavior, not just forward calls. Keep related validation, transformation, persistence, and error handling together when that improves locality or testability.
-- **Stable boundaries**: Decouple at real boundaries: external services, storage, user interfaces, configuration, and independently testable domain behavior. Avoid generic layer splits.
-- **Predictable configuration**: Use configuration for deployment flexibility, not to move business logic into data files.
-- **Operational quality**: Use descriptive names, deterministic tests, structured logs, and clear errors.
-
-## Containers and Operations
-
-- Provide a Docker option when practical. Use multi-stage builds, small version-pinned base images, a `.dockerignore`, and reproducible dependency installs. Exclude secrets, credentials, caches, and development tools from runtime images.
-- Run production containers as a dedicated non-root user with a read-only filesystem where practical. Drop unnecessary capabilities, avoid privileged mode, and set resource limits.
-- Keep containers stateless and disposable. Persist data in named volumes or external services, write logs to stdout/stderr, handle termination signals, and use an explicit entrypoint or command.
-- Add health checks that verify service behavior, not only process existence. Distinguish startup, readiness, and liveness when supported.
-- Use Docker Compose for multi-container local or deployment stacks. Pin image versions, isolate services on the narrowest required networks, and use NVIDIA Container Toolkit only when GPU acceleration is required.
-- Build and scan images in CI; fail on relevant high-severity vulnerabilities, generate provenance or an SBOM where supported, and rebuild regularly for security updates.
-
-## Testing
-
-- Mirror the source layout under `tests/`; name files `test_<module>.py` and tests descriptively as `test_<behavior>()`. Put shared fixtures in `conftest.py`.
-- For new behavior, fixes, and refactors, add the narrowest useful failing test first, make the smallest passing change, then refactor while tests remain green. Skip only for documentation, infrastructure, or otherwise untestable work.
-- Test observable behavior, edge cases, and public contracts rather than implementation details. Minimize mocking; isolate external HTTP, model, database, filesystem, and service boundaries only as needed for deterministic unit tests.
-- Use parametrization for input matrices, fixture factories for meaningful variations, and deterministic seeds for data/ML tests.
-- Keep slower integration tests distinguishable from unit tests. Run relevant unit tests in CI and integration tests in repository-defined pipelines.
-- Before declaring completion, run the relevant test subset and, when practical, the full quality suite.
-
-## Code Review
-
-- **Correctness**: Prioritize behavioral regressions, edge cases, security, test quality, and production failure modes such as timeouts, retries, partial failures, recovery, and observability.
-- **Maintainability**: Flag unreachable code, unused imports or variables, misleading names, avoidable duplication, inconsistent style, and functions with mixed responsibilities. Name the boundary when recommending a split.
-- **Simplification**: Prefer standard library tools and existing helpers over hand-rolled logic. Use comprehensions, generators, early returns, and fewer intermediates only when clearer.
-- **Performance**: Flag algorithmic issues, repeated loop work, hot-path I/O, N+1 queries, excessive allocation or copying, blocking async work, missing `await`, and inappropriate concurrency. Explain the expected impact; avoid speculative micro-optimizations.
-- **Python fit**: Use idioms such as `enumerate`, `zip`, unpacking, f-strings, `with`, `pathlib`, and structured data types when they clarify behavior. Avoid mutable defaults and silent failures.
-
-## Documentation
-
-- Comments and docstrings explain why, not what; docstrings follow PEP 257.
-- Keep README concise and example-driven.
-- Add architecture, API, deployment, data, evaluation, or model documentation only when needed.
-
-## Git
-
-- Under GitHub flow, merge to `main` through reviewed pull requests with passing CI.
-- For versioned releases, follow Semantic Versioning and repository automation; tag releases as `v<version>`.
-- Use conventional commits: `type(scope): message`, with `feat`, `fix`, `docs`, `refactor`, `test`, or `chore`. Example: `feat(auth): add OAuth2 login flow`.
-- Name branches `feature/<name>`, `fix/<name>`, or `refactor/<name>`.
-- Keep commits small and focused; avoid WIP commits on `main`.
-- After code changes, suggest a conventional commit message matching the actual scope.
-
-## Quality Commands
+- For behavior changes, fixes, and refactors, first add or update the narrowest useful failing test, then implement the smallest passing change and refactor while green. Skip only for documentation, infrastructure, or genuinely untestable work.
+- Test observable behavior, public contracts, failure modes, and edge cases rather than implementation structure. Use native assertions, `pytest.raises`, parametrization for input matrices, factory fixtures for meaningful variants, and deterministic seeds for data/ML tests.
+- Minimize mocking. Isolate HTTP, model, database, filesystem, and other external boundaries only as needed for fast deterministic unit tests.
+- Mirror source layout under `tests/`; use `test_<module>.py`, descriptive `test_<behavior>()` names, and shared fixtures in `conftest.py`. Keep slower integration tests distinguishable and follow repository CI conventions.
+- Run the relevant test subset before completion and, when practical, the full quality suite:
 
 ```bash
 uv run ruff format .
-uv run ruff check . [--fix]
+uv run ruff check .
 uv run pytest
-uv run ruff format . && uv run ruff check . && uv run pytest
 ```
+
+## Review Guidance
+
+When asked to review, prioritize findings over summaries and cite concrete locations.
+
+- **Correctness/security:** Regressions, edge cases, unsafe input/data handling, tests, and production failures such as timeouts, retries, partial failure, recovery, and missing observability.
+- **Maintainability:** Unreachable code, unused symbols, misleading names, duplication, inconsistent style, and mixed responsibilities. Name the boundary when recommending a split.
+- **Performance:** Algorithmic issues, repeated loop work, hot-path I/O, N+1 queries, excessive allocation, blocking async work, missing `await`, and inappropriate concurrency. Explain likely impact; avoid speculative micro-optimization.
+- **Simplicity/Python fit:** Prefer standard-library or existing helpers and clear idioms over custom machinery.
+
+## Documentation and Git
+
+- Use Google-style docstrings. Give modules, classes, and functions a concise summary; document arguments, returns, and raised exceptions for non-trivial APIs without repeating signature types. Comments explain why, not what.
+- Keep README content concise and example-driven. Add architecture, API, deployment, data, evaluation, or model documentation only when the project needs it.
+- Under GitHub flow, work on short-lived `feat/<name>`, `fix/<name>`, or `refactor/<name>` branches and merge to `main` only through a focused, reviewed PR with passing CI. Do not commit directly to `main`.
+- Use conventional commits: `feat`, `fix`, `docs`, `refactor`, `test`, or `chore`, optionally scoped; for example, `feat(auth): add OAuth2 login`.
+- Follow Semantic Versioning for releases and repository automation; tag releases `v<version>`. After code changes, suggest a conventional commit message matching the actual scope.
 
 ## Preferred Stack
 
-Add missing packages with approved `uv add` before importing them. Ignore entries that do not apply.
+Use only when the capability is needed and the package is declared or its addition approved:
 
-- **Config**: `pyyaml` for YAML; `python-dotenv` for env vars.
-- **CLI**: `typer` rather than `argparse`; use type hints, `typer.Argument()`, `typer.Option()`, and `Enum` for fixed choices.
-- **HTTP**: `httpx`, especially for async clients.
-- **Output**: `rich` (`Console`, `Table`) for terminal output.
-- **FastAPI**: Pydantic validation, `app/routers/`, dependency injection, async I/O.
-- **Streamlit**: `st.sidebar` controls, `st.session_state`, `@st.cache_data`.
-- **LLM**: OpenRouter via OpenAI-compatible client. Load API keys from `.env`; configure model, temperature, token limits, endpoint, timeouts, and retries in `config.yaml`; use `ThreadPoolExecutor` for simple concurrent blocking calls.
-- **Embeddings**: local `sentence-transformers`, e.g. `intfloat/multilingual-e5-small`.
-- **Scraping**: Start with plain HTTP via `httpx` or `requests`. Use Playwright only when direct HTTP cannot handle client-side rendering, browser interaction, or anti-bot flows.
-- **Data science**: Jupyter, vectorized pandas or polars, pyarrow/parquet, scikit-learn, seaborn.
-- **Document parsing**: Use `docling` by default for DOCX/PDF to Markdown (`export_to_markdown`). For fast parallel parsing, parse text/tables first, disable OCR/VLMs, skip image descriptions, and use an empty image placeholder. Use `liteparse` as a lighter tool when only PDF conversion is needed.
+- Config: `pyyaml`, `python-dotenv`
+- CLI/output: `typer`, `rich`
+- HTTP/API: `httpx`; FastAPI with Pydantic and async I/O
+- Simple UI: Streamlit; use a dedicated frontend for complex, long-lived, asynchronous, or richer UX
+- Embeddings: local `sentence-transformers` (for example, `intfloat/multilingual-e5-small`)
+- Scraping: plain HTTP first; Playwright only when client rendering or browser interaction requires it
+- Data science: Jupyter, vectorized pandas or polars, Parquet, scikit-learn, seaborn
+- Document parsing: `docling` by default; `pymupdf` or `liteparse` for lighter needs
