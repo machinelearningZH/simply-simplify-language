@@ -20,6 +20,8 @@ dependencies = [
 
 [tool.uv]
 exclude-newer = "7 days"
+# Security fixes may bypass the stability window when the container scan blocks a release.
+exclude-newer-package = { gitpython = false }
 
 [tool.ruff.lint]
 select = ["B", "E", "F", "I", "RUF", "UP"]

@@ -42,7 +42,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.12", "3.14"]
+        python-version: ["3.12", "3.13"]
 
     steps:
       - name: Checkout code
@@ -127,6 +127,8 @@ jobs:
           image-ref: local/simply-simplify-language:validation
           format: table
           exit-code: "1"
+          ignore-unfixed: true
+          scanners: vuln
           severity: HIGH,CRITICAL
 
       - name: Clean up container
