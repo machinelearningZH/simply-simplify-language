@@ -1,0 +1,60 @@
+publiccodeYmlVersion: 0.5.0
+name: Sprache vereinfachen
+applicationSuite: Accessibility & Language Simplification
+url: https://github.com/machinelearningZH/simply-simplify-language
+releaseDate: 2025-07-14
+platforms:
+  - web
+  - windows
+  - mac
+  - linux
+categories:
+  - office
+developmentStatus: stable
+softwareType: standalone/web
+intendedAudience:
+  countries:
+    - CH
+  scope:
+    - government
+organisation:
+  uri: https://ld.admin.ch/canton/1
+  name: Zurich
+description:
+  en:
+    localisedName: Simply simplify language
+    shortDescription: Use LLMs to simplify your institutional communication. Get rid
+      of «Behördendeutsch».
+    longDescription: "Simply Simplify Language helps public institutions rewrite
+      complex official communication into clear, accessible language — commonly
+      known in German as «Einfache Sprache» or «Leichte Sprache» — using large
+      language models. Beyond rewriting text, it acts as a writing coach, giving
+      staff detailed, sentence-by-sentence feedback, and scores how
+      understandable a text is using the ZIX understandability index, an
+      open-source metric also developed and published by the Canton of Zurich.
+      Its One-Click feature sends a text to multiple configured language models
+      at once and returns several draft versions as a ready-to-use Word
+      document, letting staff quickly compare and pick the best result. The tool
+      is built on OpenRouter, a unified API for accessing commercial models from
+      providers such as OpenAI, Anthropic, Google, and Mistral AI, which keeps
+      usage costs low and gives full control over which models are used. This
+      reliance on external commercial providers is an important consideration:
+      using the app sends the submitted text to OpenRouter and its partner model
+      providers, so it must not be used with sensitive or confidential data."
+    documentation: https://github.com/machinelearningZH/simply-simplify-language/blob/main/README.md
+    features:
+      - LLM
+      - Text Simplification
+      - Assistive System
+      - Schweizer Hochdeutsch
+legal:
+  license: MIT
+maintenance:
+  type: internal
+  contacts:
+    - name: Team Data, Amt für Statistik und Daten
+      email: datashop@statistik.zh.ch
+localisation:
+  localisationReady: true
+  availableLanguages:
+    - de-CH
