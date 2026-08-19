@@ -16,6 +16,19 @@ WORKDIR /app
 ENV PATH="/app/.venv/bin:$PATH" \
     PYTHONUNBUFFERED=1
 
+RUN apt-get update \
+    && apt-get install --only-upgrade -y --no-install-recommends \
+        bsdutils \
+        libblkid1 \
+        liblastlog2-2 \
+        libmount1 \
+        libsmartcols1 \
+        libuuid1 \
+        login \
+        mount \
+        util-linux \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN useradd --create-home --uid 10001 app
 
 COPY --from=builder --chown=app:app /app/.venv ./.venv
