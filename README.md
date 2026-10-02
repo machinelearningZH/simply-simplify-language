@@ -113,7 +113,11 @@ You can develop and run the app in a cloud-hosted environment using GitHub Codes
 Edit `config.yaml` to customize available models:
 
 - `name`: UI display name
-- `id`: OpenRouter model identifier (e.g., `anthropic/claude-sonnet-5`, `openai/gpt-5.6-sol`)
+- `id`: OpenRouter model identifier (e.g., `anthropic/claude-opus-5.5`, `openai/gpt-6.1-sol`)
+- `reasoning_effort`: Optional reasoning level (`default`, `none`, `minimal`, `low`, `medium`, `high`, `xhigh`, `max`). Use levels supported by the model; `default` uses its own defaults.
+- `subprovider`: Optional OpenRouter provider or endpoint slug (`default` uses automatic routing). A selected provider is exclusive, with fallbacks disabled. Unavailable providers or unsupported parameters cause the request to fail.
+
+For example, add `reasoning_effort: "medium"` and `subprovider: "openai"` to a model entry. These settings apply to simplification, analysis, and One-Click requests. See [provider selection](https://openrouter.ai/docs/guides/routing/provider-selection) and [reasoning levels](https://openrouter.ai/docs/guides/best-practices/reasoning-tokens).
 
 See the full model list at [OpenRouter models](https://openrouter.ai/models).
 

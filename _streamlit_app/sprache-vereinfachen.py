@@ -27,6 +27,7 @@ from app_core import (
     get_zix,
     load_project_info,
     load_yaml_config,
+    model_request_parameters,
     repo_path,
     result_models_used,
     rounded_score,
@@ -62,6 +63,9 @@ config = load_config()
 # Create model dictionaries from config
 MODEL_IDS = {model["name"]: model["id"] for model in config["models"]}
 MODEL_NAMES = list(MODEL_IDS.keys())
+MODEL_PARAMETERS = {
+    model["id"]: model_request_parameters(model) for model in config["models"]
+}
 
 # Get configuration values from config
 TEMPERATURE = config["api"]["temperature"]
@@ -151,6 +155,7 @@ def invoke_model(
     try:
         message = openrouter_client.chat.completions.create(
             model=model_id,
+            **MODEL_PARAMETERS[model_id],
             **temperature_request_parameters(TEMPERATURE),
             max_tokens=MAX_TOKENS,
             messages=[

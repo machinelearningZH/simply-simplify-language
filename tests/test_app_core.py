@@ -27,6 +27,7 @@ from _streamlit_app.app_core import (
     load_project_info,
     load_understandability_functions,
     load_yaml_config,
+    model_request_parameters,
     repo_path,
     result_models_used,
     rounded_score,
@@ -97,6 +98,43 @@ def test_extract_tagged_response_requires_non_empty_matching_tag():
 
 def test_temperature_request_parameters_omits_model_default():
     assert temperature_request_parameters("default") == {}
+
+
+def test_model_request_parameters_preserves_defaults() -> None:
+    assert model_request_parameters({"id": "example/model"}) == {}
+    assert (
+        model_request_parameters(
+            {"reasoning_effort": "default", "subprovider": "default"}
+        )
+        == {}
+    )
+
+
+def test_model_request_parameters_applies_reasoning_and_strict_provider() -> None:
+    assert model_request_parameters(
+        {"reasoning_effort": "high", "subprovider": "google-vertex/us-east5"}
+    ) == {
+        "extra_body": {
+            "reasoning": {"effort": "high"},
+            "provider": {
+                "only": ["google-vertex/us-east5"],
+                "allow_fallbacks": False,
+                "require_parameters": True,
+            },
+        }
+    }
+
+
+@pytest.mark.parametrize("effort", ["invalid", None, True, 1])
+def test_model_request_parameters_rejects_invalid_reasoning(effort: object) -> None:
+    with pytest.raises(ValueError, match="reasoning_effort"):
+        model_request_parameters({"reasoning_effort": effort})
+
+
+@pytest.mark.parametrize("provider", ["", "OpenAI Provider", None, True, "../openai"])
+def test_model_request_parameters_rejects_invalid_provider(provider: object) -> None:
+    with pytest.raises(ValueError, match="subprovider"):
+        model_request_parameters({"subprovider": provider})
 
 
 def test_temperature_request_parameters_includes_float_override():

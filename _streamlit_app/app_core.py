@@ -146,6 +146,45 @@ def temperature_request_parameters(temperature: str | float) -> dict[str, float]
     raise ValueError("api.temperature must be 'default' or a float")
 
 
+def model_request_parameters(model: dict[str, object]) -> dict[str, object]:
+    """Build OpenRouter overrides from per-model configuration.
+
+    Raises:
+        ValueError: If reasoning effort or the provider slug is invalid.
+    """
+    effort = model.get("reasoning_effort", "default")
+    if not isinstance(effort, str) or effort not in {
+        "default",
+        "none",
+        "minimal",
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max",
+    }:
+        raise ValueError(
+            "model.reasoning_effort must be a supported effort or 'default'"
+        )
+    provider = model.get("subprovider", "default")
+    if not isinstance(provider, str) or not re.fullmatch(
+        r"[a-z0-9][a-z0-9_-]*(?:/[a-z0-9][a-z0-9_-]*)*", provider
+    ):
+        raise ValueError("model.subprovider must be a provider slug or 'default'")
+    body: dict[str, object] = {}
+    if effort != "default":
+        body["reasoning"] = {"effort": effort}
+    if provider != "default":
+        body["provider"] = {
+            "only": [provider],
+            "allow_fallbacks": False,
+            "require_parameters": True,
+        }
+    elif body:
+        body["provider"] = {"require_parameters": True}
+    return {"extra_body": body} if body else {}
+
+
 def classify_understandability(
     score: float,
     *,
