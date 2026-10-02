@@ -5,10 +5,7 @@
 # https://www.zh.ch/de/webangebote-entwickeln-und-gestalten/inhalt/barrierefreiheit/regeln-fuer-leichte-sprache.html
 # https://www.zh.ch/content/dam/zhweb/bilder-dokumente/themen/politik-staat/teilhabe/erfolgsbeispiele-teilhabe/Sprachleitfaden_Strassenverkehrsamt_Maerz_2022.pdf
 
-# Note that Anthropic recommends to put the content first and the prompt last. This is the opposite of what usually is the prompt structure for OpenAI models.
-# https://docs.anthropic.com/en/docs/long-context-window-tips#document-query-placement
-# Note also that Claude models prefer XML tags for structuring whereas OpenAI models prefer Markdown (used here) or JSON.
-# We use the Claude prompt structure for Mistral with good success. Feel free to adjust the structure to your needs.
+# All configured models use the same templates and language-specific output tags.
 
 SAMPLE_TEXT = """Als Vernehmlassungsverfahren wird diejenige Phase innerhalb des Vorverfahrens der Gesetzgebung bezeichnet, in der Vorhaben des Bundes von erheblicher politischer, finanzieller, wirtschaftlicher, ökologischer, sozialer oder kultureller Tragweite auf ihre sachliche Richtigkeit, Vollzugstauglichkeit und Akzeptanz hin geprüft werden.
 

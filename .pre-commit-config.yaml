@@ -40,7 +40,8 @@ repos:
     hooks:
       - id: codespell
         additional_dependencies: []
-        args: ["-L", "nd,ist"]
+        # German UI text: these are valid words, not English spelling mistakes.
+        args: ["-L", "nd,ist,deine"]
         exclude: ^(_streamlit_app/(sprache-vereinfachen\.py|utils_expander\.md|utils_prompts\.py)|config\.yaml|tests/test_app_core\.py)$
 
   - repo: https://github.com/PyCQA/bandit

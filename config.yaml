@@ -1,12 +1,11 @@
 # Language models available for text simplification.
 # Each model has a display name and an OpenRouter API identifier.
 # Select models from here: https://openrouter.ai/models
-# We recommend that you select up to 10 models for the best performance and compatibility in the UI.
+# One-Click starts one worker per configured model; more models increase concurrent calls.
 # Optional per-model settings: reasoning_effort and subprovider (both default to "default").
 # Efforts: none, minimal, low, medium, high, xhigh, max; support varies by model.
-# Luna/Terra support none, low, medium, high, xhigh, max; Sol/Sonnet/Opus require reasoning
-# and support low, medium, high, xhigh, max. "default" omits the override.
-# subprovider: Allowed provider/endpoint slugs, e.g. [["openai/flex", "openai"], "openai"].
+# "default" omits the reasoning override. Verify support with the chosen provider.
+# subprovider: Allowed provider/endpoint slugs, e.g. ["openai/flex", "openai"].
 # A single slug is also accepted. "default" allows all available providers.
 # Providers are tried by price, with fallback restricted to the allowed list.
 models:

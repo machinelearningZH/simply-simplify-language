@@ -1,7 +1,8 @@
 import json
 import logging
 import sys
-from concurrent.futures import Future
+from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
 from threading import Event
 from unittest.mock import Mock
 
@@ -13,7 +14,6 @@ from _streamlit_app.app_core import (
     JSONFormatter,
     ResultState,
     ScoreClassification,
-    _complete_understandability_load,
     app_path,
     build_log_payload,
     classify_understandability,
@@ -35,18 +35,6 @@ from _streamlit_app.app_core import (
     strip_markdown,
     temperature_request_parameters,
     write_event_log,
-)
-from _streamlit_app.utils_prompts import (
-    REWRITE_COMPLETE,
-    REWRITE_CONDENSED,
-    RULES_ES,
-    RULES_LS,
-    SYSTEM_MESSAGE_ES,
-    SYSTEM_MESSAGE_LS,
-    TEMPLATE_ANALYSIS_ES,
-    TEMPLATE_ANALYSIS_LS,
-    TEMPLATE_ES,
-    TEMPLATE_LS,
 )
 
 
@@ -250,66 +238,63 @@ def test_result_models_used_selects_models_for_processing_mode(one_click, expect
     assert result_models_used(result) == expected
 
 
-def test_create_prompt_einfache_sprache_assembles_es_template_and_complete_rules():
+@pytest.mark.parametrize("analysis", [False, True])
+@pytest.mark.parametrize(
+    ("leichte_sprache", "language", "level", "tag", "rule"),
+    [
+        (
+            False,
+            "Einfache Sprache",
+            "B1 bis A2",
+            "einfachesprache",
+            "höchstens 12 Wörtern",
+        ),
+        (True, "Leichte Sprache", "A2 bis A1", "leichtesprache", "maximal 85 Zeichen"),
+    ],
+)
+def test_prompt_preserves_source_and_language_contract(
+    analysis: bool,
+    leichte_sprache: bool,
+    language: str,
+    level: str,
+    tag: str,
+    rule: str,
+) -> None:
+    # Literal contract anchors protect routing without duplicating template assembly.
+    source = "Grüsse: {rules} und <Beispiel> bleiben erhalten."
     prompt, system = create_prompt(
-        "Quelltext",
-        analysis=False,
-        leichte_sprache=False,
-        condense_text=False,
+        source, analysis=analysis, leichte_sprache=leichte_sprache, condense_text=False
     )
+    assert prompt.endswith(source)
+    assert prompt.count(source) == 1
+    assert language in prompt and language in system
+    assert level in system
+    assert f"<{tag}>" in prompt and f"<{tag}>" in system
+    assert rule in prompt
+    if analysis:
+        assert "Satz für Satz" in prompt
+        assert "Mache einen Vorschlag für einen vereinfachten Satz." in prompt
+    else:
+        assert "ALLE Informationen" in prompt
 
-    assert prompt == TEMPLATE_ES.format(
-        rules=RULES_ES, completeness=REWRITE_COMPLETE, prompt="Quelltext"
-    )
-    assert system == SYSTEM_MESSAGE_ES
 
-
-def test_create_prompt_leichte_sprache_condense_flag_selects_completeness_block():
+@pytest.mark.parametrize("analysis", [False, True])
+@pytest.mark.parametrize("leichte_sprache", [False, True])
+def test_condensing_changes_only_leichte_sprache_rewrites(
+    analysis: bool, leichte_sprache: bool
+) -> None:
+    options = {"analysis": analysis, "leichte_sprache": leichte_sprache}
+    complete, system = create_prompt("Quelltext", condense_text=False, **options)
     condensed, condensed_system = create_prompt(
-        "Quelltext",
-        analysis=False,
-        leichte_sprache=True,
-        condense_text=True,
+        "Quelltext", condense_text=True, **options
     )
-    complete, _ = create_prompt(
-        "Quelltext",
-        analysis=False,
-        leichte_sprache=True,
-        condense_text=False,
-    )
-
-    assert condensed == TEMPLATE_LS.format(
-        rules=RULES_LS, completeness=REWRITE_CONDENSED, prompt="Quelltext"
-    )
-    assert complete == TEMPLATE_LS.format(
-        rules=RULES_LS, completeness=REWRITE_COMPLETE, prompt="Quelltext"
-    )
-    assert condensed_system == SYSTEM_MESSAGE_LS
-
-
-def test_create_prompt_analysis_uses_analysis_template_without_completeness_block():
-    prompt, system = create_prompt(
-        "Quelltext",
-        analysis=True,
-        leichte_sprache=False,
-        condense_text=True,
-    )
-
-    # Analysis has no {completeness} slot, so the condense flag must be ignored.
-    assert prompt == TEMPLATE_ANALYSIS_ES.format(rules=RULES_ES, prompt="Quelltext")
-    assert system == SYSTEM_MESSAGE_ES
-
-
-def test_create_prompt_analysis_uses_leichte_sprache_rules_and_system_message():
-    prompt, system = create_prompt(
-        "Quelltext",
-        analysis=True,
-        leichte_sprache=True,
-        condense_text=False,
-    )
-
-    assert prompt == TEMPLATE_ANALYSIS_LS.format(rules=RULES_LS, prompt="Quelltext")
-    assert system == SYSTEM_MESSAGE_LS
+    assert condensed_system == system
+    if leichte_sprache and not analysis:
+        assert "ALLE Informationen" in complete
+        assert "lass den Rest weg" in condensed
+        assert "ALLE Informationen" not in condensed
+    else:
+        assert condensed == complete
 
 
 def test_strip_markdown_removes_headers_and_emphasis():
@@ -319,12 +304,7 @@ def test_strip_markdown_removes_headers_and_emphasis():
 
     result = strip_markdown(text)
 
-    assert "#" not in result
-    assert "*" not in result
-    assert "_" not in result
-    assert "Titel" in result
-    assert "fett" in result
-    assert "kursiv" in result
+    assert result == "Titel\nUntertitel\nDies ist fett und kursiv und auch und so."
 
 
 def test_extract_tagged_response_joins_multiple_matches_with_newline():
@@ -415,82 +395,67 @@ def test_load_project_info_reads_text_from_given_path(tmp_path):
     assert load_project_info(info_file) == "Projektinfo"
 
 
-def test_understandability_dependency_is_loaded_only_when_needed(monkeypatch):
-    calls = []
-
-    def score_fn(text):
-        calls.append(("score", text))
-        return 1.5
-
-    def cefr_fn(score):
-        calls.append(("cefr", score))
-        return "B1"
-
-    monkeypatch.setattr(
-        "_streamlit_app.app_core.load_understandability_functions",
-        lambda: (score_fn, cefr_fn),
-    )
-
-    assert get_zix("Ein Text.") == 1.5
-    assert get_cefr(1.5) == "B1"
-    assert calls == [("score", "Ein Text."), ("cefr", 1.5)]
-
-
-def test_understandability_background_load_is_shared(monkeypatch):
-    import_started = Event()
-    allow_import_to_finish = Event()
-    functions = (lambda text: 1.0, lambda score: "B1")
-
-    def slow_import():
-        import_started.set()
-        allow_import_to_finish.wait(timeout=1)
-        return functions
-
+@pytest.fixture
+def isolated_loader(monkeypatch: pytest.MonkeyPatch) -> None:
+    # Reset shared cache only for isolation; assertions use the public loader API.
     monkeypatch.setattr("_streamlit_app.app_core._understandability_future", None)
+
+
+def test_understandability_background_load_serves_concurrent_callers(
+    monkeypatch: pytest.MonkeyPatch, isolated_loader: None
+) -> None:
+    import_started = Event()
+    release_import = Event()
+    imports = []
+
+    def slow_import() -> tuple:
+        imports.append(1)
+        import_started.set()
+        if not release_import.wait(timeout=5):
+            raise TimeoutError("Test did not release loader")
+        return (lambda text: {"Ein Text.": 1.5}[text], lambda score: {1.5: "B1"}[score])
+
     monkeypatch.setattr(
         "_streamlit_app.app_core._import_understandability_functions", slow_import
     )
+    future = start_understandability_loading()
+    try:
+        assert import_started.wait(timeout=5)
+        assert not future.done()
+        with ThreadPoolExecutor(max_workers=4) as executor:
+            callers = [
+                executor.submit(start_understandability_loading) for _ in range(4)
+            ]
+            shared = [caller.result(timeout=5) for caller in callers]
+        assert all(result is future for result in shared)
+    finally:
+        release_import.set()
+        future.result(timeout=5)
 
-    first_future = start_understandability_loading()
-    assert import_started.wait(timeout=1)
-    second_future = start_understandability_loading()
-
-    assert first_future is second_future
-    assert first_future.done() is False
-
-    allow_import_to_finish.set()
-    assert first_future.result(timeout=1) is functions
-
-
-def test_load_understandability_functions_returns_shared_future_result(monkeypatch):
-    functions = (lambda text: 1.0, lambda score: "B1")
-    future = Future()
-    future.set_result(functions)
-    monkeypatch.setattr(
-        "_streamlit_app.app_core.start_understandability_loading",
-        lambda: future,
-    )
-
-    assert load_understandability_functions() is functions
+    assert get_zix("Ein Text.") == 1.5
+    assert get_cefr(1.5) == "B1"
+    assert len(imports) == 1
 
 
-def test_understandability_background_load_exposes_import_failure(monkeypatch):
-    future = Future()
-    error = RuntimeError("ZIX import failed")
-
-    def fail_import():
-        raise error
+def test_understandability_load_failure_reaches_public_callers(
+    monkeypatch: pytest.MonkeyPatch, isolated_loader: None
+) -> None:
+    def fail_import() -> tuple:
+        raise RuntimeError("ZIX import failed")
 
     monkeypatch.setattr(
-        "_streamlit_app.app_core._import_understandability_functions",
-        fail_import,
+        "_streamlit_app.app_core._import_understandability_functions", fail_import
     )
-
-    _complete_understandability_load(future)
-
-    with pytest.raises(RuntimeError, match="ZIX import failed") as captured:
-        future.result()
-    assert captured.value is error
+    future = start_understandability_loading()
+    with pytest.raises(RuntimeError, match="ZIX import failed"):
+        future.result(timeout=5)
+    for operation in (
+        load_understandability_functions,
+        lambda: get_zix("Text"),
+        lambda: get_cefr(1),
+    ):
+        with pytest.raises(RuntimeError, match="ZIX import failed"):
+            operation()
 
 
 def test_json_formatter_emits_structured_payload_with_event_and_exception():
@@ -550,10 +515,55 @@ def test_configure_event_logger_writes_json_lines_to_relative_file(tmp_path):
             handler.close()
 
 
-def test_write_event_log_does_not_emit_for_disabled_logger():
-    logger = Mock(spec=logging.Logger)
-    logger.disabled = True
+def test_reconfiguring_logging_replaces_destination_and_disabled_logging_stops_writes(
+    tmp_path: Path,
+) -> None:
+    logger = configure_event_logger(
+        {"enabled": True, "filename": "first.log"}, base_dir=tmp_path
+    )
+    write_event_log(logger, {"sequence": 1})
+    logger = configure_event_logger(
+        {"enabled": True, "filename": "second.log"}, base_dir=tmp_path
+    )
+    write_event_log(logger, {"sequence": 2})
+    logger = configure_event_logger({})
+    write_event_log(logger, {"sequence": 3})
+    first = [
+        json.loads(line)["event"]
+        for line in (tmp_path / "first.log").read_text().splitlines()
+    ]
+    second = [
+        json.loads(line)["event"]
+        for line in (tmp_path / "second.log").read_text().splitlines()
+    ]
+    assert first == [{"sequence": 1}]
+    assert second == [{"sequence": 2}]
 
-    write_event_log(logger, {"input_chars": 1})
 
-    logger.info.assert_not_called()
+def test_one_click_preserves_each_text_and_its_own_score() -> None:
+    def score(text: str) -> float:
+        return {"Erster Text.": 1.4, "Zweiter Text.": -2.6}[text]
+
+    def cefr(value: float) -> str:
+        return {1: "B1", -3: "C1"}[value]
+
+    success, output = format_one_click_results(
+        {
+            "Model A": (True, "Erster Text."),
+            "Model B": (True, "Zweiter Text."),
+            "Model C": (False, "private failure details"),
+            "Model D": (True, "   "),
+        },
+        score_fn=score,
+        cefr_fn=cefr,
+    )
+    assert success is True
+    assert (
+        "Model A (Verständlichkeit: 1, Niveau etwa B1) -----\n\nErster Text." in output
+    )
+    assert (
+        "Model B (Verständlichkeit: -3, Niveau etwa C1) -----\n\nZweiter Text."
+        in output
+    )
+    assert "Fehlgeschlagen: Model C, Model D" in output
+    assert "private failure details" not in output

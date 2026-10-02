@@ -7,7 +7,7 @@
 [![GitHub Stars](https://img.shields.io/github/stars/machinelearningZH/simply-simplify-language.svg)](https://github.com/machinelearningZH/simply-simplify-language/stargazers)
 [![GitHub Issues](https://img.shields.io/github/issues/machinelearningZH/simply-simplify-language.svg)](https://github.com/machinelearningZH/simply-simplify-language/issues)
 [![GitHub Issues](https://img.shields.io/github/issues-pr/machinelearningZH/simply-simplify-language.svg)](https://img.shields.io/github/issues-pr/machinelearningZH/simply-simplify-language)
-[![Current Version](https://img.shields.io/badge/version-1.5.0-green.svg)](https://github.com/machinelearningZH/simply-simplify-language)
+[![Current Version](https://img.shields.io/badge/version-1.4.0-green.svg)](https://github.com/machinelearningZH/simply-simplify-language)
 <a href="https://github.com/astral-sh/ruff"><img alt="linting - Ruff" class="off-glb" loading="lazy" src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json"></a>
 
 <details>
@@ -19,7 +19,6 @@
   - [What does the app do?](#what-does-the-app-do)
   - [What does it cost?](#what-does-it-cost)
   - [Our language guidelines](#our-language-guidelines)
-  - [A couple of findings](#a-couple-of-findings)
   - [How does the understandability score work?](#how-does-the-understandability-score-work)
   - [What does the score mean?](#what-does-the-score-mean)
 - [Project team](#project-team)
@@ -40,7 +39,7 @@
 
 ### Running Locally
 
-1. Install [uv](https://docs.astral.sh/uv/).
+1. Install [uv](https://docs.astral.sh/uv/) and Python 3.12 or 3.13 (tested in CI). The declared requirement is `>=3.12`.
 2. Clone the repo and enter the directory:\
    `cd simply-simplify-language/`
 3. Install dependencies:\
@@ -75,38 +74,18 @@ The Make targets are thin wrappers around `uv`; you can also run the underlying
 3. Start the container and pass the API key at runtime:
 
    ```bash
-   docker run --rm -p 8080:8501 --env-file ./_streamlit_app/.env
+   docker run --rm -p 8080:8501 --env-file ./_streamlit_app/.env simplify
    ```
 
 4. Open <http://localhost:8080>.
 
 The `.env` file is excluded from the image by `.dockerignore`. Do not add API keys to the Dockerfile or image.
 
-### Running in the Cloud
+### Remote deployment
 
-- Instantiate a small virtual machine with the cloud provider of your choosing. Suggested size: 2 vCPUs, 2GB RAM, and an SSD with a couple of GBs are sufficient. This will set you back no more than a couple of Francs per month.
-- Install the app as described above for local usage.
-- Recommendation: To use a proper domain and HTTPS it makes sense to install a reverse proxy. We very much like [Caddy server](https://caddyserver.com/) for this due to its simplicity and ease of installation and usage. It's also simple to request certificates – Caddy does [this automatically for you](https://caddyserver.com/docs/automatic-https).
+Use the local or Docker setup on your remote host. Resource requirements and hosting costs have not been benchmarked in this repository. Configure HTTPS and access controls for your deployment; no reverse proxy, authentication layer, or cloud provisioning is included.
 
-### Running in GitHub Codespaces
-
-You can develop and run the app in a cloud-hosted environment using GitHub Codespaces. Benefits include:
-
-- No local installation required
-- Everything runs from your web browser
-- Free usage hours with your GitHub account (you still need to pay for LLM token usage)
-
-> [!Note]
-> To avoid unnecessary charges, remember to delete any unused Codespaces. It's also a good idea to enable the Auto-delete codespace option in your settings.
-
-- Launch a codespace:\
-  `Code > Codespaces > Create codespace on main`
-- Install dependencies:\
-  `uv sync`
-- Add OpenRouter API key via `.env` or GitHub Secrets.
-- Start the app:\
-  `uv run streamlit run _streamlit_app/sprache-vereinfachen.py`
-- Port 8501 is auto-forwarded by Codespaces.
+For Codespaces, install `uv` if needed, follow the local setup, and forward port 8501. There is no Codespaces configuration in this repository. You can supply `OPENROUTER_API_KEY` as an environment variable instead of `_streamlit_app/.env`. A root-level `.env` is not explicitly loaded by the app.
 
 ### Configuring Models
 
@@ -115,14 +94,18 @@ Edit `config.yaml` to customize available models:
 - `name`: UI display name
 - `id`: OpenRouter model identifier (e.g., `anthropic/claude-opus-5.5`, `openai/gpt-6.1-sol`)
 - `reasoning_effort`: Optional reasoning level (`default`, `none`, `minimal`, `low`, `medium`, `high`, `xhigh`, `max`). Use levels supported by the model; `default` uses its own defaults.
-- `subprovider`: Optional list of allowed OpenRouter provider or endpoint slugs, e.g. `["openai/flex", "openai"]`. A single slug is also accepted; `default` allows all available providers. Routing sorts by price and can fall back within the allowed list, never outside it. Unavailable providers or unsupported parameters cause the request to fail.
+- `subprovider`: Optional list of allowed OpenRouter provider or endpoint slugs, e.g. `["openai/flex", "openai"]`. A single slug is also accepted; `default` allows all available providers. The app requests price-based routing and restricts fallback to the allowed list. With a provider restriction or explicit reasoning effort, it requests providers that support the supplied parameters. Live provider availability and parameter support are not verified by repository tests.
+
+Restart the app after editing configuration; it is cached for the running process. Model names and IDs should be unique because the app builds dictionaries from them.
 
 For example, add `reasoning_effort: "medium"` and `subprovider: "openai"` to a model entry. These settings apply to simplification, analysis, and One-Click requests. See [provider selection](https://openrouter.ai/docs/guides/routing/provider-selection) and [reasoning levels](https://openrouter.ai/docs/guides/best-practices/reasoning-tokens).
 
-See the full model list at [OpenRouter models](https://openrouter.ai/models).
+See the model catalogue at [OpenRouter models](https://openrouter.ai/models).
+
+Other settings in `config.yaml` include a 10,000-character UI input limit, a 120-second API timeout, two SDK retries, and an 8,192-token response limit. `api.temperature: "default"` omits the temperature parameter; a YAML float supplies an override. These values apply to every model request. The UI defaults to Einfache Sprache; enabling Leichte Sprache also exposes the condensation option, enabled by default.
 
 > [!Note]
-> Event logging is disabled by default. To enable local analytics, set `logging.enabled: true` in `config.yaml`. Logs contain metadata such as text length, selected model, runtime, and success status, not the raw input or model output.
+> Event logging is disabled by default. To enable local analytics, set `logging.enabled: true` in `config.yaml`. Events are JSON lines in `_streamlit_app/app.log` by default (`logging.filename` can override this). They contain text lengths, selected model, runtime, mode, and success status, without raw input or output. This applies to the event logger; model-call failures separately log exception traces. In One-Click mode, the event records the radio-selected model rather than all models called.
 
 ## Project information
 
@@ -137,25 +120,23 @@ We developed the app according to our communication guidelines, but we know from
 - This app **simplifies complex texts, rewriting them according to rules for [«Einfache Sprache»](https://de.wikipedia.org/wiki/Einfache_Sprache) or [«Leichte Sprache»](https://de.wikipedia.org/wiki/Leichte_Sprache)**. To simplify your source text, the app applies effective prompting and uses your chosen LLM via OpenRouter.
 - The app also offers **coaching to improve your writing**. Its **analysis function** provides detailed, sentence-by-sentence feedback to enhance your communication.
 - It **measures the understandability of your text** on a scale from -10 (very complex) to +10 (very easy to understand).
-- The **One-Click feature sends your text to all configured LLMs simultaneously**, delivering multiple drafts in a formatted Word document within seconds, ready for download.
+- The **One-Click feature sends your text to all configured LLMs simultaneously**, showing successful drafts with individual scores and offering a Word download containing the source and results. Failed models are listed when at least one succeeds; if all fail, the app displays an error. Runtime depends on the models and configured timeouts/retries.
 
 In English, «Einfache Sprache» is roughly equivalent to [«Plain English»](https://www.plainlanguage.gov/about/definitions/), while «Leichte Sprache» has similarities to [«Easy English»](https://centreforinclusivedesign.org.au/wp-content/uploads/2020/04/Easy-English-vs-Plain-English_accessible.pdf).
 
 > [!Important]
-> At the risk of stating the obvious: By using the app **you send data to OpenRouter and their partner model providers** (OpenAI, Anthropic, Google, Meta, Mistral AI, etc.). **Therefore, strictly only use non-sensitive data.** Again, stating the obvious: **LLMs make errors.** They regularly hallucinate, make things up, and get things wrong. They often do so in subtle, non-obvious ways that may be hard to detect. This app is **meant to be used as an assistive system**. It **only yields a draft that you always must check.**
-
-**At the time of writing, many users in our administration have extensively used the app with many thousands of texts over more than a year and a half. The results are very promising.** With the prototype app, our experts have saved time, improved their output, and made public communication more inclusive.
+> Model requests **send your text to OpenRouter and the routed model provider**. Use **only public, non-sensitive data**. Generated text can contain factual errors or omissions. Always review the draft, ideally with people from the target audience, especially for Leichte Sprache.
 
 > [!Note]
-> This **app is optimized for Swiss German** («Swiss High German», not dialect). Some rules in the prompts steer the models toward this. Also, the app is **set up to use the Swiss `ss` rather than the German `ß`.** The understandability index assumes the Swiss `ss` for the common word scoring, and we replace `ß` with `ss` in the results.
+> This **app is configured for Swiss Standard German** («Schweizer Hochdeutsch», not dialect). Some rules in the prompts steer the models toward this. Also, the app is **set up to use the Swiss `ss` rather than the German `ß`.** The understandability index assumes the Swiss `ss` for the common word scoring, and we replace `ß` with `ss` in the results.
 
 ### What does it cost?
 
-**Usage is inexpensive**. You only pay OpenRouter for the tokens that you use. OpenRouter provides transparent, competitive pricing for all models. E.g., for the simplification of 100 separate [«Normseiten»](https://de.wikipedia.org/wiki/Normseite) (standard pages of 250 German words each) to Einfache Sprache or Leichte Sprache, you pay depending on the model—roughly between 0.5 CHF for faster models and around 5-10 CHF for premium models like Claude Opus. Check [OpenRouter pricing](https://openrouter.ai/models) for current rates. The hardware requirements to run the app are modest too. As mentioned above, a small VM for a couple of Francs per month will suffice.
+Model calls use your OpenRouter account. Costs depend on models, input/output tokens, reasoning, and retries; One-Click calls every configured model. The repository contains no current pricing data or cost benchmark. Check [OpenRouter pricing](https://openrouter.ai/models) before use and account separately for hosting costs.
 
 ### Our language guidelines
 
-You can find the current rules that are being prompted in `utils_prompts.py`. Have a look and change these according to your needs and organizational communication guidelines.
+You can find the current rules that are being prompted in [`_streamlit_app/utils_prompts.py`](_streamlit_app/utils_prompts.py). Have a look and change these according to your needs and organizational communication guidelines.
 
 We derived the current rules in the prompts mainly from these of our language guidelines:
 
@@ -163,33 +144,29 @@ We derived the current rules in the prompts mainly from these of our language gu
 - [Language guidelines Leichte Sprache](https://www.zh.ch/de/webangebote-entwickeln-und-gestalten/inhalt/barrierefreiheit/regeln-fuer-leichte-sprache.html)
 - [Guidelines Strassenverkehrsamt](https://www.zh.ch/content/dam/zhweb/bilder-dokumente/themen/politik-staat/teilhabe/erfolgsbeispiele-teilhabe/Sprachleitfaden_Strassenverkehrsamt_Maerz_2022.pdf)
 
-### A couple of findings
-
-- **Large Language Models (LLMs) already have an understanding of Einfache Sprache, Leichte Sprache, and CEFR levels** ([A1, A2, B1, etc.](https://www.goethe.de/de/spr/kur/stu.html)) from their pretraining. It's impressive how well they can translate text by simply being asked to rewrite it according to these terms or levels. We have also successfully created test data by asking models to e.g. describe a situation at each of the six CEFR levels (A1 to C2).
-- **LLMs produce varied rewrites, which is beneficial**. By offering multiple model options through OpenRouter, users receive a range of suggestions, helping them achieve a good result. It's often effective to use the One-Click mode, which consolidates results from all configured models.
-- **Measuring text understandability is really helpful**. Early in our project, we realized the need for a quantitative metric to evaluate our outputs, such as comparing different prompts, models, and preprocessing steps. We developed an index for this purpose that we call the «Zürcher Verständlichkeits-Index» or «ZIX» 😉. We created the ZIX using a dataset of complex legal and administrative texts, as well as many samples of Einfache and Leichte Sprache. We trained a classification model to differentiate between complex and simple texts. The ZIX as a metric has been very useful to us in practice. We have published the code and the Python package [here](https://github.com/machinelearningZH/zix_understandability-index).
-- Finally, **validating your results with your target audience is crucial**, especially for Leichte Sprache, which requires expert and user validation to be effective.
-
 ### How does the understandability score work?
 
-- The score takes into account sentence lengths, the [readability metric RIX](https://hlasse.github.io/TextDescriptives/readability.html), the occurrence of common words, and overlap with the standard CEFR vocabularies A1, A2, and B1.
-- At the moment, the score does **not** take into account other language properties that are essential for, e.g., [Einfache Sprache](https://de.wikipedia.org/wiki/Einfache_Sprache) (B1 or easier, similar to «Plain English») or [Leichte Sprache](https://de.wikipedia.org/wiki/Leichte_Sprache) (A2, A1, similar to «Easy English»), like use of passive voice, subjunctives, negations, etc.
+The app delegates scoring and CEFR estimates to the external [`zix` package](https://github.com/machinelearningZH/zix_understandability-index), whose Git revision is recorded in `uv.lock`. It starts loading ZIX in a background thread after rendering the initial UI; scoring waits for that shared load when needed. The app does not train a model or read the legacy files in `_streamlit_app/data/`.
 
-We have published the ZIX understandability index as a pip installable package. You can find it [here](https://github.com/machinelearningZH/zix_understandability-index).
-
-> [!Note]
-> The index is slightly adjusted to Swiss German. Specifically, we use `ss` instead of `ß` in our vocabulary lists. In practice, this should not make a big difference. For High German text that actually contains `ß`, the index will likely underestimate the understandability slightly with a difference of around 0.1.
+ZIX uses sentence length, RIX, common-word scores, and A1/A2/B1 vocabulary overlap. Its regression score is limited to -10 through +10. It does not explicitly evaluate all language guidelines, such as passive voice or negation. Training data and calibration evidence are not included in this repository; the score and CEFR estimate are aids for review, not proof of a language level or factual accuracy.
 
 ### What does the score mean?
 
-- **Negative scores indicate difficult texts in the range of B2 to C2**. These texts will likely be **very hard to understand for many people** (this is classic «Behördendeutsch» or legal text territory...).
-- **Positive scores indicate a language level of B1 or easier**.
+The current UI classifies the unrounded score using `config.yaml`:
+
+- Below -2: hard to understand (`schwer verständlich`).
+- From -2 to below 0: moderately understandable (`nur mässig verständlich`).
+- From 0: understandable (`gut verständlich`).
+
+These score thresholds are configurable. The displayed numeric score is rounded. A single simplification shows the output score and change from the source; analysis shows the source score. One-Click shows individual output scores inline and the source score in the metric panel, rather than scoring the combined results.
+
+The illustration below provides context for the score; it does not validate generated text.
 
 ![](_imgs/zix_scores.jpg)
 
 ## Project Team
 
-This project is a collaborative effort by these people from the cantonal administration of Zurich:
+Project contributors from the cantonal administration of Zurich (affiliations recorded by the project):
 
 - **Simone Luchetta, Roger Zedi** - [Team Informationszugang & Dialog, Staatskanzlei](https://www.zh.ch/de/staatskanzlei/digitale-verwaltung/team.html)
 - **Emek Sahin, Peter Hotz** - [Team Kommunikation & Entwicklung, Strassenverkehrsamt](https://www.zh.ch/de/sicherheitsdirektion/strassenverkehrsamt.html)
@@ -211,7 +188,23 @@ submitting a change, run the complete local quality suite:
 make check
 ```
 
-Run `make help` to see the available development and Docker commands.
+Install repository hooks with `make install` (dependency sync plus pre-commit and pre-push hooks). `make check` checks formatting, lint, and tests without modifying files. `make pre-commit` runs configured pre-commit hooks and may change files; pre-push also runs tests and container validation. Container validation skips the build locally if Docker is unavailable; CI requires it.
+
+CI runs pre-commit, tests on Python 3.12/3.13, a full Git-history secret scan, and a container build, health check, and vulnerability scan. The health check tests Streamlit's HTTP endpoint without an API key; it does not validate model calls or ZIX scoring.
+
+Run `make help` for available commands. See [NOTES.md](NOTES.md) for engineering constraints.
+
+### Repository structure
+
+- `_streamlit_app/sprache-vereinfachen.py`: Streamlit UI, API calls, concurrent One-Click requests, session results, and in-memory Word exports.
+- `_streamlit_app/app_core.py`: prompt assembly, routing parameters, result formatting, score labels, paths, background ZIX loading, and optional event logging.
+- `_streamlit_app/utils_prompts.py`: shared prompts, language rules, and sample text.
+- `_streamlit_app/utils_expander.md`: German project information displayed in the app.
+- `config.yaml`: models, API limits, UI settings, document formatting, score thresholds, and logging.
+- `tests/test_app_core.py`: deterministic core tests; no live-provider or scoring-calibration tests.
+- `Dockerfile`, `scripts/validate-container.sh`, `.github/workflows/ci.yaml`: container and CI setup.
+
+Input and the latest result are retained in Streamlit session state. Word downloads are generated in memory. The app has no database or persistent text store; optional event logs are local files.
 
 ## License
 
