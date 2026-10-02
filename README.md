@@ -115,7 +115,7 @@ Edit `config.yaml` to customize available models:
 - `name`: UI display name
 - `id`: OpenRouter model identifier (e.g., `anthropic/claude-opus-5.5`, `openai/gpt-6.1-sol`)
 - `reasoning_effort`: Optional reasoning level (`default`, `none`, `minimal`, `low`, `medium`, `high`, `xhigh`, `max`). Use levels supported by the model; `default` uses its own defaults.
-- `subprovider`: Optional OpenRouter provider or endpoint slug (`default` uses automatic routing). A selected provider is exclusive, with fallbacks disabled. Unavailable providers or unsupported parameters cause the request to fail.
+- `subprovider`: Optional list of allowed OpenRouter provider or endpoint slugs, e.g. `["openai/flex", "openai"]`. A single slug is also accepted; `default` allows all available providers. Routing sorts by price and can fall back within the allowed list, never outside it. Unavailable providers or unsupported parameters cause the request to fail.
 
 For example, add `reasoning_effort: "medium"` and `subprovider: "openai"` to a model entry. These settings apply to simplification, analysis, and One-Click requests. See [provider selection](https://openrouter.ai/docs/guides/routing/provider-selection) and [reasoning levels](https://openrouter.ai/docs/guides/best-practices/reasoning-tokens).
 

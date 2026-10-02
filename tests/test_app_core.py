@@ -101,12 +101,13 @@ def test_temperature_request_parameters_omits_model_default():
 
 
 def test_model_request_parameters_preserves_defaults() -> None:
-    assert model_request_parameters({"id": "example/model"}) == {}
+    expected = {"extra_body": {"provider": {"sort": "price"}}}
+    assert model_request_parameters({"id": "example/model"}) == expected
     assert (
         model_request_parameters(
             {"reasoning_effort": "default", "subprovider": "default"}
         )
-        == {}
+        == expected
     )
 
 
@@ -118,9 +119,23 @@ def test_model_request_parameters_applies_reasoning_and_strict_provider() -> Non
             "reasoning": {"effort": "high"},
             "provider": {
                 "only": ["google-vertex/us-east5"],
-                "allow_fallbacks": False,
+                "allow_fallbacks": True,
                 "require_parameters": True,
+                "sort": "price",
             },
+        }
+    }
+
+
+def test_model_request_parameters_routes_among_allowed_providers_by_price() -> None:
+    assert model_request_parameters({"subprovider": ["openai/flex", "openai"]}) == {
+        "extra_body": {
+            "provider": {
+                "only": ["openai/flex", "openai"],
+                "allow_fallbacks": True,
+                "require_parameters": True,
+                "sort": "price",
+            }
         }
     }
 
@@ -131,7 +146,20 @@ def test_model_request_parameters_rejects_invalid_reasoning(effort: object) -> N
         model_request_parameters({"reasoning_effort": effort})
 
 
-@pytest.mark.parametrize("provider", ["", "OpenAI Provider", None, True, "../openai"])
+@pytest.mark.parametrize(
+    "provider",
+    [
+        "",
+        "OpenAI Provider",
+        None,
+        True,
+        "../openai",
+        [],
+        ["default"],
+        [1],
+        ["openai", ""],
+    ],
+)
 def test_model_request_parameters_rejects_invalid_provider(provider: object) -> None:
     with pytest.raises(ValueError, match="subprovider"):
         model_request_parameters({"subprovider": provider})

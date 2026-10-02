@@ -167,22 +167,31 @@ def model_request_parameters(model: dict[str, object]) -> dict[str, object]:
             "model.reasoning_effort must be a supported effort or 'default'"
         )
     provider = model.get("subprovider", "default")
-    if not isinstance(provider, str) or not re.fullmatch(
-        r"[a-z0-9][a-z0-9_-]*(?:/[a-z0-9][a-z0-9_-]*)*", provider
-    ):
-        raise ValueError("model.subprovider must be a provider slug or 'default'")
-    body: dict[str, object] = {}
+    providers = (
+        []
+        if provider == "default"
+        else ([provider] if isinstance(provider, str) else provider)
+    )
+    if not isinstance(providers, list) or (provider != "default" and not providers):
+        raise ValueError(
+            "model.subprovider must be 'default', a slug, or a non-empty list"
+        )
+    for slug in providers:
+        if (
+            not isinstance(slug, str)
+            or slug == "default"
+            or not re.fullmatch(r"[a-z0-9][a-z0-9_-]*(?:/[a-z0-9][a-z0-9_-]*)*", slug)
+        ):
+            raise ValueError("model.subprovider must contain valid provider slugs")
+    routing: dict[str, object] = {"sort": "price"}
+    body: dict[str, object] = {"provider": routing}
     if effort != "default":
         body["reasoning"] = {"effort": effort}
-    if provider != "default":
-        body["provider"] = {
-            "only": [provider],
-            "allow_fallbacks": False,
-            "require_parameters": True,
-        }
-    elif body:
-        body["provider"] = {"require_parameters": True}
-    return {"extra_body": body} if body else {}
+    if providers:
+        routing.update(only=providers, allow_fallbacks=True, require_parameters=True)
+    elif effort != "default":
+        routing["require_parameters"] = True
+    return {"extra_body": body}
 
 
 def classify_understandability(
