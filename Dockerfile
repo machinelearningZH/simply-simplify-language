@@ -22,6 +22,7 @@ RUN apt-get update \
         libblkid1 \
         liblastlog2-2 \
         libmount1 \
+        libpcre2-8-0 \
         libsmartcols1 \
         libuuid1 \
         login \

@@ -12,6 +12,10 @@
 - The `python:3.12-slim` base image may lag Debian 13 security updates. Upgrade the
   affected packages in the runtime stage when a fixable OS vulnerability blocks the
   container scan.
+- The pre-commit CI job must install Python 3.13 to match the hook interpreter in
+  `.pre-commit-config.yaml`; installing only 3.12 fails during hook setup.
+- The runtime upgrade list includes `libpcre2-8-0` for CVE-2026-103111; the failing
+  scan reported `10.46-1~deb13u2`, with the fix available in `10.46-1~deb13u3`.
 
 ## Scoring dependency and documentation limits
 
