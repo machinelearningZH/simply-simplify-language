@@ -27,12 +27,23 @@ exclude-newer-package = { gitpython = false }
 select = ["B", "E", "F", "I", "RUF", "UP"]
 ignore = ["E402", "E501"]
 
+[tool.ruff]
+extend-exclude = ["mutants"]
+
 [tool.pytest.ini_options]
 pythonpath = ["."]
+testpaths = ["tests"]
 
 [dependency-groups]
 dev = [
+    "mutmut>=3.8.0",
     "pre-commit>=4.2.0",
     "pytest>=9.0.3",
     "ruff>=0.15.12",
 ]
+
+[tool.mutmut]
+source_paths = ["_streamlit_app/"]
+pytest_add_cli_args_test_selection = ["tests/"]
+# The app resolves this file relative to its copied source tree.
+also_copy = ["config.yaml"]

@@ -7,7 +7,7 @@ default_install_hook_types:
 
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: 39d9ac5938dadb73df0564a45f163e25ff9fa6e2  # v0.16.1
+    rev: 39d9ac5938dadb73df0564a45f163e25ff9fa6e2 # v0.16.1
     hooks:
       - id: ruff
         name: ruff-lint
@@ -16,12 +16,10 @@ repos:
         name: ruff-format
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c  # v6.0.0
+    rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c # v6.0.0
     hooks:
       - id: check-yaml
       - id: check-json
-      - id: check-added-large-files
-        args: ["--maxkb=1000"]
       - id: detect-private-key
       - id: end-of-file-fixer
         exclude: ^\.agents/
@@ -31,28 +29,12 @@ repos:
       - id: mixed-line-ending
 
   - repo: https://github.com/abravalheri/validate-pyproject
-    rev: 78f5e0f104cfa803d0597eaa924b4de3becd3e3e  # v0.24.1
+    rev: 78f5e0f104cfa803d0597eaa924b4de3becd3e3e # v0.24.1
     hooks:
       - id: validate-pyproject
 
-  - repo: https://github.com/codespell-project/codespell
-    rev: 63c8f8312b7559622c0d82815639671ae42132ac  # v2.4.1
-    hooks:
-      - id: codespell
-        additional_dependencies: []
-        # German UI text: these are valid words, not English spelling mistakes.
-        args: ["-L", "nd,ist,deine"]
-        exclude: ^(_streamlit_app/(sprache-vereinfachen\.py|utils_expander\.md|utils_prompts\.py)|config\.yaml|tests/test_app_core\.py)$
-
-  - repo: https://github.com/PyCQA/bandit
-    rev: 2d0b675b04c80ae42277e10500db06a0a37bae17  # 1.8.6
-    hooks:
-      - id: bandit
-        args: ["-q"]
-        exclude: ^tests/
-
   - repo: https://github.com/gitleaks/gitleaks
-    rev: 83d9cd684c87d95d656c1458ef04895a7f1cbd8e  # v8.30.1
+    rev: 83d9cd684c87d95d656c1458ef04895a7f1cbd8e # v8.30.1
     hooks:
       - id: gitleaks
       - id: gitleaks

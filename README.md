@@ -188,6 +188,11 @@ submitting a change, run the complete local quality suite:
 make check
 ```
 
+Run mutation testing with `uv run mutmut run`, then inspect surviving mutations
+with `uv run mutmut results`. The configuration copies `config.yaml` into mutmut's
+isolated workspace so the offline Streamlit tests can load it. Generated files
+under `mutants/` are excluded from Git, pytest discovery, and Ruff checks.
+
 Install repository hooks with `make install` (dependency sync plus pre-commit and pre-push hooks). `make check` checks formatting, lint, and tests without modifying files. `make pre-commit` runs configured pre-commit hooks and may change files; pre-push also runs tests and container validation. Container validation skips the build locally if Docker is unavailable; CI requires it.
 
 CI runs pre-commit, tests on Python 3.12/3.13, a full Git-history secret scan, and a container build, health check, and vulnerability scan. The health check tests Streamlit's HTTP endpoint without an API key; it does not validate model calls or ZIX scoring.
