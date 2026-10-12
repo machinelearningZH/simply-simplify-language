@@ -266,10 +266,22 @@ def create_prompt(
 
 def strip_markdown(text: str) -> str:
     """Strip markdown headers and bold/italic markers from text."""
-    # Remove markdown headers.
-    text = re.sub(r"#+\s", "", text)
-    # Remove markdown italic and bold.
-    text = re.sub(r"\*\*|\*|__|_", "", text)
+    # Remove header markers only at line start, so "C# Kurs" or "Raum # 3" survive.
+    # Like Markdown, an opening marker needs a following space or the line end ("#Zürich"
+    # stays), and closing hashes of any count need a preceding space ("# C#" stays).
+    text = re.sub(
+        r"^[ \t]*#+(?:[ \t]+|(?=\r?$))(.*?)[ \t]*(?:(?<=[ \t])#+[ \t]*)?(?=\r?$)",
+        r"\1",
+        text,
+        flags=re.MULTILINE,
+    )
+    # Remove bold and italic markers only where they wrap text, so literal
+    # characters in e-mail addresses, URLs, and gendered forms (Bürger*innen) survive.
+    # Like Markdown, emphasis may span a line break but not a blank line (new paragraph),
+    # so markers split across paragraphs are left as they are.
+    inner = r"((?:[^\n]|\n(?!\s*\n))+?)"
+    text = re.sub(rf"(\*\*|__)(?=\S){inner}(?<=\S)\1", r"\2", text)
+    text = re.sub(rf"(?<![\w*])([*_])(?=\S){inner}(?<=\S)\1(?![\w*])", r"\2", text)
     return text
 
 
