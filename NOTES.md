@@ -34,6 +34,26 @@
   but the system message and template still request completeness. This conflicting
   guidance limits what documentation can promise about condensation behavior.
 
+## Markdown stripping of model output
+
+- `strip_markdown` runs on every model answer. Over-stripping corrupts content
+  (e-mail addresses, URLs, `Bürger*innen`), while a missed marker is only cosmetic
+  in the plain-text output, so ambiguous markers are deliberately left in place.
+- Left unstripped: intraword `*` pairs, which Markdown would render as emphasis but
+  may separate compound parts like a Mediopunkt
+  (`Behinderten*gleichstellungs*gesetz`), unclosed markers (`**fett`) and markers
+  split by a blank line.
+- Still over-stripped: intraword `__` (`snake__case__name` → `snakecasename`),
+  `_word_` in URLs (`example.ch/_privat_/x` → `example.ch/privat/x`), escaped
+  markers (`\*x\*` → `\x\`) and `#` lines indented by a tab or four or more spaces,
+  which Markdown treats as code. Such cases are uncommon in plain-language texts
+  produced by this app, so they are deliberately not handled.
+- Runtime is quadratic when one long paragraph contains many unpaired markers such
+  as `*a`: locally about 1.4 s for 15,000 and 4 s for 20,000 characters. Normal
+  text, including many gender stars, is cheap.
+- Links, inline code, strikethrough, `-`/numbered lists, setext headers (`===`
+  underlines) and HTML pass through unchanged.
+
 ## Offline test boundaries
 
 - Mutmut needs explicit `source_paths` for the `_streamlit_app/` layout and

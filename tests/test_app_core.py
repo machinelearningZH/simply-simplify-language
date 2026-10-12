@@ -3,6 +3,7 @@ import logging
 import sys
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+from textwrap import dedent
 from threading import Event
 from unittest.mock import Mock
 
@@ -305,6 +306,164 @@ def test_strip_markdown_removes_headers_and_emphasis():
     result = strip_markdown(text)
 
     assert result == "Titel\nUntertitel\nDies ist fett und kursiv und auch und so."
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        ("### Titel", "Titel"),
+        ("###### Titel", "Titel"),
+        ("######## Titel", "Titel"),
+        ("   ## Eingerückt", "Eingerückt"),
+        ("      ########## Eingerückt", "Eingerückt"),
+        ("\t\t# Eingerückt", "Eingerückt"),
+        ("##   Viele Leerzeichen", "Viele Leerzeichen"),
+        ("Text\n## Titel\nText", "Text\nTitel\nText"),
+        ("#", ""),
+        ("Text\n##\nText", "Text\n\nText"),
+        ("Text\n###   \nText", "Text\n\nText"),
+        ("## Titel ##", "Titel"),
+        ("# Titel ###", "Titel"),
+        ("### Titel #", "Titel"),
+        ("## Titel ##   ", "Titel"),
+        ("## ##", ""),
+        ("Text\n## Titel ##\nText", "Text\nTitel\nText"),
+        ("## Titel ##\r\nText", "Titel\r\nText"),
+    ],
+)
+def test_strip_markdown_removes_header_markers_at_line_start(text, expected):
+    assert strip_markdown(text) == expected
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        ("# C#", "C#"),
+        ("## Titel#", "Titel#"),
+        ("### foo ### b", "foo ### b"),
+    ],
+)
+def test_strip_markdown_keeps_hashes_belonging_to_header_text(text, expected):
+    assert strip_markdown(text) == expected
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "C# Kurs am Montag",
+        "Raum # 3",
+        "#Zürich ist schön",
+    ],
+)
+def test_strip_markdown_keeps_hash_outside_headers(text):
+    assert strip_markdown(text) == text
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "anmeldung_kurs@example.ch",
+        "www.example.ch/formular_2026.pdf",
+        "Bürger*innen",
+        "Liebe Kund*innen und Mitarbeiter_innen",
+    ],
+)
+def test_strip_markdown_keeps_literal_underscores_and_asterisks(text):
+    assert strip_markdown(text) == text
+
+
+def test_strip_markdown_keeps_gender_star_inside_emphasis():
+    assert (
+        strip_markdown("**Bürger*innen** und *Kund*innen*")
+        == "Bürger*innen und Kund*innen"
+    )
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        ("Das ist **sehr\nwichtig** heute.", "Das ist sehr\nwichtig heute."),
+        ("Das ist __sehr\nwichtig__ heute.", "Das ist sehr\nwichtig heute."),
+        ("Das ist *sehr\nwichtig* heute.", "Das ist sehr\nwichtig heute."),
+        ("Das ist _sehr\nwichtig_ heute.", "Das ist sehr\nwichtig heute."),
+        (
+            "Das ist **sehr\nsehr\nwichtig** heute.",
+            "Das ist sehr\nsehr\nwichtig heute.",
+        ),
+        (
+            "Das ist *eins\nzwei\ndrei\nvier* heute.",
+            "Das ist eins\nzwei\ndrei\nvier heute.",
+        ),
+    ],
+)
+def test_strip_markdown_removes_emphasis_across_line_breaks(text, expected):
+    assert strip_markdown(text) == expected
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "Erster **Absatz\n\nZweiter** Absatz.",
+        "Erster *Absatz\n\nZweiter* Absatz.",
+        "Erster **Absatz\n  \nZweiter** Absatz.",
+    ],
+)
+def test_strip_markdown_keeps_markers_separated_by_blank_line(text):
+    assert strip_markdown(text) == text
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        ("* eins\n* zwei\n* drei", "* eins\n* zwei\n* drei"),
+        ("* **eins**\n* *zwei*\n* drei", "* eins\n* zwei\n* drei"),
+        ("* Bürger*innen\n* Kund*innen", "* Bürger*innen\n* Kund*innen"),
+    ],
+)
+def test_strip_markdown_keeps_star_list_bullets(text, expected):
+    assert strip_markdown(text) == expected
+
+
+def test_strip_markdown_handles_mixed_emphasis_and_literal_markers_in_text():
+    text = dedent("""\
+        # Anmeldung
+
+        ## Für **alle Bürger*innen**
+
+        Melden Sie sich **bis Freitag** an. Das ist ***sehr wichtig***.
+        Schreiben Sie an anmeldung_kurs@example.ch (_nicht_ per Post).
+
+        Bringen Sie mit:
+
+        * Ihre **Kranken*versicherungs*karte**
+        * einen _gültigen_ Ausweis
+        * *das ausgefüllte Formular*
+
+        Das Formular finden Sie hier: www.example.ch/formular_2026.pdf
+
+        Fragen? Unsere **_Mitarbeiter_innen_** und __Kund*innen-Beratung__ helfen.
+        """)
+
+    result = strip_markdown(text)
+
+    assert result == dedent("""\
+        Anmeldung
+
+        Für alle Bürger*innen
+
+        Melden Sie sich bis Freitag an. Das ist sehr wichtig.
+        Schreiben Sie an anmeldung_kurs@example.ch (nicht per Post).
+
+        Bringen Sie mit:
+
+        * Ihre Kranken*versicherungs*karte
+        * einen gültigen Ausweis
+        * das ausgefüllte Formular
+
+        Das Formular finden Sie hier: www.example.ch/formular_2026.pdf
+
+        Fragen? Unsere Mitarbeiter_innen und Kund*innen-Beratung helfen.
+        """)
 
 
 def test_extract_tagged_response_joins_multiple_matches_with_newline():
