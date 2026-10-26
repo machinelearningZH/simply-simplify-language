@@ -19,9 +19,11 @@ dependencies = [
 ]
 
 [tool.uv]
+constraint-dependencies = ["certifi>=2026.10.19"]
 exclude-newer = "7 days"
 # Security fixes may bypass the stability window when the container scan blocks a release.
-exclude-newer-package = { gitpython = false }
+# eMudhra/emSign: remove only certifi exceptions once artifacts age seven days.
+exclude-newer-package = { gitpython = false, certifi = false }
 
 [tool.ruff.lint]
 select = ["B", "E", "F", "I", "RUF", "UP"]

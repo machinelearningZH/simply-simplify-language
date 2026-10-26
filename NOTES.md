@@ -143,3 +143,7 @@ No production changes were made to force mutation kills, and no assertions were
 weakened. Final validation: 119 tests pass; repository Ruff lint and formatting
 checks pass. Validation used the existing local Python 3.14 environment; the CI
 Python 3.12/3.13 matrix was not run locally.
+
+## 2026-10-26: eMudhra/emSign certificate update
+
+Require certifi >=2026.10.19; only certifi and affected pip changed package versions. Keep the seven-day cooldown. Remove only the incident certifi exception after 2026-10-27 03:24:17 Europe/Zurich, then relock and sync. Build/CI uv pins are 0.13.5; Python image stages patch existing pip with secure uv. Deployment images still require a fresh build (`--pull --no-cache`) and verification before redeployment. Advisory: https://discuss.python.org/t/109576.

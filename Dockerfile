@@ -1,6 +1,8 @@
-FROM ghcr.io/astral-sh/uv:0.11.23 AS uv
+FROM ghcr.io/astral-sh/uv:0.13.5 AS uv
 
 FROM python:3.12-slim AS builder
+RUN --mount=from=ghcr.io/astral-sh/uv:0.13.5,source=/uv,target=/tmp/security-uv \
+    /tmp/security-uv pip install --system --no-deps 'pip>=26.2.2'
 WORKDIR /app
 
 RUN apt-get update \
@@ -12,6 +14,8 @@ COPY pyproject.toml uv.lock ./
 RUN uv sync --frozen --no-dev --no-install-project
 
 FROM python:3.12-slim
+RUN --mount=from=ghcr.io/astral-sh/uv:0.13.5,source=/uv,target=/tmp/security-uv \
+    /tmp/security-uv pip install --system --no-deps 'pip>=26.2.2'
 WORKDIR /app
 ENV PATH="/app/.venv/bin:$PATH" \
     PYTHONUNBUFFERED=1
