@@ -147,3 +147,7 @@ Python 3.12/3.13 matrix was not run locally.
 ## 2026-10-26: eMudhra/emSign certificate update
 
 Require certifi >=2026.10.19; only certifi and affected pip changed package versions. Keep the seven-day cooldown. Remove only the incident certifi exception after 2026-10-27 03:24:17 Europe/Zurich, then relock and sync. Build/CI uv pins are 0.13.5; Python image stages patch existing pip with secure uv. Deployment images still require a fresh build (`--pull --no-cache`) and verification before redeployment. Advisory: https://discuss.python.org/t/109576.
+
+## 2026-10-26: Container scan fixes
+
+Pillow 13.0.0 fixes the CRITICAL/HIGH Pillow CVEs but streamlit 1.66.0 caps `pillow<13`; streamlit 1.66.1 (uploaded 2026-10-21) lifts the cap, so `streamlit` is exempted from the seven-day cooldown in `pyproject.toml` (remove after 2026-10-28, then relock). The runtime image uninstalls pip because even pip 26.2.2 vendors vulnerable msgpack 1.1.2, urllib3 2.7.0 and setuptools 70.3.0 and no fixed pip exists; the application never calls pip. Verified with Trivy 0.70.0 (`--ignore-unfixed --severity HIGH,CRITICAL`): no findings.

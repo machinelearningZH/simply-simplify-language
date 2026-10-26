@@ -14,8 +14,9 @@ COPY pyproject.toml uv.lock ./
 RUN uv sync --frozen --no-dev --no-install-project
 
 FROM python:3.12-slim
+# The runtime never calls pip, and even the newest pip vendors vulnerable msgpack, urllib3, and setuptools.
 RUN --mount=from=ghcr.io/astral-sh/uv:0.13.5,source=/uv,target=/tmp/security-uv \
-    /tmp/security-uv pip install --system --no-deps 'pip>=26.2.2'
+    /tmp/security-uv pip uninstall --system pip
 WORKDIR /app
 ENV PATH="/app/.venv/bin:$PATH" \
     PYTHONUNBUFFERED=1

@@ -23,7 +23,8 @@ constraint-dependencies = ["certifi>=2026.10.19"]
 exclude-newer = "7 days"
 # Security fixes may bypass the stability window when the container scan blocks a release.
 # eMudhra/emSign: remove only certifi exceptions once artifacts age seven days.
-exclude-newer-package = { gitpython = false, certifi = false }
+# Pillow 13 fixes: streamlit 1.66.0 caps pillow<13; remove the streamlit exception after 2026-10-28.
+exclude-newer-package = { gitpython = false, certifi = false, streamlit = false }
 
 [tool.ruff.lint]
 select = ["B", "E", "F", "I", "RUF", "UP"]
