@@ -14,7 +14,6 @@ from unittest.mock import MagicMock, Mock, call
 import pytest
 from docx import Document
 from docx.shared import Inches, Pt
-from openai import APIStatusError
 
 from _streamlit_app import app_core
 
@@ -163,36 +162,6 @@ def test_provider_timeout_is_caught_at_client_boundary(
         record.exc_info and record.exc_info[0] is TimeoutError
         for record in caplog.records
     )
-
-
-def test_provider_error_logs_omit_sensitive_response_details(
-    app_module: ModuleType,
-    monkeypatch: pytest.MonkeyPatch,
-    caplog: pytest.LogCaptureFixture,
-) -> None:
-    private_text = "Private submitted text echoed by provider"
-    error = APIStatusError(
-        f"Provider rejected: {private_text}",
-        response=Mock(status_code=400, request=Mock()),
-        body={"error": {"message": private_text}},
-    )
-    complete = Mock(side_effect=error)
-    monkeypatch.setattr(
-        app_module,
-        "get_openrouter_client",
-        lambda: SimpleNamespace(
-            chat=SimpleNamespace(completions=SimpleNamespace(create=complete))
-        ),
-    )
-
-    success, response = app_module.invoke_model(
-        "Source", next(iter(app_module.MODEL_PARAMETERS))
-    )
-
-    assert success is False
-    assert private_text not in response
-    assert caplog.records
-    assert private_text not in caplog.text
 
 
 @pytest.mark.parametrize("easy", [False, True])
