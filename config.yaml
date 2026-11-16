@@ -15,11 +15,11 @@ models:
     subprovider: "default"
   - name: "Claude Opus 5.5"
     id: "anthropic/claude-opus-5.5"
-    reasoning_effort: "default"
+    reasoning_effort: "low"
     subprovider: "default"
   - name: "Claude Fable 5.2"
     id: "anthropic/claude-fable-5.2"
-    reasoning_effort: "default"
+    reasoning_effort: "low"
     subprovider: "default"
   - name: "GPT-6.1 Terra"
     id: "openai/gpt-6.1-terra"
@@ -27,12 +27,16 @@ models:
     subprovider: ["openai/flex", "openai"]
   - name: "GPT-6.1 Sol"
     id: "openai/gpt-6.1-sol"
-    reasoning_effort: "default"
+    reasoning_effort: "medium"
     subprovider: ["openai/flex", "openai"]
   - name: "Gemini 4 Carbon"
     id: "google/gemini-4-carbon"
+    reasoning_effort: "low"
+    subprovider: ["google-ai-studio/flex", "google-vertex/global"]
   - name: "Gemini 4 Hydrogen"
     id: "google/gemini-4-hydrogen"
+    reasoning_effort: "low"
+    subprovider: ["google-ai-studio/flex", "google-vertex/global"]
 
 # API configuration for model calls
 api:
