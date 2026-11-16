@@ -198,8 +198,8 @@ def get_one_click_results():
     return format_one_click_results(responses, score_fn=get_zix, cefr_fn=get_cefr)
 
 
-def create_download_link(result):
-    """Create a downloadable Word document and download link of the results."""
+def build_download_document(result):
+    """Create a downloadable Word document in memory for the given result."""
     from docx import Document
     from docx.shared import Inches, Pt
 
@@ -250,6 +250,13 @@ def create_download_link(result):
 
     io_stream = io.BytesIO()
     document.save(io_stream)
+    return io_stream.getvalue()
+
+
+def create_download_link(result, document_bytes=None):
+    """Render a download button for the generated Word document."""
+    if document_bytes is None:
+        document_bytes = build_download_document(result)
 
     file_name = DEFAULT_OUTPUT_FILENAME
 
@@ -263,7 +270,7 @@ def create_download_link(result):
         caption = "Analyse herunterladen"
     st.download_button(
         label=caption,
-        data=io_stream.getvalue(),
+        data=document_bytes,
         file_name=file_name,
         mime=DOWNLOAD_MIME_TYPE,
     )
@@ -296,9 +303,29 @@ def log_event(
     write_event_log(EVENT_LOGGER, payload)
 
 
-def render_download_and_caption(result):
+def get_cached_result_artifacts(result):
+    """Cache derived target scores and DOCX bytes per ResultState instance."""
+    cache = (
+        st.session_state.last_result_artifacts
+        if "last_result_artifacts" in st.session_state
+        else None
+    )
+    if cache is None or cache.get("result") is not result:
+        score_target = get_zix(result.response) if result.simplification else None
+        cefr_target = get_cefr(score_target) if result.simplification else None
+        cache = {
+            "result": result,
+            "score_target": score_target,
+            "cefr_target": cefr_target,
+            "docx_bytes": build_download_document(result),
+        }
+        st.session_state.last_result_artifacts = cache
+    return cache
+
+
+def render_download_and_caption(result, document_bytes=None):
     """Render the download button and processing-time caption for a result."""
-    create_download_link(result)
+    create_download_link(result, document_bytes=document_bytes)
     st.caption(f"Verarbeitet in {result.time_processed:.1f} Sekunden.")
 
 
@@ -307,6 +334,9 @@ def render_result(result):
     text = "Dein vereinfachter Text"
     if result.analysis:
         text = "Deine Analyse"
+
+    artifacts = get_cached_result_artifacts(result)
+    document_bytes = artifacts["docx_bytes"]
 
     with placeholder_result.container():
         st.text_area(
@@ -326,11 +356,11 @@ def render_result(result):
                     value=rounded_score(result.score_source),
                     help=METRIC_HELP,
                 )
-                render_download_and_caption(result)
+                render_download_and_caption(result, document_bytes=document_bytes)
         elif result.simplification:
-            score_target = get_zix(result.response)
+            score_target = artifacts["score_target"]
             score_target_rounded = rounded_score(score_target)
-            cefr_target = get_cefr(score_target)
+            cefr_target = artifacts["cefr_target"]
             target_classification = classify_understandability(
                 score_target,
                 limit_hard=LIMIT_HARD,
@@ -351,7 +381,7 @@ def render_result(result):
                     delta=rounded_score(score_target - result.score_source),
                     help=METRIC_HELP,
                 )
-                render_download_and_caption(result)
+                render_download_and_caption(result, document_bytes=document_bytes)
         else:
             with placeholder_analysis.container():
                 st.metric(
@@ -359,7 +389,7 @@ def render_result(result):
                     value=rounded_score(result.score_source),
                     help=METRIC_HELP,
                 )
-                render_download_and_caption(result)
+                render_download_and_caption(result, document_bytes=document_bytes)
 
 
 # ---------------------------------------------------------------
@@ -422,13 +452,22 @@ with button_cols[2]:
             value=True,
             help="**Schalter aktiviert**: Modell konzentriert sich auf essentielle Informationen und versucht, Unwichtiges wegzulassen. **Schalter nicht aktiviert**: Modell versucht, alle Informationen zu übernehmen.",
         )
-with button_cols[3]:
-    model_choice = st.radio(
+
+
+@st.fragment
+def render_model_selector():
+    """Isolate model radio reruns from the full page so switching models is instant."""
+    st.radio(
         label="Sprachmodell",
         options=MODEL_NAMES,
         index=0,
         horizontal=True,
+        key="key_model_choice",
     )
+
+
+with button_cols[3]:
+    render_model_selector()
 
 # Instantiate empty containers for the text areas.
 cols = st.columns([2, 2, 1])
@@ -467,7 +506,12 @@ with placeholder_analysis:
 start_understandability_loading()
 
 
-# Derive model_id from explicit model_choice.
+# Derive model_choice and model_id from session state.
+model_choice = (
+    st.session_state.key_model_choice
+    if "key_model_choice" in st.session_state
+    else MODEL_NAMES[0]
+)
 model_id = MODEL_IDS[model_choice]
 
 # Start processing if one of the processing buttons is clicked.

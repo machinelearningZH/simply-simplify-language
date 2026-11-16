@@ -137,3 +137,42 @@ def test_analysis_uses_selected_model_routing_and_language(app: tuple) -> None:
     assert "lass den Rest weg" not in request["messages"][1]["content"]
     assert test_app.text_area[1].label == "Deine Analyse"
     assert test_app.text_area[1].value == "Eine Analyse."
+
+
+def test_switching_models_preserves_selection_and_avoids_recomputing_last_result(
+    app: tuple, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    test_app, requests, _ = app
+    zix_calls: list[str] = []
+
+    def counting_zix(text: str) -> float:
+        zix_calls.append(text)
+        return 1.5
+
+    monkeypatch.setattr(app_core, "get_zix", counting_zix)
+    test_app.run()
+    test_app.text_area(key="key_textinput").input("Der Ausgangstext.")
+    next(
+        button for button in test_app.button if button.label == "Vereinfachen"
+    ).click().run()
+    assert not test_app.exception
+    assert len(zix_calls) == 2  # source + initial target
+
+    config = app_core.load_yaml_config(app_core.repo_path("config.yaml"))
+    second_model = config["models"][1]
+    test_app.radio[0].set_value(second_model["name"]).run()
+    assert not test_app.exception
+    assert test_app.session_state["key_model_choice"] == second_model["name"]
+    assert len(zix_calls) == 2
+
+    # Even a full rerun (e.g. toggling Leichte Sprache) reuses cached target artifacts.
+    test_app.toggle[0].set_value(True).run()
+    assert not test_app.exception
+    assert len(zix_calls) == 2
+
+    next(
+        button for button in test_app.button if button.label == "Vereinfachen"
+    ).click().run()
+    assert not test_app.exception
+    assert len(requests) == 2
+    assert requests[1]["model"] == second_model["id"]
