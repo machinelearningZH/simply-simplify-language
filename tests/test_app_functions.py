@@ -14,6 +14,7 @@ from unittest.mock import MagicMock, Mock, call
 import pytest
 from docx import Document
 from docx.shared import Inches, Pt
+from openai import APIStatusError
 
 from _streamlit_app import app_core
 
@@ -164,6 +165,36 @@ def test_provider_timeout_is_caught_at_client_boundary(
     )
 
 
+def test_provider_error_logs_omit_sensitive_response_details(
+    app_module: ModuleType,
+    monkeypatch: pytest.MonkeyPatch,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    private_text = "Private submitted text echoed by provider"
+    error = APIStatusError(
+        f"Provider rejected: {private_text}",
+        response=Mock(status_code=400, request=Mock()),
+        body={"error": {"message": private_text}},
+    )
+    complete = Mock(side_effect=error)
+    monkeypatch.setattr(
+        app_module,
+        "get_openrouter_client",
+        lambda: SimpleNamespace(
+            chat=SimpleNamespace(completions=SimpleNamespace(create=complete))
+        ),
+    )
+
+    success, response = app_module.invoke_model(
+        "Source", next(iter(app_module.MODEL_PARAMETERS))
+    )
+
+    assert success is False
+    assert private_text not in response
+    assert caplog.records
+    assert private_text not in caplog.text
+
+
 @pytest.mark.parametrize("easy", [False, True])
 def test_response_wrapper_selects_language_tag(
     app_module: ModuleType, monkeypatch: pytest.MonkeyPatch, easy: bool
@@ -187,7 +218,7 @@ def test_one_click_uses_source_for_each_model_and_reports_partial_failure(
         ]
 
     monkeypatch.setattr(app_module, "invoke_model", complete)
-    monkeypatch.setattr(app_module, "get_cefr", lambda score: {1: "B1"}[score])
+    monkeypatch.setattr(app_module, "get_cefr", lambda score: "B1")
     assert app_module.get_one_click_results() == (
         True,
         "\n----- Ergebnis von A (Verständlichkeit: 1, Niveau etwa B1) -----\n\nResult"
@@ -338,6 +369,34 @@ def test_render_result_uses_mode_specific_scores_and_offers_download(
     ui.download_button.assert_called_once()
 
 
+def test_unscorable_output_keeps_text_and_download_without_a_score(
+    app_module: ModuleType,
+    result: app_core.ResultState,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(app_module, "get_zix", lambda text: None)
+    cefr = Mock()
+    monkeypatch.setattr(app_module, "get_cefr", cefr)
+
+    app_module.render_result(result)
+
+    ui = app_module.st
+    assert ui.text_area.call_args.kwargs["value"] == result.response
+    assert "keine Verständlichkeitsbewertung verfügbar" in ui.info.call_args.args[0]
+    ui.metric.assert_called_once_with(
+        label=app_module.METRIC_LABEL,
+        value=None,
+        delta=None,
+        help=app_module.METRIC_HELP,
+    )
+    cefr.assert_not_called()
+    document = Document(io.BytesIO(ui.download_button.call_args.kwargs["data"]))
+    assert [p.text for p in document.paragraphs][1::2] == [
+        "\n" + result.source_text,
+        result.response,
+    ]
+
+
 def test_log_event_writes_only_metadata_to_configured_logger(
     app_module: ModuleType, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
@@ -418,7 +477,7 @@ def test_one_click_starts_every_model_before_waiting_for_results(
     # still fan out in parallel rather than queue requests behind slow providers.
     models = {f"Model {index}": f"offline/{index}" for index in range(33)}
     monkeypatch.setattr(app_module, "MODEL_IDS", models)
-    monkeypatch.setattr(app_module, "get_cefr", lambda score: {1: "B1"}[score])
+    monkeypatch.setattr(app_module, "get_cefr", lambda score: "B1")
     started: set[str] = set()
     lock, all_started, release = Lock(), Event(), Event()
 

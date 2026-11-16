@@ -312,7 +312,7 @@ def get_cached_result_artifacts(result):
     )
     if cache is None or cache.get("result") is not result:
         score_target = get_zix(result.response) if result.simplification else None
-        cefr_target = get_cefr(score_target) if result.simplification else None
+        cefr_target = get_cefr(score_target) if score_target is not None else None
         cache = {
             "result": result,
             "score_target": score_target,
@@ -359,26 +359,36 @@ def render_result(result):
                 render_download_and_caption(result, document_bytes=document_bytes)
         elif result.simplification:
             score_target = artifacts["score_target"]
-            score_target_rounded = rounded_score(score_target)
-            cefr_target = artifacts["cefr_target"]
-            target_classification = classify_understandability(
-                score_target,
-                limit_hard=LIMIT_HARD,
-                limit_medium=LIMIT_MEDIUM,
-            )
-            st.markdown(
-                format_understandability_message(
-                    "vereinfachter Text",
-                    score_target_rounded,
-                    cefr_target,
-                    target_classification,
+            score_target_rounded = None
+            if score_target is None:
+                st.info(
+                    "Für den vereinfachten Text ist keine Verständlichkeitsbewertung verfügbar."
                 )
-            )
+            else:
+                score_target_rounded = rounded_score(score_target)
+                cefr_target = artifacts["cefr_target"]
+                target_classification = classify_understandability(
+                    score_target,
+                    limit_hard=LIMIT_HARD,
+                    limit_medium=LIMIT_MEDIUM,
+                )
+                st.markdown(
+                    format_understandability_message(
+                        "vereinfachter Text",
+                        score_target_rounded,
+                        cefr_target,
+                        target_classification,
+                    )
+                )
             with placeholder_analysis.container():
                 st.metric(
                     label=METRIC_LABEL,
                     value=score_target_rounded,
-                    delta=rounded_score(score_target - result.score_source),
+                    delta=(
+                        rounded_score(score_target - result.score_source)
+                        if score_target is not None
+                        else None
+                    ),
                     help=METRIC_HELP,
                 )
                 render_download_and_caption(result, document_bytes=document_bytes)
@@ -517,11 +527,16 @@ model_id = MODEL_IDS[model_choice]
 # Start processing if one of the processing buttons is clicked.
 if do_simplification or do_analysis or do_one_click:
     start_time = time.time()
-    if st.session_state.key_textinput == "":
+    if not st.session_state.key_textinput.strip():
         st.error("Bitte gib einen Text ein.")
         st.stop()
 
     score_source = get_zix(st.session_state.key_textinput)
+    if score_source is None:
+        st.error(
+            "Der Ausgangstext kann nicht bewertet werden. Bitte gib einen Text mit Wörtern ein."
+        )
+        st.stop()
     score_source_rounded = rounded_score(score_source)
     cefr_source = get_cefr(score_source)
     source_classification = classify_understandability(

@@ -293,7 +293,7 @@ def rounded_score(score: float) -> int:
 def format_one_click_results(
     responses: dict[str, tuple[bool, str]],
     *,
-    score_fn: Callable[[str], float],
+    score_fn: Callable[[str], float | None],
     cefr_fn: Callable[[float], str],
 ) -> tuple[bool, str]:
     response_texts = []
@@ -301,11 +301,16 @@ def format_one_click_results(
 
     for name, (success, response) in responses.items():
         if success and response.strip():
-            zix = rounded_score(score_fn(response))
-            cefr = cefr_fn(zix)
+            score = score_fn(response)
+            if score is None:
+                rating = "Verständlichkeit: nicht verfügbar"
+            else:
+                rating = (
+                    f"Verständlichkeit: {rounded_score(score)}, "
+                    f"Niveau etwa {cefr_fn(score)}"
+                )
             response_texts.append(
-                f"\n----- Ergebnis von {name} "
-                f"(Verständlichkeit: {zix}, Niveau etwa {cefr}) -----\n\n{response}"
+                f"\n----- Ergebnis von {name} ({rating}) -----\n\n{response}"
             )
         else:
             failed_models.append(name)

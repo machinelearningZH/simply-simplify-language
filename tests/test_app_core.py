@@ -275,6 +275,7 @@ def test_prompt_preserves_source_and_language_contract(
     if analysis:
         assert "Satz für Satz" in prompt
         assert "Mache einen Vorschlag für einen vereinfachten Satz." in prompt
+        assert "Befolge diesen Ablauf von Anfang bis Ende" in prompt
     else:
         assert "ALLE Informationen" in prompt
 
@@ -294,6 +295,8 @@ def test_condensing_changes_only_leichte_sprache_rewrites(
         assert "ALLE Informationen" in complete
         assert "lass den Rest weg" in condensed
         assert "ALLE Informationen" not in condensed
+        assert "kürze nicht" not in condensed_system
+        assert "vollständig" not in condensed
     else:
         assert condensed == complete
 
@@ -701,10 +704,11 @@ def test_reconfiguring_logging_replaces_destination_and_disabled_logging_stops_w
 
 def test_one_click_preserves_each_text_and_its_own_score() -> None:
     def score(text: str) -> float:
-        return {"Erster Text.": 1.4, "Zweiter Text.": -2.6}[text]
+        return {"Erster Text.": 1.6, "Zweiter Text.": -2.6}[text]
 
     def cefr(value: float) -> str:
-        return {1: "B1", -3: "C1"}[value]
+        # ZIX maps 1.6 to B1, while rounding first crosses the A2 threshold at 2.
+        return {1.6: "B1", 2: "A2", -2.6: "C1", -3: "C1"}[value]
 
     success, output = format_one_click_results(
         {
@@ -718,7 +722,7 @@ def test_one_click_preserves_each_text_and_its_own_score() -> None:
     )
     assert success is True
     assert (
-        "Model A (Verständlichkeit: 1, Niveau etwa B1) -----\n\nErster Text." in output
+        "Model A (Verständlichkeit: 2, Niveau etwa B1) -----\n\nErster Text." in output
     )
     assert (
         "Model B (Verständlichkeit: -3, Niveau etwa C1) -----\n\nZweiter Text."
@@ -726,3 +730,26 @@ def test_one_click_preserves_each_text_and_its_own_score() -> None:
     )
     assert "Fehlgeschlagen: Model C, Model D" in output
     assert "private failure details" not in output
+
+
+def test_one_click_preserves_unscorable_output_and_other_model_results() -> None:
+    cefr = Mock(return_value="B1")
+    success, output = format_one_click_results(
+        {
+            "Unscorable": (True, "12345"),
+            "Scored": (True, "Ein Text."),
+            "Failed": (False, "private failure details"),
+        },
+        score_fn=lambda text: {"12345": None, "Ein Text.": 1.6}[text],
+        cefr_fn=cefr,
+    )
+
+    assert success is True
+    assert (
+        "Ergebnis von Unscorable (Verständlichkeit: nicht verfügbar) -----\n\n12345"
+        in output
+    )
+    assert "Scored (Verständlichkeit: 2, Niveau etwa B1) -----\n\nEin Text." in output
+    assert "Fehlgeschlagen: Failed" in output
+    assert "private failure details" not in output
+    cefr.assert_called_once_with(1.6)
