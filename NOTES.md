@@ -3,10 +3,10 @@
 ## CI compatibility and security scanning
 
 - CI tests Python 3.12 and 3.13; Docker uses Python 3.12. The declared range
-  is `>=3.12`, but CI does not establish support for later versions. The lockfile
-  currently records spaCy 3.8.16.
-- GitPython is exempt from the global seven-day `uv` release window so actionable
-  security fixes are not delayed when the container vulnerability scan blocks CI.
+  is `>=3.12`, but CI does not establish support for later versions. Consult
+  `uv.lock` for the current spaCy version.
+- The seven-day `uv` release window applies to all packages; no package-specific
+  exceptions are currently configured.
 - The container scan ignores vulnerabilities without an available fix, but continues
   to fail for fixable HIGH and CRITICAL findings.
 - The `python:3.12-slim` base image may lag Debian 13 security updates. Upgrade the
@@ -16,6 +16,9 @@
   `.pre-commit-config.yaml`; installing only 3.12 fails during hook setup.
 - The runtime upgrade list includes `libpcre2-8-0` for CVE-2026-103111; the failing
   scan reported `10.46-1~deb13u2`, with the fix available in `10.46-1~deb13u3`.
+- The builder updates pip with uv; the runtime image removes pip. Keep the spaCy
+  model in the locked dependencies so ZIX does not need its runtime download
+  fallback. Fresh images still need their own vulnerability scan.
 
 ## Scoring dependency and documentation limits
 
@@ -30,9 +33,10 @@
   model examples reflect configuration, not a verified external model catalogue.
 - `publiccode.yml` describes a prototype to match the UI warning. Its former release
   date had no matching release evidence in the reviewed files and was removed.
-- The Leichte Sprache condensation option selects a condensed user instruction,
-  but the system message and template still request completeness. This conflicting
-  guidance limits what documentation can promise about condensation behavior.
+- Keep Leichte Sprache completeness requirements in the mode-specific instructions:
+  condensed rewrites may omit nonessential information, while complete rewrites
+  and sentence-by-sentence analysis must cover the whole source. Shared system
+  and template text must not override the condensation choice.
 
 ## Markdown stripping of model output
 
@@ -143,11 +147,3 @@ No production changes were made to force mutation kills, and no assertions were
 weakened. Final validation: 119 tests pass; repository Ruff lint and formatting
 checks pass. Validation used the existing local Python 3.14 environment; the CI
 Python 3.12/3.13 matrix was not run locally.
-
-## 2026-10-26: eMudhra/emSign certificate update
-
-Require certifi >=2026.10.19; only certifi and affected pip changed package versions. Keep the seven-day cooldown. Remove only the incident certifi exception after 2026-10-27 03:24:17 Europe/Zurich, then relock and sync. Build/CI uv pins are 0.13.5; Python image stages patch existing pip with secure uv. Deployment images still require a fresh build (`--pull --no-cache`) and verification before redeployment. Advisory: https://discuss.python.org/t/109576.
-
-## 2026-10-26: Container scan fixes
-
-Pillow 13.0.0 fixes the CRITICAL/HIGH Pillow CVEs but streamlit 1.66.0 caps `pillow<13`; streamlit 1.66.1 (uploaded 2026-10-21) lifts the cap, so `streamlit` is exempted from the seven-day cooldown in `pyproject.toml` (remove after 2026-10-28, then relock). The runtime image uninstalls pip because even pip 26.2.2 vendors vulnerable msgpack 1.1.2, urllib3 2.7.0 and setuptools 70.3.0 and no fixed pip exists; the application never calls pip. Verified with Trivy 0.70.0 (`--ignore-unfixed --severity HIGH,CRITICAL`): no findings.

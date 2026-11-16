@@ -7,7 +7,7 @@
 [![GitHub Stars](https://img.shields.io/github/stars/machinelearningZH/simply-simplify-language.svg)](https://github.com/machinelearningZH/simply-simplify-language/stargazers)
 [![GitHub Issues](https://img.shields.io/github/issues/machinelearningZH/simply-simplify-language.svg)](https://github.com/machinelearningZH/simply-simplify-language/issues)
 [![GitHub Issues](https://img.shields.io/github/issues-pr/machinelearningZH/simply-simplify-language.svg)](https://img.shields.io/github/issues-pr/machinelearningZH/simply-simplify-language)
-[![Current Version](https://img.shields.io/badge/version-1.7.0-green.svg)](https://github.com/machinelearningZH/simply-simplify-language)
+[![Current Version](https://img.shields.io/badge/version-1.7.1-green.svg)](https://github.com/machinelearningZH/simply-simplify-language)
 <a href="https://github.com/astral-sh/ruff"><img alt="linting - Ruff" class="off-glb" loading="lazy" src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json"></a>
 
 <details>
@@ -105,7 +105,7 @@ See the model catalogue at [OpenRouter models](https://openrouter.ai/models).
 Other settings in `config.yaml` include a 10,000-character UI input limit, a 120-second API timeout, two SDK retries, and an 8,192-token response limit. `api.temperature: "default"` omits the temperature parameter; a YAML float supplies an override. These values apply to every model request. The UI defaults to Einfache Sprache; enabling Leichte Sprache also exposes the condensation option, enabled by default.
 
 > [!Note]
-> Event logging is disabled by default. To enable local analytics, set `logging.enabled: true` in `config.yaml`. Events are JSON lines in `_streamlit_app/app.log` by default (`logging.filename` can override this). They contain text lengths, selected model, runtime, mode, and success status, without raw input or output. This applies to the event logger; model-call failures separately log exception traces. In One-Click mode, the event records the radio-selected model rather than all models called.
+> Event logging is disabled by default. To enable local analytics, set `logging.enabled: true` in `config.yaml`. Events are JSON lines in `_streamlit_app/app.log` by default (`logging.filename` can override this). They contain text lengths, selected model, runtime, mode, and success status, without raw input or output. Model-call failures separately log exception traces, even when event logging is disabled. Those traces can include provider error details containing submitted text. In One-Click mode, the event records the radio-selected model rather than all models called.
 
 ## Project information
 
@@ -158,7 +158,9 @@ The current UI classifies the unrounded score using `config.yaml`:
 - From -2 to below 0: moderately understandable (`nur mässig verständlich`).
 - From 0: understandable (`gut verständlich`).
 
-These score thresholds are configurable. The displayed numeric score is rounded. A single simplification shows the output score and change from the source; analysis shows the source score. One-Click shows individual output scores inline and the source score in the metric panel, rather than scoring the combined results.
+These score thresholds are configurable. The displayed numeric score is rounded; CEFR estimates use the unrounded score in every mode. A single simplification shows the output score and change from the source; analysis shows the source score. One-Click shows individual output scores inline and the source score in the metric panel, rather than scoring the combined results.
+
+The app rejects source text that ZIX cannot score before sending a model request. If a generated draft cannot be scored, it remains visible and downloadable with its score marked unavailable.
 
 The illustration below provides context for the score; it does not validate generated text.
 

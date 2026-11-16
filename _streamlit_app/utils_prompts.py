@@ -14,7 +14,7 @@ Die Vorlage wird zu diesem Zweck den Kantonen, den in der Bundesversammlung vert
 SYSTEM_MESSAGE_ES = """Du bist ein hilfreicher Assistent, der Texte in Einfache Sprache, Sprachniveau B1 bis A2, umschreibt. Sei immer wahrheitsgemäß und objektiv. Schreibe nur das, was du sicher aus dem Text des Benutzers weisst. Arbeite die Texte immer vollständig durch und kürze nicht. Mache keine Annahmen. Schreibe einfach und klar und immer in deutscher Sprache. Gib dein Ergebnis innerhalb von <einfachesprache> Tags aus."""
 
 
-SYSTEM_MESSAGE_LS = """Du bist ein hilfreicher Assistent, der Texte in Leichte Sprache, Sprachniveau A2 bis A1, umschreibt. Sei immer wahrheitsgemäß und objektiv. Schreibe nur das, was du sicher aus dem Text des Benutzers weisst. Arbeite die Texte immer vollständig durch und kürze nicht. Mache keine Annahmen. Schreibe einfach und klar und immer in deutscher Sprache. Gib dein Ergebnis innerhalb von <leichtesprache> Tags aus."""
+SYSTEM_MESSAGE_LS = """Du bist ein hilfreicher Assistent, der Texte in Leichte Sprache, Sprachniveau A2 bis A1, umschreibt. Sei immer wahrheitsgemäß und objektiv. Schreibe nur das, was du sicher aus dem Text des Benutzers weisst. Mache keine Annahmen. Schreibe einfach und klar und immer in deutscher Sprache. Gib dein Ergebnis innerhalb von <leichtesprache> Tags aus."""
 
 
 RULES_ES = """
@@ -128,7 +128,7 @@ Hier ist der schwer verständliche Text:
 """.strip()
 
 TEMPLATE_LS = """
-Du bekommst einen schwer verständlichen Text, den du vollständig in Leichte Sprache auf Sprachniveau A2 bis A1 umschreiben sollst.
+Du bekommst einen schwer verständlichen Text, den du in Leichte Sprache auf Sprachniveau A2 bis A1 umschreiben sollst.
 
 Beachte dabei folgende Regeln:
 

@@ -95,15 +95,33 @@ def test_invalid_model_output_shows_error_without_success_result(
     assert "last_result" not in test_app.session_state
 
 
-def test_empty_input_prevents_model_request(app: tuple) -> None:
+@pytest.mark.parametrize("text", ["", " \t\n"])
+def test_empty_input_prevents_model_request(app: tuple, text: str) -> None:
     test_app, requests, _ = app
     test_app.run()
+    test_app.text_area(key="key_textinput").input(text)
     next(
         button for button in test_app.button if button.label == "Vereinfachen"
     ).click().run()
     assert not test_app.exception
     assert [error.value for error in test_app.error] == ["Bitte gib einen Text ein."]
     assert requests == []
+
+
+@pytest.mark.parametrize("action", ["Vereinfachen", "Analysieren", "🚀 One-Klick"])
+def test_unscorable_input_does_not_crash(
+    app: tuple, monkeypatch: pytest.MonkeyPatch, action: str
+) -> None:
+    test_app, requests, _ = app
+    monkeypatch.setattr(app_core, "get_zix", lambda text: None)
+    test_app.run()
+    test_app.text_area(key="key_textinput").input("12345")
+    next(button for button in test_app.button if button.label == action).click().run()
+
+    assert not test_app.exception
+    assert any("Text mit Wörtern" in error.value for error in test_app.error)
+    assert requests == []
+    assert "last_result" not in test_app.session_state
 
 
 def test_analysis_uses_selected_model_routing_and_language(app: tuple) -> None:
