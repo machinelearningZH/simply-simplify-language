@@ -33,6 +33,7 @@ RUN apt-get update \
         login \
         mount \
         util-linux \
+        zlib1g \
     && rm -rf /var/lib/apt/lists/*
 
 RUN useradd --create-home --uid 10001 app
