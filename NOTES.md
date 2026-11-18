@@ -1,149 +1,43 @@
-# Engineering Notes
+# Engineering notes
 
-## CI compatibility and security scanning
+## CI and packaging
 
-- CI tests Python 3.12 and 3.13; Docker uses Python 3.12. The declared range
-  is `>=3.12`, but CI does not establish support for later versions. Consult
-  `uv.lock` for the current spaCy version.
-- The seven-day `uv` release window applies to all packages; no package-specific
-  exceptions are currently configured.
-- The container scan ignores vulnerabilities without an available fix, but continues
-  to fail for fixable HIGH and CRITICAL findings.
-- The `python:3.12-slim` base image may lag Debian 13 security updates. Upgrade the
-  affected packages in the runtime stage when a fixable OS vulnerability blocks the
-  container scan.
-- The pre-commit CI job must install Python 3.13 to match the hook interpreter in
-  `.pre-commit-config.yaml`; installing only 3.12 fails during hook setup.
-- The runtime upgrade list includes `libpcre2-8-0` for CVE-2026-103111; the failing
-  scan reported `10.46-1~deb13u2`, with the fix available in `10.46-1~deb13u3`.
-- The builder updates pip with uv; the runtime image removes pip. Keep the spaCy
-  model in the locked dependencies so ZIX does not need its runtime download
-  fallback. Fresh images still need their own vulnerability scan.
+- Match the pre-commit interpreter `python3.13` in CI. The application matrix
+  tests 3.12 and 3.13, and Docker uses 3.12.
+- The scanner fails on fixable HIGH and CRITICAL vulnerabilities. When the slim
+  base image lags Debian security updates, upgrade the affected packages in the
+  runtime stage and validate the rebuilt image.
+- Keep the locked spaCy model in the runtime environment. With the model absent,
+  the pinned ZIX release tries to install it using pip, which the image removes.
+  An upstream fix should replace the fallback with an actionable missing-model
+  error. The app loads its scoring assets through `zix`.
 
-## Scoring dependency and documentation limits
+## Prompt and output handling
 
-- The app imports scoring functions from installed `zix`, not the duplicated
-  `_streamlit_app/data/` files. Keep scoring changes in the dependency boundary.
-- The installed ZIX source contains a fallback that invokes `pip` to download the
-  spaCy model if it is missing. The project declares that model explicitly; use
-  locked dependency installation rather than relying on this fallback. A focused
-  upstream fix should replace the fallback with an actionable missing-model error.
-- Live model/provider availability, price estimates, ZIX calibration, and current
-  contributor affiliations cannot be established from this repository. README
-  model examples reflect configuration, not a verified external model catalogue.
-- `publiccode.yml` describes a prototype to match the UI warning. Its former release
-  date had no matching release evidence in the reviewed files and was removed.
-- Keep Leichte Sprache completeness requirements in the mode-specific instructions:
-  condensed rewrites may omit nonessential information, while complete rewrites
-  and sentence-by-sentence analysis must cover the whole source. Shared system
-  and template text must not override the condensation choice.
+- Keep completeness instructions specific to the mode. Condensed Leichte Sprache
+  rewrites may omit nonessential information. Complete rewrites and analysis must
+  cover the whole source. Avoid shared instructions that contradict the choice.
+- `strip_markdown` removes headings and emphasis from model replies. Preserve
+  literal markers in content such as `Bürger*innen`, URLs and email addresses.
+  Some escaped markers, paired double underscores and indented code headings
+  can still be stripped. Long runs of unmatched emphasis markers can take
+  quadratic time. Check both content preservation and runtime when editing the
+  patterns.
 
-## Markdown stripping of model output
+## Offline and mutation tests
 
-- `strip_markdown` runs on every model answer. Over-stripping corrupts content
-  (e-mail addresses, URLs, `Bürger*innen`), while a missed marker is only cosmetic
-  in the plain-text output, so ambiguous markers are deliberately left in place.
-- Left unstripped: intraword `*` pairs, which Markdown would render as emphasis but
-  may separate compound parts like a Mediopunkt
-  (`Behinderten*gleichstellungs*gesetz`), unclosed markers (`**fett`) and markers
-  split by a blank line.
-- Still over-stripped: intraword `__` (`snake__case__name` → `snakecasename`),
-  `_word_` in URLs (`example.ch/_privat_/x` → `example.ch/privat/x`), escaped
-  markers (`\*x\*` → `\x\`) and `#` lines indented by a tab or four or more spaces,
-  which Markdown treats as code. Such cases are uncommon in plain-language texts
-  produced by this app, so they are deliberately not handled.
-- Runtime is quadratic when one long paragraph contains many unpaired markers such
-  as `*a`: locally about 1.4 s for 15,000 and 4 s for 20,000 characters. Normal
-  text, including many gender stars, is cheap.
-- Links, inline code, strikethrough, `-`/numbered lists, setext headers (`===`
-  underlines) and HTML pass through unchanged.
-
-## Offline test boundaries
-
-- Mutmut needs explicit `source_paths` for the `_streamlit_app/` layout and
-  `also_copy = ["config.yaml"]`: its tests run against a copied tree in `mutants/`,
-  where the app still resolves configuration relative to the source directory.
-  Do not copy `.env` or developer credentials into that workspace.
-
-- Streamlit AppTest exercises UI requests and reruns with only the OpenAI client
-  and ZIX scoring boundary replaced. Disable dotenv loading in these tests so
-  developer credentials cannot affect results; clear resource caches and restore
-  the event logger between tests. No provider calls or model downloads are needed.
-- Prompt tests protect language, output tags, source preservation, and mode-specific
-  instructions rather than reconstructing strings with production templates.
-  They verify instruction selection, not whether an LLM follows those instructions.
-
-## Mutation testing contracts and limitations
-
-- AppTest executes the script as `__main__` on a Streamlit script thread. Mutmut
-  identifies app mutations as `_streamlit_app.sprache-vereinfachen`, so AppTest
-  alone does not select or activate these app-function mutants. Direct tests
-  import the trusted script under that module name with an inactive Streamlit UI;
-  OpenAI and ZIX remain mocked at their boundaries. Keep AppTest for real UI flows.
-- A no-argument `mutmut run` can retain cached results after test changes. Use
-  explicit function globs (or `'*'` for all functions) to rerun affected mutants.
-- The loader shutdown test forwards actual mutant IDs into a child interpreter.
-  It removes only the `stats` sentinel because standalone interpreters do not
-  initialize mutmut's pytest statistics plugin. A parent loader call records test
-  selection. Nested `uv run --active --offline --no-sync` uses the existing
-  environment even from mutmut's copied workspace; without `--active`, nested uv
-  selected an environment without mutmut and failed statistics collection.
-- Shutdown and parallel fan-out tests synchronize with events, not sleeps. Their
-  bounded waits fail deterministically and release/reap resources. Non-daemon
-  loader mutants fail the subprocess timeout assertion, rather than being counted
-  as mutation-runner timeouts.
-
-### Mutation audit, 2026-10-02
-
-The original report contained 90 survivors and 278 mutants marked “no tests.”
-After the full explicit rerun and a final affected-function rerun: **651/684
-killed, 33 survived, 0 no tests, 0 timeouts, 0 suspicious results**. Of the original
-report entries, 63 survivors and 272 “no tests” mutants are now killed. Production
-code and dependencies were not changed. The added tests cover reasoning options,
-provider slug shapes, multiline tags, configuration failures, logging schemas,
-loader shutdown, model failures, parallel requests, Word bytes and formatting,
-and all result-rendering modes.
-
-IDs below are the suffixes in `x_<function>__mutmut_<ID>` (formatter IDs use
-`xǁJSONFormatterǁformat`). These are newly killed entries from the original report:
-
-| Module/function | Newly killed IDs |
-| --- | --- |
-| core/start_understandability_loading | 6, 10, 13 |
-| core/model_request_parameters | 15–22, 25–28, 102–105 |
-| core/extract_tagged_response | 7 |
-| core/format_one_click_results | 17–19, 32 |
-| core/build_log_payload | 1–2, 8–19, 21–26 |
-| core/JSONFormatter.format | 8–11, 13, 15, 32–33 |
-| core/configure_event_logger | 2–4, 13, 19, 23–24, 28, 32, 34, 37 |
-| app/create_project_info | 1–30 (all) |
-| app/get_result_from_response | 1–11 (all) |
-| app/invoke_model | 1–36, 41–50, 53–57 |
-| app/enter_sample_text | 1 (all) |
-| app/get_one_click_results | 1–15 (all) |
-| app/create_download_link | 1–71 (all) |
-| app/log_event | 1–25 (all) |
-| app/render_download_and_caption | 1–2 (all) |
-| app/render_result | 1–66 (all) |
-
-Remaining mutations are deliberately distinguished from test gaps:
-
-| Module/function and surviving IDs | Assessment |
-| --- | --- |
-| core/start_understandability_loading: 5, 9, 11, 12 | Only changes the private worker's diagnostic name. Loading, sharing, exception propagation and process exit are covered; exact thread names are not a public contract. |
-| core/load_yaml_config: 3 | Equivalent: `Path.open` defaults to read mode. |
-| core/load_yaml_config: 2, 4; core/load_project_info: 6, 8; core/configure_event_logger: 44, 46 | Locale-dependent encoding gap: removing explicit UTF-8 is indistinguishable on this UTF-8 host. Unicode content is tested; tests do not assert internal codec arguments merely to kill mutants. |
-| core/load_yaml_config: 8; core/configure_event_logger: 48 | Equivalent UTF-8 codec aliases (case-insensitive). |
-| core/temperature_request_parameters: 7; core/model_request_parameters: 30, 57, 73; core/classify_understandability: 3 | Adds `XX` around diagnostic messages. Exception types and useful field/error descriptions are checked; exact decoration is not contractual. |
-| core/rounded_score: 2, 4, 6 | Equivalent for supported finite scores: adding/subtracting zero or rounding without explicit zero precision gives the same final integer. |
-| core/format_one_click_results: 26 | Unobservable separator: the all-failure branch can contain at most one combined failure section, so joining never uses its separator. |
-| core/JSONFormatter.format: 30 | Equivalent: `ensure_ascii=None` is false, like `False`. |
-| core/configure_event_logger: 8, 10, 27 | Equivalent truthiness: absent enabled defaults to false/None; propagation false/None both stop propagation. |
-| core/configure_event_logger: 38 | Changes default filename to `APP.LOG`; the case-insensitive local filesystem accepts the same lookup. Platform limitation, not globally equivalent. |
-| app/invoke_model: 37–40 | Changes an internal missing-content exception message that is caught and translated to the same generic failure. Missing content and exception logging are covered. |
-| app/invoke_model: 51–52 | Decorates/cases diagnostic log wording. Error severity, model identity, exception information and returned failure are covered. |
-
-No production changes were made to force mutation kills, and no assertions were
-weakened. Final validation: 119 tests pass; repository Ruff lint and formatting
-checks pass. Validation used the existing local Python 3.14 environment; the CI
-Python 3.12/3.13 matrix was not run locally.
+- Mutmut copies the source into `mutants/`. Keep `source_paths` set to
+  `_streamlit_app/` and copy `config.yaml`, which the app resolves relative to
+  its source tree. Keep credentials out of the copy.
+- AppTest runs the Streamlit script as `__main__`. Mutmut tracks
+  `_streamlit_app.sprache-vereinfachen`, so direct tests import that module to
+  exercise function mutants. Keep AppTest for UI flows and mock OpenAI and ZIX at
+  their boundaries. Disable dotenv loading, clear resource caches and restore
+  event logging in test fixtures.
+- After changing tests, use explicit function globs with `uv run mutmut run`
+  (or quote `'*'` for all functions) to avoid reusing cached mutation results.
+- The loader shutdown test uses `uv run --active --offline --no-sync` so the
+  child inherits the test environment in the copied workspace. Pass actual
+  mutant IDs to the child and clear the `stats` sentinel, which requires
+  mutmut's pytest plugin. Use events and bounded waits to test shutdown and
+  parallel requests.

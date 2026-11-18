@@ -32,7 +32,7 @@ In der aktuellen Konfiguration ordnet die App den ungerundeten Wert so ein:
 
 Die angezeigte Zahl ist gerundet. Beim Vereinfachen siehst du den Wert des Ergebnisses und die Veränderung gegenüber dem Ausgangstext. Beim Analysieren siehst du den Wert des Ausgangstexts.
 
-Mit «One-Klick» schickst du deinen Text gleichzeitig an alle konfigurierten Modelle. Erfolgreiche Ergebnisse enthalten jeweils eine Bewertung. Fehlgeschlagene Modelle werden aufgeführt, sofern mindestens ein Modell ein Ergebnis liefert. Du kannst Ergebnisse und Ausgangstext als Word-Dokument herunterladen.
+Mit «One-Klick» schickst du deinen Text gleichzeitig an alle konfigurierten Modelle. Zu jedem Entwurf siehst du die Bewertung, sofern sie verfügbar ist. Fehlgeschlagene Modelle werden aufgeführt, sofern mindestens ein Modell ein Ergebnis liefert. Du kannst Ergebnisse und Ausgangstext als Word-Dokument herunterladen.
 
 Wir zeigen dir zusätzlich eine **grobe** Schätzung des Sprachniveaus gemäss [CEFR (Common European Framework of Reference for Languages)](https://www.coe.int/en/web/common-european-framework-reference-languages/level-descriptions) von A1 bis C2 an.
 

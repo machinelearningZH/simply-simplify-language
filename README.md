@@ -1,6 +1,8 @@
 # Simply simplify language
 
-**Use LLMs to simplify your institutional communication. Get rid of «Behördendeutsch».**
+Rewrite German administrative texts in Einfache Sprache or Leichte Sprache,
+get sentence-by-sentence writing feedback, and compare drafts from multiple
+models. The Canton of Zurich developed this Streamlit prototype.
 
 ![GitHub License](https://img.shields.io/github/license/machinelearningZH/simply-simplify-language)
 [![PyPI - Python](https://img.shields.io/badge/python-v3.12+-blue.svg)](https://github.com/machinelearningZH/simply-simplify-language)
@@ -29,63 +31,50 @@
 
 </details>
 
-![](_imgs/app_ui.png)
+![Streamlit app with source text, a generated draft and a readability score](_imgs/app_ui.png)
+
+> [!IMPORTANT]
+> The app sends submitted text to OpenRouter and the routed model provider. Use
+> only public, non-sensitive data. Review drafts for errors and omissions, ideally
+> with the target audience, especially for Leichte Sprache.
 
 ## Usage
 
-- You can run the app **locally**, **with Docker**, **in the cloud** or **in a [GitHub Codespace](https://github.com/features/codespaces)**.
-- The app uses **[OpenRouter](https://openrouter.ai/)** as a unified API provider to access multiple leading language models.
-- All available models are configured in `config.yaml` and can be easily customized for your needs.
-
 ### Running Locally
 
-1. Install [uv](https://docs.astral.sh/uv/) and Python 3.12 or 3.13 (tested in CI). The declared requirement is `>=3.12`.
-2. Clone the repo and enter the directory:\
-   `cd simply-simplify-language/`
-3. Install dependencies:\
-   `make sync`
-4. Add your OpenRouter API key to a `.env` file in `_streamlit_app/`:
+From the repository root, use [uv](https://docs.astral.sh/uv/), Make and Python
+3.12 or 3.13. CI tests both versions. The package requires Python 3.12 or newer.
 
-```
-OPENROUTER_API_KEY=sk-or-v1-...
+```bash
+make sync
+cp -n _streamlit_app/.env_example _streamlit_app/.env
 ```
 
-5. Start the app:\
-   `make run`
+Set `OPENROUTER_API_KEY` in `_streamlit_app/.env` or the process environment.
+Create a key and add credits in your OpenRouter account. [API keys](https://openrouter.ai/keys) · [Credits](https://openrouter.ai/credits)
 
-The Make targets are thin wrappers around `uv`; you can also run the underlying
-`uv` commands directly.
+```bash
+make run
+```
 
-#### Getting your OpenRouter API key
-
-1. Register at [OpenRouter](https://openrouter.ai/)
-2. Create an API key: [API Keys](https://openrouter.ai/keys)
-3. Add credits: [Credits](https://openrouter.ai/credits)
+Open <http://localhost:8501>.
 
 ### Running with Docker
 
-1. Add your OpenRouter API key to `_streamlit_app/.env` as described above.
-2. Build the image:
+Set the key in `_streamlit_app/.env`, then run the following.
 
-   ```bash
-   docker build -t simplify .
-   ```
+```bash
+make docker-build
+make docker-run
+```
 
-3. Start the container and pass the API key at runtime:
-
-   ```bash
-   docker run --rm -p 8080:8501 --env-file ./_streamlit_app/.env simplify
-   ```
-
-4. Open <http://localhost:8080>.
-
-The `.env` file is excluded from the image by `.dockerignore`. Do not add API keys to the Dockerfile or image.
+Open <http://localhost:8080>. The run target passes `.env` to the container at
+startup. `.dockerignore` excludes it from image builds.
 
 ### Remote deployment
 
-Use the local or Docker setup on your remote host. Resource requirements and hosting costs have not been benchmarked in this repository. Configure HTTPS and access controls for your deployment; no reverse proxy, authentication layer, or cloud provisioning is included.
-
-For Codespaces, install `uv` if needed, follow the local setup, and forward port 8501. There is no Codespaces configuration in this repository. You can supply `OPENROUTER_API_KEY` as an environment variable instead of `_streamlit_app/.env`. A root-level `.env` is not explicitly loaded by the app.
+Use the local or Docker setup on your remote host and provide HTTPS and access
+controls. In a Codespace, follow the local setup and forward port 8501.
 
 ### Configuring Models
 
@@ -104,31 +93,29 @@ See the model catalogue at [OpenRouter models](https://openrouter.ai/models).
 
 Other settings in `config.yaml` include a 10,000-character UI input limit, a 120-second API timeout, two SDK retries, and an 8,192-token response limit. `api.temperature: "default"` omits the temperature parameter; a YAML float supplies an override. These values apply to every model request. The UI defaults to Einfache Sprache; enabling Leichte Sprache also exposes the condensation option, enabled by default.
 
-> [!Note]
-> Event logging is disabled by default. To enable local analytics, set `logging.enabled: true` in `config.yaml`. Events are JSON lines in `_streamlit_app/app.log` by default (`logging.filename` can override this). They contain text lengths, selected model, runtime, mode, and success status, without raw input or output. Model-call failures separately log exception traces, even when event logging is disabled. Those traces can include provider error details containing submitted text. In One-Click mode, the event records the radio-selected model rather than all models called.
+### Data handling
+
+Input and the latest result live in Streamlit session state. The app generates
+Word downloads in memory. Optional event logging records text lengths, the
+selected model, runtime, mode and success status. Set `logging.enabled: true` to
+write JSON lines to `_streamlit_app/app.log` or set `logging.filename` to choose
+a path. In One-Click mode, the event records the model selected in the UI.
+
+Model-call failures log exception traces even when event logging is off. Provider
+error details can include submitted text. See the [open logging fix](PLAN.md).
 
 ## Project information
 
-**Institutional communication is often complicated and difficult to understand.** This can be a barrier for many people. Clear and simple communication is essential to ensure equal access to public processes and services.
-
-The cantonal administration of Zurich has long worked to make its communication more inclusive and accessible. As the amount of content continues to grow, we saw an opportunity to use AI to support this goal. In autumn 2023, we launched a pilot project—this app is one of its results. The code in this repository is a snapshot of our ongoing work.
-
-We developed the app according to our communication guidelines, but we know from experience that it can be easily adapted to other guidelines and by other institutions.
-
 ### What does the app do?
 
-- This app **simplifies complex texts, rewriting them according to rules for [«Einfache Sprache»](https://de.wikipedia.org/wiki/Einfache_Sprache) or [«Leichte Sprache»](https://de.wikipedia.org/wiki/Leichte_Sprache)**. To simplify your source text, the app applies effective prompting and uses your chosen LLM via OpenRouter.
-- The app also offers **coaching to improve your writing**. Its **analysis function** provides detailed, sentence-by-sentence feedback to enhance your communication.
-- It **measures the understandability of your text** on a scale from -10 (very complex) to +10 (very easy to understand).
-- The **One-Click feature sends your text to all configured LLMs simultaneously**, showing successful drafts with individual scores and offering a Word download containing the source and results. Failed models are listed when at least one succeeds; if all fail, the app displays an error. Runtime depends on the models and configured timeouts/retries.
+- **Vereinfachen** rewrites text using the selected language level and model.
+- **Analysieren** gives sentence-by-sentence feedback on the source.
+- **One-Klick** requests a rewrite from every configured model in parallel. It
+  shows successful drafts and their scores where available, lists partial failures,
+  and displays an error if every model fails.
 
-In English, «Einfache Sprache» is roughly equivalent to [«Plain English»](https://www.plainlanguage.gov/about/definitions/), while «Leichte Sprache» has similarities to [«Easy English»](https://centreforinclusivedesign.org.au/wp-content/uploads/2020/04/Easy-English-vs-Plain-English_accessible.pdf).
-
-> [!Important]
-> Model requests **send your text to OpenRouter and the routed model provider**. Use **only public, non-sensitive data**. Generated text can contain factual errors or omissions. Always review the draft, ideally with people from the target audience, especially for Leichte Sprache.
-
-> [!Note]
-> This **app is configured for Swiss Standard German** («Schweizer Hochdeutsch», not dialect). Some rules in the prompts steer the models toward this. Also, the app is **set up to use the Swiss `ss` rather than the German `ß`.** The understandability index assumes the Swiss `ss` for the common word scoring, and we replace `ß` with `ss` in the results.
+Download the source and results as a Word document. The prompts use Swiss
+Standard German, and the app replaces `ß` with `ss` in displayed results.
 
 ### What does it cost?
 
@@ -146,9 +133,13 @@ We derived the current rules in the prompts mainly from these of our language gu
 
 ### How does the understandability score work?
 
-The app delegates scoring and CEFR estimates to the external [`zix` package](https://github.com/machinelearningZH/zix_understandability-index), whose Git revision is recorded in `uv.lock`. It starts loading ZIX in a background thread after rendering the initial UI; scoring waits for that shared load when needed. The app does not train a model or read the legacy files in `_streamlit_app/data/`.
+The [`zix` package](https://github.com/machinelearningZH/zix_understandability-index)
+calculates understandability and estimates the CEFR language level. Its Git revision
+is pinned in `uv.lock`. The app loads it in the background after rendering the UI.
 
-ZIX uses sentence length, RIX, common-word scores, and A1/A2/B1 vocabulary overlap. Its regression score is limited to -10 through +10. It does not explicitly evaluate all language guidelines, such as passive voice or negation. Training data and calibration evidence are not included in this repository; the score and CEFR estimate are aids for review, not proof of a language level or factual accuracy.
+ZIX uses sentence length, RIX (a readability index), common-word scores and
+A1/A2/B1 vocabulary overlap. It scores texts from -10 to +10. Use the score and
+CEFR estimate as review aids. Check factual accuracy and language rules separately.
 
 ### What does the score mean?
 
@@ -162,9 +153,7 @@ These score thresholds are configurable. The displayed numeric score is rounded;
 
 The app rejects source text that ZIX cannot score before sending a model request. If a generated draft cannot be scored, it remains visible and downloadable with its score marked unavailable.
 
-The illustration below provides context for the score; it does not validate generated text.
-
-![](_imgs/zix_scores.jpg)
+![Illustration of the ZIX score and estimated CEFR levels](_imgs/zix_scores.jpg)
 
 ## Project Team
 
@@ -190,10 +179,9 @@ submitting a change, run the complete local quality suite:
 make check
 ```
 
-Run mutation testing with `uv run mutmut run`, then inspect surviving mutations
-with `uv run mutmut results`. The configuration copies `config.yaml` into mutmut's
-isolated workspace so the offline Streamlit tests can load it. Generated files
-under `mutants/` are excluded from Git, pytest discovery, and Ruff checks.
+Run mutation testing with `uv run mutmut run` and inspect survivors with
+`uv run mutmut results`. See [engineering notes](NOTES.md#offline-and-mutation-tests)
+for the isolated test setup.
 
 Install repository hooks with `make install` (dependency sync plus pre-commit and pre-push hooks). `make check` checks formatting, lint, and tests without modifying files. `make pre-commit` runs configured pre-commit hooks and may change files; pre-push also runs tests and container validation. Container validation skips the build locally if Docker is unavailable; CI requires it.
 
@@ -210,8 +198,6 @@ Run `make help` for available commands. See [NOTES.md](NOTES.md) for engineering
 - `config.yaml`: models, API limits, UI settings, document formatting, score thresholds, and logging.
 - `tests/test_app_core.py`: deterministic core tests; no live-provider or scoring-calibration tests.
 - `Dockerfile`, `scripts/validate-container.sh`, `.github/workflows/ci.yaml`: container and CI setup.
-
-Input and the latest result are retained in Streamlit session state. Word downloads are generated in memory. The app has no database or persistent text store; optional event logs are local files.
 
 ## License
 
